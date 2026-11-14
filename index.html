@@ -1068,5 +1068,20 @@ $('#closePrint').onclick=()=>{$('#printView').style.display='none';};
 window.addEventListener('keydown',e=>{if(!$('#play').hidden&&S.cur&&S.cur.onKey&&!S.done)S.cur.onKey(e);});
 renderMenu();
 </script>
+<!--lw-embed-->
+<style>html.lw-embed #game{min-height:0}html.lw-embed #game{min-height:780px}</style>
+<script>
+(function(){
+ if(window.self===window.top)return;
+ document.documentElement.classList.add('lw-embed');
+ var last=0;
+ function h(){var b=document.body,st=getComputedStyle(b),v=Math.ceil(b.getBoundingClientRect().height+parseFloat(st.marginTop)+parseFloat(st.marginBottom));if(Math.abs(v-last)>2){last=v;parent.postMessage({lwToolHeight:v},'*');}}
+ function top(){parent.postMessage({lwToolScroll:true},'*');}
+ if(window.ResizeObserver)new ResizeObserver(h).observe(document.body);
+ setInterval(h,1000);window.addEventListener('load',h);h();
+ ['menu','game','play'].forEach(function(id){var el=document.getElementById(id);if(el)new MutationObserver(function(){setTimeout(function(){h();top();},30);}).observe(el,{attributes:true,attributeFilter:['hidden']});});
+})();
+</script>
+<!--/lw-embed-->
 </body>
 </html>
