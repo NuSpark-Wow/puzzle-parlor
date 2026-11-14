@@ -1093,6 +1093,7 @@ renderMenu();
 #jtable{position:relative;background:#e9e1cf;border-radius:14px;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;box-shadow:inset 0 0 0 1px #d7ccb4}
 #jboard{position:absolute;left:0;top:0;background:#f7f2e6;outline:2px solid #cdbf9f;border-radius:2px}
 #jghost{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .2s;pointer-events:none}
+#jPeekBox{position:absolute;left:0;top:0;z-index:999999;background:rgba(20,24,35,.85);cursor:pointer;display:flex;flex-direction:column}#jPeekBox[hidden]{display:none}#jPeekBox img{flex:1;min-height:0;width:100%;object-fit:contain;display:block}#jPeekBox .jpk-bar{background:#1f2a44;color:#fff;text-align:center;padding:10px;font-size:15px}#jPeekBox .jpk-bar b{color:#f5d27a}
 #jtable canvas.jp{position:absolute;left:0;top:0;cursor:grab;touch-action:none}
 #jtable canvas.jp.placed{cursor:default}
 #jtable canvas.jp.drag{cursor:grabbing;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
@@ -1181,7 +1182,7 @@ function loadImg(src){return new Promise((ok,bad)=>{const i=new Image();if(/^htt
 /* ---------- state ---------- */
 let J=null,IMG=null,pick={cat:'landscapes',pic:'landscapes:0',photo:null,n:120};
 const saveLoad=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}};
-let saveT=0;function save(){if(!J)return;clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify({pic:J.pic,photo:J.photo,n:J.n,cols:J.cols,rows:J.rows,seed:J.seed,elapsed:J.elapsed+(Date.now()-J.t0),hints:J.hints||0,pos:J.pieces.map(p=>[+p.x.toFixed(3),+p.y.toFixed(3),p.placed?1:0])}));}catch(e){}},250);}
+let saveT=0;function save(){if(!J)return;clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(snapshot()));}catch(e){}},250);}
 function clearSave(){try{localStorage.removeItem(KEY);}catch(e){}}
 
 /* ---------- UI ---------- */
@@ -1189,7 +1190,7 @@ function ensureUI(){
  if(q('#jig'))return;
  const menu=q('#menu');
  const card=el('div',{id:'jigCard'});
- card.innerHTML=`<svg class="jc-ico" viewBox="0 0 64 64"><path d="M8 8 h18 a6 6 0 1 1 12 0 h18 v18 a6 6 0 1 1 0 12 v18 h-18 a6 6 0 1 0 -12 0 h-18 v-18 a6 6 0 1 0 0 -12z" fill="#c99a2e" stroke="#1f2a44" stroke-width="2.5"/></svg><div class="jc-txt"><div class="jc-k">Bonus game</div><h3>The Jigsaw Room</h3><p>Pick a landscape, a famous landmark or your own photo, then choose 120 or 240 pieces. Your progress saves on this device. Best played on a computer or tablet.</p></div><div class="jc-btns" id="jcBtns"></div>`;
+ card.innerHTML=`<svg class="jc-ico" viewBox="0 0 64 64"><path d="M8 8 h18 a6 6 0 1 1 12 0 h18 v18 a6 6 0 1 1 0 12 v18 h-18 a6 6 0 1 0 -12 0 h-18 v-18 a6 6 0 1 0 0 -12z" fill="#c99a2e" stroke="#1f2a44" stroke-width="2.5"/></svg><div class="jc-txt"><div class="jc-k">Bonus game</div><h3>The Jigsaw Room</h3><p>Pick a landscape, a famous landmark or your own photo, then choose 120 or 240 pieces. Your progress saves on this device, or save it to a file to finish anywhere. Best played on a computer or tablet.</p></div><div class="jc-btns" id="jcBtns"></div>`;
  menu.append(card);
  const sec=el('section',{id:'jig',hidden:''});
  sec.innerHTML=`<div class="jbar"><button class="link" id="jBack">← Puzzle menu</button><span class="jstat" id="jStat"></span></div>
@@ -1199,17 +1200,18 @@ function ensureUI(){
  <h2>2. How many pieces?</h2><div class="jcounts" id="jCounts"></div>
  <p class="sub" style="margin-top:8px">120 pieces: a relaxed puzzle. 240 pieces: a bigger challenge, best on a computer.</p>
  <button class="btn gold start" id="jGo">Start the jigsaw →</button>
+ <p class="sub">Saved a jigsaw to a file? <button class="link" id="jOpenFile">📂 Open saved file</button></p>
  <p class="sub">Landscape and landmark photos are public domain, from Wikimedia Commons. Photos you add stay on your device and are never uploaded.</p></div>
- <div id="jPlay" hidden><div class="jtools"><button class="btn" id="jHint">💡 Hint</button><button class="btn" id="jPeek">👁 Peek at picture</button><button class="btn" id="jEdges">🧩 Edge pieces first</button><button class="btn" id="jShuffle">🔀 Spread out pieces</button><button class="btn" id="jPhoto">📷 Use my photo</button><button class="btn" id="jNew">New jigsaw</button></div>
+ <div id="jPlay" hidden><div class="jtools"><button class="btn" id="jHint">💡 Hint</button><button class="btn" id="jPeek">👁 Peek at picture</button><button class="btn" id="jEdges">🧩 Edge pieces first</button><button class="btn" id="jShuffle">🔀 Spread out pieces</button><button class="btn" id="jFile">💾 Save to file</button><button class="btn" id="jPhoto">📷 Use my photo</button><button class="btn" id="jNew">New jigsaw</button></div>
  <div id="jwin"><h3>You did it! 🎉</h3><p id="jWinTxt"></p><button class="btn gold" id="jAgain">Start a new jigsaw</button></div>
- <div id="jtable"><div id="jboard"><img id="jghost" alt=""></div></div>
+ <div id="jtable"><div id="jboard"><img id="jghost" alt=""></div><div id="jPeekBox" hidden><img id="jPeekImg" alt="The finished picture"><div class="jpk-bar">👁 The finished picture · <b>Tap anywhere to close ✕</b></div></div></div>
  <p class="sub" id="jCredit" style="margin-top:8px"></p><p class="sub" style="margin-top:4px">Drag a piece close to its spot and it snaps into place. Your progress saves automatically.</p></div>`;
  menu.after(sec);
  q('#jBack').onclick=()=>{save();showMenu();};
- q('#jGo').onclick=startNew;
+ q('#jGo').onclick=startNew;q('#jOpenFile').onclick=openFile;
  q('#jNew').onclick=()=>{if(J&&J.pieces.some(p=>p.placed)&&!J.done&&!confirmNew())return;clearSave();J=null;showSetup();};
  q('#jAgain').onclick=()=>{clearSave();J=null;showSetup();};
- const pk=q('#jPeek');const peek=v=>{q('#jghost').style.opacity=v?'.35':'0';};pk.onpointerdown=()=>peek(1);pk.onpointerup=pk.onpointerleave=()=>peek(0);pk.onclick=e=>e.preventDefault();
+ q('#jPeek').onclick=()=>{const bx=q('#jPeekBox');if(!bx.hidden){bx.hidden=true;return;}q('#jPeekImg').src=q('#jghost').src;bx.style.width=q('#jboard').style.width;bx.style.height=q('#jboard').style.height;bx.hidden=false;q('#jtable').scrollIntoView({behavior:'smooth',block:'start'});};q('#jPeekBox').onclick=()=>{q('#jPeekBox').hidden=true;};q('#jFile').onclick=saveFile;
  q('#jEdges').onclick=edgesFirst;q('#jHint').onclick=hint;q('#jPhoto').onclick=()=>{if(J&&J.pieces.some(p=>p.placed)&&!J.done&&!confirmBtn(q('#jPhoto'),'📷 Use my photo'))return;pickPhoto(()=>{pick.n=J?J.n:pick.n;clearSave();startNew();});};q('#jShuffle').onclick=()=>{scatter(false);layout();save();};
  window.addEventListener('resize',()=>{if(J&&!q('#jPlay').hidden)build();});
  renderCard();
@@ -1218,7 +1220,7 @@ function confirmBtn(b,lab){if(b.dataset.sure){delete b.dataset.sure;b.textConten
 function confirmNew(){const b=q('#jNew');if(b.dataset.sure){delete b.dataset.sure;b.textContent='New jigsaw';return true;}b.dataset.sure='1';b.textContent='Tap again to start over';setTimeout(()=>{delete b.dataset.sure;b.textContent='New jigsaw';},3000);return false;}
 function renderCard(){const b=q('#jcBtns');if(!b)return;b.innerHTML='';const sv=saveLoad();
  if(sv){const placed=sv.pos.filter(p=>p[2]).length;b.append(el('button',{class:'btn gold',onclick:()=>resume(sv)},`▶ Continue (${placed} of ${sv.n})`));b.append(el('button',{class:'btn',onclick:()=>{openRoom();showSetup();}},'New jigsaw'));}
- else b.append(el('button',{class:'btn gold',onclick:()=>{openRoom();showSetup();}},'🧩 Open the Jigsaw Room'));}
+ else b.append(el('button',{class:'btn gold',onclick:()=>{openRoom();showSetup();}},'🧩 Open the Jigsaw Room'));b.append(el('button',{class:'btn',onclick:openFile},'📂 Open saved file'));}
 function openRoom(){q('#menu').hidden=true;q('#play')&&(q('#play').hidden=true);q('#jig').hidden=false;window.scrollTo(0,0);}
 function showMenu(){q('#jig').hidden=true;q('#menu').hidden=false;renderCard();window.scrollTo(0,0);}
 function picInfo(key){if(!key)return null;const [c,i]=key.split(':');if(PHOTOS[c]&&PHOTOS[c][+i]){const x=PHOTOS[c][+i];return {name:x[0],url:x[1],by:x[2],lic:x[3],cat:c};}const sc=SCENES.find(z=>z[0]===key);return sc?{name:sc[1],url:sceneURL(key),by:'',lic:'',cat:'art'}:null;}
@@ -1243,6 +1245,16 @@ function pickPhoto(after){if(!fileInp){fileInp=el('input',{type:'file',accept:'i
  fileInp.value='';fileInp.onchange=async()=>{const f=fileInp.files[0];if(!f)return;try{pick.photo=await shrinkPhoto(f);pick.cat='photo';if(typeof after==='function')after();else showSetup();}catch(e){alert('That photo could not be opened. Try a JPG or PNG.');}};fileInp.click();}
 function shrinkPhoto(f){return new Promise((ok,bad)=>{const rd=new FileReader();rd.onload=async()=>{try{const im=await loadImg(rd.result);const M=1600,k=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82));}catch(e){bad(e);}};rd.onerror=bad;rd.readAsDataURL(f);});}
 
+
+function snapshot(){return {app:'puzzle-parlor-jigsaw',v:1,pic:J.pic,photo:J.photo,n:J.n,cols:J.cols,rows:J.rows,seed:J.seed,elapsed:J.elapsed+(Date.now()-J.t0),hints:J.hints||0,pos:J.pieces.map(p=>[+p.x.toFixed(3),+p.y.toFixed(3),p.placed?1:0])};}
+function saveFile(){if(!J)return;const sv=snapshot();const info=J.photo?{name:'My photo'}:picInfo(J.pic);const nm=(info?info.name:'jigsaw').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase();
+ const d=new Date(),ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+ const blob=new Blob([JSON.stringify(sv)],{type:'application/json'});const a=el('a',{href:URL.createObjectURL(blob),download:`jigsaw-${nm}-${ds}.json`});document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+ const b=q('#jFile');b.textContent='✓ Saved to your Downloads';setTimeout(()=>b.textContent='💾 Save to file',3000);}
+let loadInp=null;
+function openFile(){if(!loadInp){loadInp=el('input',{type:'file',accept:'.json,application/json',style:'display:none'});document.body.append(loadInp);}
+ loadInp.value='';loadInp.onchange=()=>{const f=loadInp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const sv=JSON.parse(rd.result);if(sv.app!=='puzzle-parlor-jigsaw'||!sv.pos||!sv.cols)throw 0;resume(sv).then(()=>save());}catch(e){alert("That file isn't a saved jigsaw from The Puzzle Parlor.");}};rd.readAsText(f);};loadInp.click();}
+
 /* ---------- puzzle geometry ---------- */
 function makeEdges(cols,rows,seed){const r=rng(seed),H=[],V=[];for(let y=0;y<rows-1;y++){H.push([]);for(let x=0;x<cols;x++)H[y].push(r()<.5?1:-1);}for(let y=0;y<rows;y++){V.push([]);for(let x=0;x<cols-1;x++)V[y].push(r()<.5?1:-1);}return {H,V};}
 function sides(c,r){const E=J.edges;return {top:r===0?0:-E.H[r-1][c],bottom:r===J.rows-1?0:E.H[r][c],left:c===0?0:-E.V[r][c-1],right:c===J.cols-1?0:E.V[r][c]};}
@@ -1257,7 +1269,7 @@ async function startNew(){const [cols,rows]=COUNTS[pick.n];J={pic:pick.photo?nul
  J.edges=makeEdges(cols,rows,J.seed);await prepImage();scatter(true);openRoom();showPlay();build();save();}
 async function resume(sv){J={pic:sv.pic,photo:sv.photo,n:sv.n,cols:sv.cols,rows:sv.rows,seed:sv.seed,elapsed:sv.elapsed||0,hints:sv.hints||0,t0:Date.now(),done:false,pieces:[]};let i=0;
  for(let r=0;r<J.rows;r++)for(let c=0;c<J.cols;c++){const p=sv.pos[i++]||[0,0,0];J.pieces.push({c,r,x:p[0],y:p[1],placed:!!p[2]});}
- J.edges=makeEdges(J.cols,J.rows,J.seed);try{await prepImage();}catch(e){clearSave();renderCard();return;}openRoom();showPlay();build();}
+ J.edges=makeEdges(J.cols,J.rows,J.seed);try{await prepImage();}catch(e){clearSave();renderCard();return;}openRoom();showPlay();build();q('#jPeekBox').hidden=true;}
 async function prepImage(){let im;const info=J.photo?null:picInfo(J.pic);try{im=await loadImg(J.photo||info.url);}catch(e){if(J.photo)throw e;J.pic=SCENES[Math.floor(Math.random()*SCENES.length)][0];im=await loadImg(sceneURL(J.pic));}
  const cr=q('#jCredit');if(cr){const i2=J.photo?null:picInfo(J.pic);cr.textContent=J.photo?'Your photo · stays on your device':(i2?(i2.name+(i2.by?' · '+credit(i2):'')):'');}
  const W=1600,H=Math.round(W*J.rows/J.cols),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
