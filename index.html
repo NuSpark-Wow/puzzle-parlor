@@ -1222,7 +1222,7 @@ function renderCard(){const b=q('#jcBtns');if(!b)return;b.innerHTML='';const sv=
 function openRoom(){q('#menu').hidden=true;q('#play')&&(q('#play').hidden=true);q('#jig').hidden=false;window.scrollTo(0,0);}
 function showMenu(){q('#jig').hidden=true;q('#menu').hidden=false;renderCard();window.scrollTo(0,0);}
 function picInfo(key){if(!key)return null;const [c,i]=key.split(':');if(PHOTOS[c]&&PHOTOS[c][+i]){const x=PHOTOS[c][+i];return {name:x[0],url:x[1],by:x[2],lic:x[3],cat:c};}const sc=SCENES.find(z=>z[0]===key);return sc?{name:sc[1],url:sceneURL(key),by:'',lic:'',cat:'art'}:null;}
-function thumb(u){return u.replace('/1920px-','/400px-').replace('lossy-page1-1920px-','lossy-page1-400px-');}
+function thumb(u){return u.replace('/1920px-','/330px-').replace('lossy-page1-1920px-','lossy-page1-330px-');}
 function randKey(cat,not){const cats=cat==='surprise'?['landscapes','landmarks']:[cat];let k;do{const c=cats[Math.floor(Math.random()*cats.length)];k=c+':'+Math.floor(Math.random()*PHOTOS[c].length);}while(k===not&&(cat==='surprise'||PHOTOS[cat].length>1));return k;}
 function credit(info){return info&&info.by?`Photo: ${info.by} · ${info.lic==='CC0'?'Public domain (CC0)':'Public domain'} · via Wikimedia Commons`:'';}
 function showSetup(){q('#jSetup').hidden=false;q('#jPlay').hidden=true;q('#jStat').textContent='';
@@ -1230,7 +1230,7 @@ function showSetup(){q('#jSetup').hidden=false;q('#jPlay').hidden=true;q('#jStat
  [['landscapes','🏞 Landscapes'],['landmarks','🏛 Landmarks'],['surprise','🎲 Surprise Me'],['photo','📷 My Photo']].forEach(([k,lab])=>tabs.append(el('button',{class:'btn'+(pick.cat===k?' on':''),onclick:()=>{if(k==='photo'){pickPhoto();return;}pick.cat=k;pick.photo=null;pick.pic=randKey(k);showSetup();}},lab)));
  const pv=q('#jPrev');pv.innerHTML='';
  if(pick.photo){pv.append(el('img',{src:pick.photo,alt:'Your photo'}),el('div',{class:'jcap'},[el('b',{},'Your photo'),el('small',{},'Stays on your device. Never uploaded.')]));}
- else{const info=picInfo(pick.pic);const im=el('img',{src:thumb(info.url).replace('/400px-','/960px-').replace('lossy-page1-400px-','lossy-page1-960px-'),alt:info.name});im.onerror=()=>{im.onerror=null;im.src=info.url;};pv.append(im,el('div',{class:'jcap'},[el('b',{},info.name),el('small',{},credit(info))]));}
+ else{const info=picInfo(pick.pic);const im=el('img',{src:info.url.replace('/1920px-','/960px-').replace('lossy-page1-1920px-','lossy-page1-960px-'),alt:info.name});im.onerror=()=>{im.onerror=null;im.src=info.url;};pv.append(im,el('div',{class:'jcap'},[el('b',{},info.name),el('small',{},credit(info))]));}
  const ac=q('#jPrevBtns');ac.innerHTML='';
  if(!pick.photo)ac.append(el('button',{class:'btn',onclick:()=>{pick.pic=randKey(pick.cat==='photo'?'surprise':pick.cat,pick.pic);showSetup();}},'⏭ Skip to another'));
  ac.append(el('button',{class:'btn',onclick:pickPhoto},pick.photo?'📷 Choose a different photo':'📷 Upload a photo'));
