@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Puzzle Parlor</title>
+<style>
+:root{--ink:#1d2433;--navy:#1f2a44;--gold:#c99a2e;--gold2:#f6e9c6;--paper:#fbf8f1;--line:#ddd5c4;--ok:#1f8a4c;--bad:#c0392b;--muted:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--paper)}
+header{background:var(--navy);color:#fff;padding:20px 16px 16px;text-align:center}
+header h1{font-family:Georgia,"Times New Roman",serif;margin:0;font-size:30px;letter-spacing:.5px}
+header h1 span{color:var(--gold)}
+header p{margin:6px 0 0;color:#d6dbe6;font-size:14.5px}
+main{max-width:880px;margin:0 auto;padding:12px 14px 40px}
+h2{font-family:Georgia,serif;font-size:20px;margin:20px 0 10px}
+.sub{color:var(--muted);font-size:14px;margin:-4px 0 10px}
+.types{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.types{grid-template-columns:repeat(2,1fr)}}
+.type{border:2px solid var(--line);background:#fff;border-radius:12px;padding:11px 10px;text-align:left;cursor:pointer;font:inherit;color:inherit;min-height:72px;position:relative}
+.type b{display:block;font-size:15px;padding-right:18px}
+.type small{color:var(--muted);font-size:12.5px}
+.type .ck{position:absolute;top:8px;right:9px;width:18px;height:18px;border-radius:50%;border:2px solid var(--line);font-size:12px;line-height:14px;text-align:center;color:#fff}
+.type.on{border-color:var(--gold);background:var(--gold2)}
+.type.on .ck{background:var(--gold);border-color:var(--gold)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:600}
+.btn.on,.btn.primary{background:var(--navy);color:#fff}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#1d2433}
+.btn.sm{padding:6px 12px;font-size:14px}
+.btn:disabled{opacity:.4;cursor:default}
+.link{background:none;border:none;color:var(--navy);text-decoration:underline;font:inherit;cursor:pointer;padding:4px 0}
+select{font:inherit;padding:8px;border-radius:8px;border:2px solid var(--line);background:#fff;max-width:100%}
+.start{margin:24px 0 6px;width:100%;padding:14px;font-size:17px}
+.note{color:var(--bad);font-size:14px;min-height:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:10px 0}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{background:var(--gold2);color:#6b4e0f;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:600}
+.prompt{font-size:16px;line-height:1.5;margin:12px 0 4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.fb{margin-top:12px;padding:12px;border-radius:10px;display:none;line-height:1.5}
+.fb.ok{display:block;background:#e8f6ee;border:1px solid #b7e2c8}
+.fb.bad{display:block;background:#fdecea;border:1px solid #f5c2bc}
+.fb.info{display:block;background:#eef2fb;border:1px solid #cdd7ef}
+.explain{margin-top:12px;padding:12px 14px;border-radius:10px;background:#fffaf0;border:1px solid #ecd9a8;display:none;line-height:1.55}
+.explain h4{margin:0 0 6px;font-family:Georgia,serif;font-size:17px}
+ol.clues{padding-left:22px}ol.clues li,ul.plain li{margin:6px 0;line-height:1.45}
+table.lg{border-collapse:collapse;margin-top:10px;width:100%}
+table.lg td,table.lg th{border:1px solid var(--line);padding:6px;text-align:left;font-size:15px}
+table.lg select{width:100%}
+.grid{display:grid;margin:14px auto;border:3px solid var(--navy);width:max-content;background:#fff}
+.grid .c{border:1px solid #c9c9c9;display:flex;align-items:center;justify-content:center;font-size:19px;position:relative}
+.grid input{width:100%;height:100%;border:none;text-align:center;font:inherit;font-size:19px;background:transparent;color:#2347a8;padding:0;border-radius:0}
+.grid .given{font-weight:700;color:var(--ink);background:#f4f1ea}
+.grid .hinted input{color:#a8770f;font-weight:700}
+.grid .wrong{background:#fdecea}
+.cage-l{position:absolute;top:1px;left:3px;font-size:11px;font-weight:700;color:var(--ink);pointer-events:none}
+.person{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.person .q{font-size:16px;line-height:1.4}
+.seq{font-size:24px;font-weight:700;letter-spacing:1px;margin:14px 0;word-spacing:6px}
+input.ans{font:inherit;font-size:18px;padding:10px 12px;border:2px solid var(--line);border-radius:10px;width:100%;max-width:420px}
+.mx{display:grid;grid-template-columns:repeat(3,auto);gap:6px;width:max-content;margin:14px auto;background:var(--line);padding:6px;border-radius:10px}
+.mx div{background:#fff;border-radius:6px;width:76px;height:76px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;color:var(--gold)}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(min-width:640px){.opts.six{grid-template-columns:repeat(6,1fr)}.opts.four{grid-template-columns:repeat(4,1fr)}}
+.opt{border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px;cursor:pointer;font:inherit;color:inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+.opt.sel{border-color:var(--navy);background:#eef2fb}
+.opt.right{border-color:var(--ok);background:#e8f6ee}
+.opt.gone{opacity:.25;pointer-events:none}
+.opt.text{align-items:flex-start;text-align:left;padding:10px 12px;font-size:15px}
+.cipher{font-family:"Courier New",monospace;font-size:21px;font-weight:700;letter-spacing:2px;line-height:1.6;margin:14px 0;word-break:break-word}
+.givens{font-size:14.5px;color:#6b4e0f;margin-bottom:10px}
+.mem{display:grid;gap:6px;max-width:330px;margin:14px auto}
+.mc{aspect-ratio:1;border:2px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+.mc.lit{background:var(--gold);border-color:var(--gold)}
+.mc.sel{background:var(--navy);border-color:var(--navy)}
+.mc.miss{background:#fff;border:3px solid var(--ok)}
+.mc.extra{background:var(--bad);border-color:var(--bad)}
+.ladder{display:flex;flex-direction:column;gap:8px;max-width:260px;margin:14px auto;text-align:center}
+.ladder .w{font-size:22px;font-weight:700;letter-spacing:4px;padding:8px;border-radius:10px;background:var(--gold2)}
+.ladder input{font:inherit;font-size:20px;letter-spacing:4px;text-align:center;text-transform:uppercase;padding:8px;border:2px solid var(--line);border-radius:10px}
+.scr{font-size:30px;font-weight:700;letter-spacing:6px;text-align:center;margin:16px 0;color:var(--navy)}
+.arg{font-size:17px;line-height:1.5;background:#f7f5ef;border-left:4px solid var(--gold);padding:12px 14px;border-radius:6px;margin:12px 0;font-style:italic}
+.shapes{display:flex;justify-content:center;margin:10px 0}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:8px}
+.stat{background:#f7f5ef;border-radius:8px;padding:8px 10px;font-size:14px}
+.mini{display:grid;border:2px solid var(--navy);width:max-content;margin:8px 0}
+.mini span{width:24px;height:24px;border:1px solid #bbb;display:flex;align-items:center;justify-content:center;font-size:13px}
+h3.grp{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#6b4e0f;margin:16px 0 8px}
+.ov{display:inline-flex;flex-direction:column;align-items:center}.ov>span:first-child{border-bottom:3px solid #1f2a44;padding-bottom:4px;margin-bottom:4px}
+.rb{font-size:30px;font-weight:800;text-align:center;margin:18px 0;letter-spacing:2px;color:#1f2a44;line-height:1.3}.ln{border-top:3px solid #1f2a44;margin:8px auto;width:170px}
+table.nono{border-collapse:collapse;margin:12px auto}.nono td{border:1px solid #bbb;text-align:center;padding:0}.nono .cc{vertical-align:bottom;font-size:12px;font-weight:700;padding:2px;line-height:1.25;border:none}.nono .rc{font-size:12px;font-weight:700;text-align:right;padding-right:6px;white-space:nowrap;border:none}
+.nc{background:#fff;cursor:pointer;font-size:18px;color:#9ca3af}.nc.f{background:#1f2a44}.nc.hl{box-shadow:inset 0 0 0 3px var(--gold)}
+.dpad{display:grid;grid-template-columns:repeat(3,58px);gap:6px;justify-content:center;margin-top:8px}.dpad .btn{height:52px;font-size:20px;padding:0;border-radius:12px}
+.peg{display:inline-block;border-radius:50%;border:2px solid rgba(0,0,0,.15);vertical-align:middle;margin:2px}
+.mmrow{display:flex;align-items:center;gap:4px;justify-content:center;margin:4px 0}.mmrow .gn{width:20px;color:#9ca3af;font-size:13px}.mmrow .fbk{margin-left:10px;font-size:18px;min-width:76px;letter-spacing:2px}.mmrow.cur{margin-top:12px}
+.slot,.palb{background:none;border:none;padding:0;cursor:pointer}.slot.fixed .peg{outline:3px solid var(--gold)}
+.banks{display:grid;grid-template-columns:1fr 74px 1fr;gap:6px;margin:14px 0}.bank{background:#eef5e6;border-radius:10px;padding:8px;min-height:160px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;justify-content:center}.bank h5{width:100%;margin:0 0 4px;text-align:center;font-size:12px;color:#555}
+.water{background:linear-gradient(#bfdbfe,#93c5fd);border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;font-size:22px}
+.itm{font-size:28px;background:#fff;border:2px solid var(--line);border-radius:10px;padding:2px 6px;cursor:pointer;line-height:1.2}.itm.sel{border-color:var(--navy)}.itm:disabled{opacity:1;cursor:default}
+.towers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.tpeg{height:180px;border-radius:10px;background:#f7f5ef;border:2px solid transparent;display:flex;flex-direction:column-reverse;align-items:center;padding:24px 4px 8px;cursor:pointer;position:relative}
+.tpeg::before{content:'';position:absolute;bottom:8px;top:24px;width:6px;background:#a8a29e;border-radius:3px;left:calc(50% - 3px)}.tpeg.held{border-color:var(--gold)}.plab{position:absolute;top:4px;left:0;right:0;text-align:center;font-weight:700;color:#6b7280}
+.disk{height:20px;border-radius:6px;margin-top:3px;position:relative;z-index:1}.disk.up{outline:3px solid #1f2a44}
+.scale{display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0;flex-wrap:wrap}.pan{background:#f7f5ef;border-radius:10px;padding:6px 10px;min-width:64px;text-align:center}.eqs{font-weight:700;color:#6b4e0f;font-size:13px}
+.ms{display:flex;justify-content:center;margin:16px 0}
+footer{text-align:center;color:var(--muted);font-size:12.5px;padding:10px 16px 30px}
+#printView{display:none;position:fixed;inset:0;background:rgba(20,24,35,.6);z-index:50;overflow:auto;padding:16px}
+#printView .sheet{background:#fff;max-width:760px;margin:0 auto;border-radius:10px;padding:24px}
+.pa{margin-top:30px;border-top:2px dashed #bbb;padding-top:16px;page-break-before:always;break-before:page}
+@media print{
+ body>*:not(#printView){display:none!important}
+ #printView{display:block!important;position:static;background:#fff;padding:0}
+ #printView .sheet{padding:0;max-width:none}
+ #printView .noprint{display:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <h1>The Puzzle <span>Parlor</span></h1>
+ <p>Keep your mind sharp. 24 kinds of puzzles, built fresh every time.</p>
+</header>
+<main>
+ <section id="menu">
+  <h2>1. Pick your puzzles</h2>
+  <p class="sub">Tap as many as you like. We'll mix them up for you. Or let us pick everything:</p>
+  <button class="btn gold" id="surprise" style="margin-bottom:8px">🎲 Surprise me</button>
+  <div class="row" style="margin-bottom:10px"><button class="link" id="all">Select all</button><span>·</span><button class="link" id="none">Clear</button></div>
+  <div id="types"></div>
+  <h2>2. Choose a level</h2>
+  <div class="row" id="diffs"></div>
+  <h2>3. Logic Grid theme</h2>
+  <p class="sub">Sets the people, places and things in Logic Grid puzzles.</p>
+  <select id="theme"></select>
+  <button class="btn gold start" id="start">Start puzzling →</button>
+  <div class="note" id="note"></div>
+  <div id="session"></div>
+ </section>
+
+ <section id="play" hidden>
+  <div class="bar"><button class="link" id="back">← Puzzle menu</button><span><b id="score">0</b> points · <b id="solvedN">0</b> solved</span></div>
+  <div class="card">
+   <div class="bar"><span class="tag" id="ptype"></span><span class="tag" id="pdiff"></span></div>
+   <div class="prompt" id="prompt"></div>
+   <div id="pbox"></div>
+   <div class="fb" id="fb"></div>
+   <div class="explain" id="explain"></div>
+   <div class="actions">
+    <button class="btn primary" id="check">Check</button>
+    <button class="btn" id="hint">Hint (3 left)</button>
+    <button class="btn" id="reveal">Show answer</button>
+    <button class="btn" id="print">Print</button>
+    <button class="btn gold" id="next">Next puzzle →</button>
+   </div>
+  </div>
+ </section>
+</main>
+<footer>A NuSpark LearnWow tool · For fun and brain exercise.</footer>
+<div id="printView"><div class="sheet"><div class="row noprint" style="justify-content:space-between;margin-bottom:12px"><b>Print view</b><span class="row"><button class="btn sm primary" id="doPrint">Print</button><button class="btn sm" id="closePrint">Close</button></span></div><div id="printBody"></div></div></div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const R=n=>Math.floor(Math.random()*n);
+const pick=a=>a[R(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=R(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const range=n=>[...Array(n).keys()];
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function h(tag,props={},...kids){const e=document.createElement(tag);for(const k in props){if(k==='class')e.className=props[k];else if(k==='html')e.innerHTML=props[k];else if(k.startsWith('on'))e.addEventListener(k.slice(2),props[k]);else e.setAttribute(k,props[k]);}kids.flat(3).forEach(k=>{if(k!=null&&k!==false)e.append(k.nodeType?k:document.createTextNode(k));});return e;}
+function perms(a){if(a.length<2)return[a.slice()];const o=[];a.forEach((x,i)=>perms([...a.slice(0,i),...a.slice(i+1)]).forEach(p=>o.push([x,...p])));return o;}
+const listJoin=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+const WORDNUM=['zero','one','two','three','four','five'];
+
+/* ---------- puzzle types ---------- */
+const TYPES=[
+ {id:'logic',name:'Logic Grids',desc:'Who did what?',skill:'Logic'},
+ {id:'truth',name:'Truth & Lies',desc:'Who is lying?',skill:'Logic'},
+ {id:'who',name:'Whodunit',desc:'Solve the case',skill:'Logic'},
+ {id:'master',name:'Mastermind',desc:'Crack the color code',skill:'Logic'},
+ {id:'nono',name:'Nonograms',desc:'Shade by the numbers',skill:'Logic'},
+ {id:'sudoku',name:'Sudoku',desc:'The classic 9×9',skill:'Number'},
+ {id:'math',name:'Math Grids',desc:'Cages that add up',skill:'Number'},
+ {id:'seq',name:'Number Sequences',desc:'What comes next?',skill:'Number'},
+ {id:'balance',name:'Balance Scales',desc:'Weigh it out',skill:'Number'},
+ {id:'prob',name:'Probability',desc:'What are the odds?',skill:'Number'},
+ {id:'matrix',name:'Pattern Matrix',desc:'Find the missing tile',skill:'Pattern'},
+ {id:'code',name:'Code Breaker',desc:'Crack the message',skill:'Pattern'},
+ {id:'rule',name:'Missing Rule',desc:'Find the secret rule',skill:'Pattern'},
+ {id:'odd',name:'Odd One Out',desc:'Which doesn\'t belong?',skill:'Pattern'},
+ {id:'shape',name:'Shape Shift',desc:'Turn it in your head',skill:'Spatial'},
+ {id:'maze',name:'Mazes',desc:'Find your way out',skill:'Spatial'},
+ {id:'match',name:'Matchstick Math',desc:'Move one match',skill:'Spatial'},
+ {id:'memory',name:'Memory Grid',desc:'See it, rebuild it',skill:'Memory'},
+ {id:'ladder',name:'Word Ladders',desc:'One letter at a time',skill:'Word'},
+ {id:'anagram',name:'Anagrams',desc:'Unscramble the word',skill:'Word'},
+ {id:'rebus',name:'Rebus',desc:'Pictures become phrases',skill:'Word'},
+ {id:'flaw',name:'Spot the Flaw',desc:'Find the weak argument',skill:'Critical Thinking'},
+ {id:'river',name:'River Crossing',desc:'Get everyone across',skill:'Strategy'},
+ {id:'tower',name:'Tower Puzzle',desc:'Move the stack',skill:'Strategy'}
+];
+const DIFFS=[['easy','Easy'],['medium','Medium'],['hard','Hard'],['mixed','Mixed']];
+const BASE={easy:10,medium:20,hard:30};
+
+/* ===== 1. Logic Grids ===== */
+const NAMES=['Ann','Ben','Carl','Dana','Eve','Frank','Gina','Hank','Iris','Jack','Kate','Leo'];
+const THEMES={
+ everyday:{label:'Everyday',cats:[
+  {name:'Hobby',items:['chess','golf','piano','tennis','poker'],who:x=>x==='golf'?'the golfer':`the ${x} player`},
+  {name:'Drink',items:['coffee','tea','juice','soda','cocoa'],who:x=>`the ${x} drinker`}]},
+ sports:{label:'Sports',cats:[
+  {name:'Sport',items:['baseball','hockey','soccer','football','basketball'],who:x=>`the ${x} fan`},
+  {name:'Jersey',items:['red','blue','green','gold','black'],who:x=>`the person in the ${x} jersey`}]},
+ travel:{label:'Travel',cats:[
+  {name:'City',items:['Paris','Rome','Tokyo','Cairo','Lima'],who:x=>`the person going to ${x}`},
+  {name:'Travels by',items:['train','plane','ship','bus','car'],who:x=>`the person traveling by ${x}`}]},
+ food:{label:'Food',cats:[
+  {name:'Dinner',items:['pizza','tacos','sushi','curry','pasta'],who:x=>`the person who ordered ${x}`},
+  {name:'Dessert',items:['pie','cake','gelato','flan','cookies'],who:x=>`the person who chose ${x}`}]},
+ music:{label:'Music',cats:[
+  {name:'Instrument',items:['guitar','drums','violin','flute','trumpet'],who:x=>`the ${x} player`},
+  {name:'Decade',items:["'50s","'60s","'70s","'80s","'90s"],who:x=>`the fan of the ${x}`}]}
+};
+function genLogic(diff,theme){
+ const n={easy:3,medium:4,hard:5}[diff];
+ const th=THEMES[theme]||THEMES.everyday;
+ const names=shuffle(NAMES).slice(0,n);
+ const cats=th.cats.map(c=>({...c,items:shuffle(c.items).slice(0,n)}));
+ const sol=[shuffle(range(n)),shuffle(range(n))];
+ const W=(c,i)=>cats[c].who(cats[c].items[i]);
+ let all=[];
+ for(let p=0;p<n;p++)for(let c=0;c<2;c++)for(let i=0;i<n;i++){
+  const isT=sol[c][p]===i;
+  all.push({k:isT?'pos':'neg',text:`${names[p]} is ${isT?'':'not '}${W(c,i)}.`,test:a=>isT?a[c][p]===i:a[c][p]!==i});
+ }
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+  const p=sol[0].indexOf(i),isT=sol[1][p]===j;
+  all.push({k:isT?'link':'linkneg',text:`${cap(W(0,i))} is ${isT?'also':'not'} ${W(1,j)}.`,test:a=>{const q=a[0].indexOf(i);return isT?a[1][q]===j:a[1][q]!==j;}});
+ }
+ const pri={easy:{pos:1,neg:2,link:1,linkneg:2},medium:{pos:3,neg:1,link:1,linkneg:1},hard:{pos:9,neg:2,link:1,linkneg:1}}[diff];
+ all=shuffle(all).sort((x,y)=>pri[x.k]-pri[y.k]);
+ const P=perms(range(n));
+ const count=cl=>{let k=0;for(const A of P)for(const B of P){const a=[A,B];if(cl.every(c=>c.test(a))&&++k>1)return k;}return k;};
+ let clues=[];
+ for(const c of all){clues.push(c);if(count(clues)===1)break;}
+ for(let i=clues.length-1;i>=0;i--){const t=clues.filter((_,j)=>j!==i);if(count(t)===1)clues=t;}
+ clues=shuffle(clues);
+ let sels=[];
+ const answer=names.map((nm,p)=>`<b>${nm}</b>: ${cats[0].items[sol[0][p]]}, ${cats[1].items[sol[1][p]]}`).join('<br>');
+ return{
+  prompt:`<b>${n} friends: ${listJoin(names)}.</b> Each has a different ${cats[0].name.toLowerCase()} (${cats[0].items.join(', ')}) and a different ${cats[1].name.toLowerCase()} (${cats[1].items.join(', ')}). Use the clues to match everyone up.`,
+  build(box){
+   box.append(h('ol',{class:'clues'},clues.map(c=>h('li',{},c.text))));
+   const t=h('table',{class:'lg'});
+   t.append(h('tr',{},h('th',{},'Name'),cats.map(c=>h('th',{},c.name))));
+   sels=names.map(nm=>{const row=h('tr',{},h('td',{},h('b',{},nm)));const s=cats.map(c=>{const sel=h('select',{},h('option',{value:''},'—'),c.items.map((it,i)=>h('option',{value:String(i)},it)));row.append(h('td',{},sel));return sel;});t.append(row);return s;});
+   box.append(t);
+  },
+  check(){let empty=0,wrong=0;sels.forEach((s,p)=>s.forEach((sel,c)=>{if(sel.value==='')empty++;else if(+sel.value!==sol[c][p])wrong++;}));
+   if(empty)return{ok:false,msg:`${empty} box${empty>1?'es are':' is'} still blank.`};
+   if(wrong)return{ok:false,msg:`Close. ${wrong} match${wrong>1?'es are':' is'} off. Recheck the clues.`};return{ok:true};},
+  hint(i){if(i===0)return 'Start with any clue that names a person directly. Then use the "not" clues to rule options out. When someone has only one choice left, it must be theirs.';
+   for(let p=0;p<n;p++)for(let c=0;c<2;c++){const sel=sels[p][c];if(sel.value===''||+sel.value!==sol[c][p]){sel.value=String(sol[c][p]);sel.disabled=true;return `Filled in: ${names[p]} is ${W(c,sol[c][p])}.`;}}
+   return 'Everything is already right. Hit Check!';},
+  reveal(){sels.forEach((s,p)=>s.forEach((sel,c)=>{sel.value=String(sol[c][p]);sel.disabled=true;}));},
+  answer,
+  explain:`Every clue either links two things or rules one out. Cross off the "not" pairs, lock in the direct matches, and there's only one way for everything to fit:<br><br>${answer}`,
+  printable:true};
+}
+
+/* ===== 2. Truth & Lies ===== */
+function genTruth(diff){
+ const n=diff==='hard'?4:3;
+ const names=shuffle(['Ava','Max','Zoe','Sam','Lou','Kim','Ray','Tess']).slice(0,n);
+ const pool=i=>{const L=[];
+  for(let j=0;j<n;j++)if(j!==i){
+   L.push({t:`${names[j]} is a truth-teller.`,f:a=>a[j]},{t:`${names[j]} is a liar.`,f:a=>!a[j]});
+   if(diff!=='easy')L.push({t:`${names[j]} and I are the same kind.`,f:a=>a[i]===a[j]},{t:`${names[j]} and I are different kinds.`,f:a=>a[i]!==a[j]});
+  }
+  for(let k=0;k<=n;k++)L.push({t:k===0?'Nobody here is a liar.':k===n?'All of us are liars.':`Exactly ${WORDNUM[k]} of us ${k===1?'is a liar':'are liars'}.`,f:a=>a.filter(x=>!x).length===k});
+  if(diff==='hard')for(let j=0;j<n;j++)for(let k=j+1;k<n;k++)if(j!==i&&k!==i)L.push({t:`At least one of ${names[j]} and ${names[k]} is a liar.`,f:a=>!a[j]||!a[k]});
+  return L;};
+ for(let tries=0;tries<5000;tries++){
+  const sol=range(n).map(()=>Math.random()<.5);
+  const st=[];let bad=false;
+  for(let i=0;i<n;i++){const c=pool(i).filter(s=>s.f(sol)===sol[i]);if(!c.length){bad=true;break;}st.push(pick(c));}
+  if(bad)continue;
+  let cnt=0;for(let m=0;m<(1<<n);m++){const a=range(n).map(k=>!!(m>>k&1));if(st.every((s,i)=>s.f(a)===a[i]))cnt++;}
+  if(cnt===1)return truthPuzzle(names,st,sol);
+ }
+ return null;
+}
+function truthPuzzle(names,st,sol){
+ const n=names.length,ch=Array(n).fill(null);let ui=[];
+ return{
+  prompt:`On Wow Island, <b>truth-tellers always tell the truth</b> and <b>liars always lie</b>. You meet ${listJoin(names)}. Who is who?`,
+  build(box){ui=names.map((nm,i)=>{const tb=h('button',{class:'btn sm'},'Truth-teller'),lb=h('button',{class:'btn sm'},'Liar');
+   const set=v=>{ch[i]=v;tb.classList.toggle('on',v===true);lb.classList.toggle('on',v===false);};
+   tb.onclick=()=>set(true);lb.onclick=()=>set(false);
+   box.append(h('div',{class:'person'},h('div',{class:'q'},h('b',{},nm+' says: '),'“'+st[i].t+'”'),h('div',{class:'row'},tb,lb)));return{set,tb,lb};});},
+  check(){if(ch.some(x=>x===null))return{ok:false,msg:'Mark everyone as a truth-teller or a liar first.'};
+   const w=ch.filter((x,i)=>x!==sol[i]).length;return w?{ok:false,msg:`Not quite. ${w} ${w>1?'people are':'person is'} marked wrong. Test your answer against each statement.`}:{ok:true};},
+  hint(i){if(i===0)return 'Assume one person is telling the truth and follow what that forces for everyone else. If you hit a contradiction, flip your assumption.';
+   const k=i-1;ui[k].set(sol[k]);ui[k].tb.disabled=ui[k].lb.disabled=true;return `${names[k]} is a ${sol[k]?'truth-teller':'liar'}.`;},
+  reveal(){ui.forEach((u,i)=>{u.set(sol[i]);u.tb.disabled=u.lb.disabled=true;});},
+  answer:names.map((nm,i)=>`<b>${nm}</b>: ${sol[i]?'truth-teller':'liar'}`).join('<br>'),
+  explain:'<ul class="plain">'+names.map((nm,i)=>`<li><b>${nm}</b> is a ${sol[i]?'truth-teller':'liar'}, so “${esc(st[i].t)}” is ${sol[i]?'true':'false'}. It checks out.</li>`).join('')+'</ul>This is the only mix of truth-tellers and liars where every statement fits.',
+  printable:true};
+}
+
+/* ===== shared number-grid puzzle (Sudoku + Math Grids) ===== */
+function cellPuzzle({n,given,sol,box,cages,size,tip,explain}){
+ let inputs=[];
+ const fill=(i,cls)=>{const inp=inputs[i];inp.value=sol[i];inp.disabled=true;inp.parentNode.classList.remove('wrong');if(cls)inp.parentNode.classList.add(cls);};
+ const mini=`<div class="mini" style="grid-template-columns:repeat(${n},24px)">${sol.map(v=>`<span>${v}</span>`).join('')}</div>`;
+ return{
+  build(bx){const g=h('div',{class:'grid'});g.style.gridTemplateColumns=`repeat(${n},${size}px)`;
+   const thick='3px solid #1f2a44';
+   inputs=range(n*n).map(i=>{const r=i/n|0,c=i%n;const d=h('div',{class:'c'});d.style.width=d.style.height=size+'px';
+    if(box){if(c%box===box-1&&c<n-1)d.style.borderRight=thick;if(r%box===box-1&&r<n-1)d.style.borderBottom=thick;}
+    if(cages){const id=cages.id[i];if(c<n-1&&cages.id[i+1]!==id)d.style.borderRight=thick;if(r<n-1&&cages.id[i+n]!==id)d.style.borderBottom=thick;const cg=cages.list[id];if(cg.cells[0]===i)d.append(h('span',{class:'cage-l'},cg.label));}
+    if(given&&given[i]){d.classList.add('given');d.append(String(given[i]));g.append(d);return null;}
+    const inp=h('input',{inputmode:'numeric',maxlength:'1',autocomplete:'off','aria-label':`Row ${r+1} column ${c+1}`});
+    inp.addEventListener('input',()=>{inp.value=inp.value.replace(/[^1-9]/g,'').slice(-1);d.classList.remove('wrong');});
+    d.append(inp);g.append(d);return inp;});
+   bx.append(g);},
+  check(){let empty=0;const wrong=[];inputs.forEach((inp,i)=>{if(!inp)return;if(!inp.value)empty++;else if(+inp.value!==sol[i])wrong.push(inp);});
+   if(empty)return{ok:false,msg:`${empty} square${empty>1?'s are':' is'} still empty.`};
+   if(wrong.length){wrong.forEach(w=>w.parentNode.classList.add('wrong'));return{ok:false,msg:`${wrong.length} square${wrong.length>1?'s are':' is'} off. They're marked in red.`};}
+   return{ok:true};},
+  hint(i){const open=inputs.map((inp,k)=>inp&&!inp.disabled&&(+inp.value!==sol[k])?k:-1).filter(k=>k>=0);
+   if(!open.length)return 'Everything is already right. Hit Check!';
+   const k=pick(open);fill(k,'hinted');return (i===0?tip+' ':'')+`Filled in row ${(k/n|0)+1}, column ${k%n+1}.`;},
+  reveal(){inputs.forEach((inp,k)=>{if(inp)fill(k);});},
+  answer:mini,explain,printable:true};
+}
+
+/* ===== 3. Sudoku ===== */
+function sudOk(g,i,d){const r=i/9|0,c=i%9,br=r-r%3,bc=c-c%3;for(let k=0;k<9;k++){if(g[r*9+k]===d||g[k*9+c]===d||g[(br+(k/3|0))*9+bc+k%3]===d)return false;}return true;}
+function sudFull(){const g=Array(81).fill(0);const rec=i=>{if(i===81)return true;for(const d of shuffle([1,2,3,4,5,6,7,8,9]))if(sudOk(g,i,d)){g[i]=d;if(rec(i+1))return true;g[i]=0;}return false;};rec(0);return g;}
+function bits(m){let c=0;while(m){m&=m-1;c++;}return c;}
+function sudCount(grid,limit){const g=grid.slice();let count=0;
+ const cand=i=>{const r=i/9|0,c=i%9,br=r-r%3,bc=c-c%3;let u=0;for(let k=0;k<9;k++)u|=(1<<g[r*9+k])|(1<<g[k*9+c])|(1<<g[(br+(k/3|0))*9+bc+k%3]);return ~u&0x3FE;};
+ const rec=()=>{let b=-1,bm=0,bc=10;for(let i=0;i<81;i++)if(!g[i]){const m=cand(i),p=bits(m);if(p<bc){bc=p;b=i;bm=m;if(!p)return;}}
+  if(b<0){count++;return;}for(let d=1;d<=9&&count<limit;d++)if(bm>>d&1){g[b]=d;rec();g[b]=0;}};
+ rec();return count;}
+function genSudoku(diff){
+ const sol=sudFull(),g=sol.slice(),target={easy:40,medium:32,hard:26}[diff];let clues=81;
+ for(const i of shuffle(range(81))){if(clues<=target)break;const v=g[i];g[i]=0;if(sudCount(g,2)!==1)g[i]=v;else clues--;}
+ const p=cellPuzzle({n:9,given:g,sol,box:3,size:36,tip:'Look for a row, column or box that is almost full. The missing number often has only one place to go.',
+  explain:'Every row, every column and every 3×3 box holds the numbers 1 to 9 exactly once. This puzzle was built so there is only one way to finish it, so careful elimination always works and guessing is never needed.'});
+ p.prompt='Fill every empty square so each <b>row</b>, <b>column</b> and <b>3×3 box</b> contains the numbers 1 to 9 exactly once.';
+ return p;
+}
+
+/* ===== 4. Math Grids ===== */
+function mathCount(n,id,list,limit){const g=Array(n*n).fill(0),rows=Array(n).fill(0),cols=Array(n).fill(0);let count=0;
+ const ok=cg=>{const vals=cg.cells.map(x=>g[x]),filled=vals.filter(Boolean),done=filled.length===vals.length,t=cg.t;
+  switch(cg.op){case'':return !done||vals[0]===t;
+   case'+':{const s=filled.reduce((a,b)=>a+b,0);return done?s===t:s<t;}
+   case'×':{const p=filled.reduce((a,b)=>a*b,1);return done?p===t:t%p===0;}
+   case'−':return !done||Math.abs(vals[0]-vals[1])===t;
+   case'÷':{if(!done)return true;const a=Math.max(...vals),b=Math.min(...vals);return a===b*t;}}return true;};
+ const rec=i=>{if(count>=limit)return;if(i===n*n){count++;return;}const r=i/n|0,c=i%n;
+  for(let d=1;d<=n;d++){const bit=1<<d;if(rows[r]&bit||cols[c]&bit)continue;g[i]=d;rows[r]|=bit;cols[c]|=bit;if(ok(list[id[i]]))rec(i+1);rows[r]^=bit;cols[c]^=bit;g[i]=0;}};
+ rec(0);return count;}
+function genMath(diff){
+ const n=diff==='hard'?5:4,maxC={easy:2,medium:3,hard:3}[diff];
+ for(let t=0;t<400;t++){
+  const rp=shuffle(range(n)),cp=shuffle(range(n)),sp=shuffle(range(n));
+  const sol=range(n*n).map(i=>sp[(rp[i/n|0]+cp[i%n])%n]+1);
+  const id=Array(n*n).fill(-1),list=[];
+  for(const s of shuffle(range(n*n))){if(id[s]>=0)continue;const cid=list.length,cells=[s];id[s]=cid;const want=2+R(maxC-1);
+   while(cells.length<want){const fr=[];cells.forEach(x=>{const r=x/n|0,c=x%n;[[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([a,b])=>{if(a>=0&&b>=0&&a<n&&b<n&&id[a*n+b]<0)fr.push(a*n+b);});});if(!fr.length)break;const x=pick(fr);id[x]=cid;cells.push(x);}
+   cells.sort((a,b)=>a-b);const v=cells.map(x=>sol[x]);let op,tg;
+   if(v.length===1){op='';tg=v[0];}
+   else if(v.length===2){const a=Math.max(...v),b=Math.min(...v),ops=['+','×','−','−'];if(a%b===0)ops.push('÷','÷');op=pick(ops);tg=op==='+'?a+b:op==='×'?a*b:op==='−'?a-b:a/b;}
+   else{op=pick(['+','×']);tg=op==='+'?v.reduce((x,y)=>x+y):v.reduce((x,y)=>x*y);}
+   list.push({cells,op,t:tg,label:tg+op});}
+  if(list.filter(c=>c.cells.length===1).length>2)continue;
+  if(mathCount(n,id,list,2)!==1)continue;
+  const p=cellPuzzle({n,sol,size:n===5?54:62,cages:{id,list},tip:'Start with the small cages. A two-square "÷" or "−" cage often has only a couple of possible pairs.',
+   explain:`Each row and column holds 1 to ${n} exactly once. Inside each outlined cage, the numbers combine with the operation shown (+, −, ×, ÷) to make the target. For − and ÷, start with the bigger number. The cages were chosen so only one grid works.`});
+  p.prompt=`Fill the grid with 1 to ${n} so no number repeats in any <b>row</b> or <b>column</b>. The numbers in each outlined <b>cage</b> must make its target using the operation shown.`;
+  return p;
+ }
+ return null;
+}
+
+/* ===== 5. Number Sequences ===== */
+const PRIMES=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61];
+const GAP='Look at the gap between each pair of numbers.';
+const SEQ={
+ easy:[
+  ()=>{const a=1+R(20),d=2+R(8);return{s:range(7).map(k=>a+k*d),why:`Add ${d} each time.`,h:GAP};},
+  ()=>{const a=60+R(40),d=3+R(7);return{s:range(7).map(k=>a-k*d),why:`Subtract ${d} each time.`,h:GAP};},
+  ()=>{const a=1+R(4),r=2+R(2);return{s:range(7).map(k=>a*r**k),why:`Multiply by ${r} each time.`,h:'Is it adding, or multiplying?'};},
+  ()=>{const s=1+R(5);return{s:range(7).map(k=>(s+k)**2),why:`These are square numbers: ${s}×${s}, ${s+1}×${s+1}, ${s+2}×${s+2}, and so on.`,h:'Think about numbers multiplied by themselves.'};}],
+ medium:[
+  ()=>{const a=1+R(10),d=1+R(3);let x=a;const s=[x];for(let k=0;k<6;k++){x+=d+k;s.push(x);}return{s,why:`The gap grows by 1 each time: +${d}, +${d+1}, +${d+2}, and so on.`,h:GAP};},
+  ()=>{const a=1+R(9),b=20+R(20),d1=2+R(4),d2=-(1+R(3));const s=range(7).map(k=>k%2?b+((k-1)/2)*d2:a+(k/2)*d1);return{s,why:`Two sequences take turns. One adds ${d1} each time, the other subtracts ${-d2}.`,h:'Try looking at every other number.'};},
+  ()=>{const a=1+R(4),b=a+1+R(4);const s=[a,b];while(s.length<7)s.push(s[s.length-1]+s[s.length-2]);return{s,why:'Each number is the sum of the two before it.',h:'Compare each number with the two numbers before it.'};},
+  ()=>{const a=1+R(4),c=1+R(3);const s=[a];while(s.length<7)s.push(s[s.length-1]*2+c);return{s,why:`Double the number, then add ${c}.`,h:'Is it adding, or multiplying? Maybe both.'};},
+  ()=>{const s0=1+R(2);return{s:range(7).map(k=>(s0+k)**3),why:'These are cube numbers: a number times itself, times itself again.',h:'Think about numbers multiplied by themselves, more than once.'};}],
+ hard:[
+  ()=>{const a=1+R(3);const s=[a];for(let k=2;s.length<7;k++)s.push(s[s.length-1]*k);return{s,why:'Multiply by 2, then 3, then 4, and so on.',h:'Divide each number by the one before it.'};},
+  ()=>{const st=R(8);return{s:PRIMES.slice(st,st+7),why:'These are prime numbers. Each can only be divided evenly by 1 and itself.',h:'Think about what makes these numbers special. Can you divide any of them evenly?'};},
+  ()=>{const a=1+R(5),c=1+R(5);const s=[a];for(let k=0;s.length<7;k++)s.push(k%2?s[s.length-1]+c:s[s.length-1]*2);return{s,why:`Two steps take turns: multiply by 2, then add ${c}.`,h:'The rule changes every other step.'};},
+  ()=>{const st=1+R(4);return{s:range(7).map(k=>(st+k)*(st+k+1)),why:`Each number is a pair of neighbors multiplied: ${st}×${st+1}, ${st+1}×${st+2}, ${st+2}×${st+3}, and so on.`,h:'Try splitting each number into two numbers that multiply together.'};},
+  ()=>{const a=1+R(10);const s=[a];for(let k=1;s.length<7;k++)s.push(s[s.length-1]+k*k);return{s,why:'The gaps are square numbers: +1, +4, +9, +16, and so on.',h:GAP+' Do the gaps look familiar?'};}]
+};
+function genSeq(diff){
+ const r=pick(SEQ[diff])(),shown=r.s.slice(0,6),ans=r.s[6];let inp;
+ const gaps=shown.slice(1).map((x,i)=>{const d=x-shown[i];return d>=0?'+'+d:String(d);});
+ return{
+  prompt:'What number comes next?',
+  build(box){box.append(h('div',{class:'seq'},shown.join(',  ')+',  ?'));inp=h('input',{class:'ans',inputmode:'numeric',placeholder:'Your answer'});box.append(inp);},
+  check(){const v=inp.value.trim();if(!v)return{ok:false,msg:'Type a number first.'};return +v===ans?{ok:true}:{ok:false,msg:`${esc(v)} isn't it. Try another angle.`};},
+  hint(i){return [r.h,`The gaps between the numbers are: ${gaps.join(', ')}.`,r.why][i];},
+  reveal(){inp.value=ans;inp.disabled=true;},
+  answer:`<b>${ans}</b>. ${r.why}`,
+  explain:`The answer is <b>${ans}</b>. ${r.why}<br><br>The full sequence: ${r.s.join(', ')}.`,
+  printable:true};
+}
+
+/* ===== 6. Pattern Matrix ===== */
+const SHAPES=['circle','square','triangle','diamond'],COLORS=[['#2563eb','blue'],['#dc2626','red'],['#16a34a','green']];
+function shapeSVG(shape,color,x,y,s){switch(shape){
+ case'circle':return `<circle cx="${x}" cy="${y}" r="${s}" fill="${color}"/>`;
+ case'square':return `<rect x="${x-s}" y="${y-s}" width="${2*s}" height="${2*s}" fill="${color}"/>`;
+ case'triangle':return `<polygon points="${x},${y-s} ${x+s},${y+s} ${x-s},${y+s}" fill="${color}"/>`;
+ default:return `<polygon points="${x},${y-s-1} ${x+s+1},${y} ${x},${y+s+1} ${x-s-1},${y}" fill="${color}"/>`;}}
+function tileSVG(t,sz=66){const pos={1:[[36,36]],2:[[21,36],[51,36]],3:[[36,20],[20,51],[52,51]]}[t.count];
+ return `<svg viewBox="0 0 72 72" width="${sz}" height="${sz}" aria-label="${t.count} ${t.cname} ${t.shape}${t.count>1?'s':''}">${pos.map(([x,y])=>shapeSVG(t.shape,t.color,x,y,t.count===1?15:11)).join('')}</svg>`;}
+function genMatrix(diff){
+ const F={row:r=>r,col:(r,c)=>c,lat:(r,c)=>(r+c)%3,lat2:(r,c)=>(r+2*c)%3,con:()=>0};
+ let fs;
+ if(diff==='easy')fs=shuffle(['row','col','con']);
+ else if(diff==='medium')fs=shuffle(['row','col',pick(['row','col'])]);
+ else fs=shuffle(['lat',pick(['row','col']),pick(['lat2','row','col'])]);
+ const attrs=['shape','color','count'];
+ const shapes=shuffle(SHAPES).slice(0,3),cols=shuffle(COLORS),counts=shuffle([1,2,3]);
+ const tile=(r,c)=>{const ci=F[fs[1]](r,c);return{shape:shapes[F[fs[0]](r,c)],color:cols[ci][0],cname:cols[ci][1],count:counts[F[fs[2]](r,c)]};};
+ const ans=tile(2,2),alts=[];
+ shapes.forEach(s=>{if(s!==ans.shape)alts.push({...ans,shape:s});});
+ cols.forEach(([c,nm])=>{if(c!==ans.color)alts.push({...ans,color:c,cname:nm});});
+ counts.forEach(k=>{if(k!==ans.count)alts.push({...ans,count:k});});
+ const opts=shuffle([ans,...shuffle(alts).slice(0,diff==='easy'?3:5)]);
+ const ansIdx=opts.indexOf(ans);
+ const say=(a,f)=>{const A={shape:'shape',color:'color',count:'number of shapes'}[a];return f==='row'?`Every tile in a row has the same ${A}.`:f==='col'?`Every tile in a column has the same ${A}.`:f==='con'?`The ${A} never changes.`:`Each row and each column has one of each ${A}.`;};
+ const rules=attrs.map((a,i)=>say(a,fs[i]));
+ const order=attrs.map((a,i)=>i).sort((x,y)=>(fs[x]==='con')-(fs[y]==='con'));
+ let sel=null,btns=[];
+ const L='ABCDEF';
+ return{
+  prompt:'Which tile completes the pattern? Check the <b>shape</b>, the <b>color</b> and <b>how many</b>.',
+  build(box){const g=h('div',{class:'mx'});for(let r=0;r<3;r++)for(let c=0;c<3;c++)g.append(h('div',{html:r===2&&c===2?'?':tileSVG(tile(r,c))}));box.append(g);
+   const o=h('div',{class:'opts '+(opts.length===6?'six':'four')});
+   btns=opts.map((t,i)=>{const b=h('button',{class:'opt',html:tileSVG(t,56)+`<b>${L[i]}</b>`});b.onclick=()=>{sel=i;btns.forEach(x=>x.classList.toggle('sel',x===b));};o.append(b);return b;});box.append(o);},
+  check(){if(sel===null)return{ok:false,msg:'Tap a tile first.'};return sel===ansIdx?{ok:true}:{ok:false,msg:`Tile ${L[sel]} doesn't fit. Check each feature one at a time.`};},
+  hint(i){if(i===0)return 'Check one feature at a time: shape first, then color, then how many.';return rules[order[i-1]];},
+  reveal(){sel=ansIdx;btns[ansIdx].classList.add('right');btns.forEach(b=>b.disabled=true);},
+  answer:`Tile <b>${L[ansIdx]}</b>: ${ans.count} ${ans.cname} ${ans.shape}${ans.count>1?'s':''}.`,
+  explain:`The answer is tile <b>${L[ansIdx]}</b>: ${ans.count} ${ans.cname} ${ans.shape}${ans.count>1?'s':''}.<ul class="plain">${rules.map(r=>`<li>${r}</li>`).join('')}</ul>`,
+  printable:true};
+}
+
+/* ===== 7. Code Breaker ===== */
+const PHRASES=['PRACTICE MAKES PERFECT','KNOWLEDGE IS POWER','GREAT MINDS THINK ALIKE','LOOK BEFORE YOU LEAP','SLOW AND STEADY WINS THE RACE','ACTIONS SPEAK LOUDER THAN WORDS','THE EARLY BIRD CATCHES THE WORM','A SHARP MIND IS A HAPPY MIND','EVERY DAY IS A CHANCE TO LEARN','CURIOSITY NEVER RETIRES','KEEP YOUR MIND IN MOTION','WHERE THERE IS A WILL THERE IS A WAY','TWO HEADS ARE BETTER THAN ONE','BETTER LATE THAN NEVER','PATIENCE IS A VIRTUE','NEVER STOP ASKING WHY','THE BEST IS YET TO COME','LEARN SOMETHING NEW TODAY','A PUZZLE A DAY KEEPS BOREDOM AWAY','WOW WHO KNEW'];
+function genCode(diff){
+ const p=pick(PHRASES),A='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),key={};let s=0;const sub=diff==='hard';
+ if(sub){let perm;do{perm=shuffle(A);}while(perm.some((x,i)=>x===A[i]));A.forEach((c,i)=>key[c]=perm[i]);}
+ else{s=1+R(25);A.forEach((c,i)=>key[c]=A[(i+s)%26]);}
+ const enc=p.split('').map(c=>key[c]||c).join('');
+ const letters=[...new Set(p.replace(/[^A-Z]/g,''))];
+ const freq={};p.replace(/[^A-Z]/g,'').split('').forEach(c=>freq[c]=(freq[c]||0)+1);
+ const given=shuffle(letters).slice(0,diff==='easy'?1:sub?2:0);
+ const byFreq=letters.filter(c=>!given.includes(c)).sort((a,b)=>freq[b]-freq[a]);
+ let inp;const norm=x=>x.toUpperCase().replace(/[^A-Z]/g,'');
+ return{
+  prompt:sub?'Every letter has been swapped for a different letter, and the same swap is used every time. Crack the message.':'Every letter has been shifted the <b>same number of places</b> along the alphabet. Crack the message.',
+  build(box){box.append(h('div',{class:'cipher'},enc));if(given.length)box.append(h('div',{class:'givens'},'Clue: '+given.map(c=>`${key[c]} stands for ${c}`).join(' · ')));inp=h('input',{class:'ans',placeholder:'Type the real message',autocapitalize:'characters',autocomplete:'off'});box.append(inp);},
+  check(){if(!inp.value.trim())return{ok:false,msg:'Type your answer first.'};return norm(inp.value)===norm(p)?{ok:true}:{ok:false,msg:'Not quite. Check each word against the code.'};},
+  hint(i){if(i===0)return 'The most common letters in English are E, T and A. Short words like THE, A and IS are great places to start.';
+   if(!sub&&i===1)return `Each letter moved ${s} place${s>1?'s':''} forward in the alphabet.`;
+   const c=byFreq[i-1]||byFreq[0];return `In the code, ${key[c]} stands for ${c}.`;},
+  reveal(){inp.value=p;inp.disabled=true;},
+  answer:`<b>${p}</b>`,
+  explain:`The message: <b>${p}</b>.<br><br>`+(sub?`Each letter was swapped for another. The key for this message (code → real): ${letters.map(c=>`${key[c]}→${c}`).join(', ')}.`:`Every letter moved ${s} place${s>1?'s':''} forward, so A became ${key.A} and B became ${key.B}. Shift each letter back ${s} to read it.`),
+  printable:true};
+}
+
+/* ===== 8. Shape Shift ===== */
+function genShape(diff){
+ const N=diff==='hard'?5:4,size=diff==='hard'?7:diff==='medium'?6:5;
+ const norm=cells=>{const mr=Math.min(...cells.map(c=>c[0])),mc=Math.min(...cells.map(c=>c[1]));return cells.map(([r,c])=>[r-mr,c-mc]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);};
+ const key=cells=>norm(cells).map(c=>c.join(',')).join(';');
+ const rot=cells=>cells.map(([r,c])=>[c,N-1-r]);
+ const mir=cells=>cells.map(([r,c])=>[r,N-1-c]);
+ const draw=(cells,px)=>{const n=norm(cells),hh=Math.max(...n.map(c=>c[0]))+1,w=Math.max(...n.map(c=>c[1]))+1,s=20,ox=(N-w)*s/2,oy=(N-hh)*s/2;
+  return `<svg viewBox="-2 -2 ${N*s+4} ${N*s+4}" width="${px}" height="${px}">${n.map(([r,c])=>`<rect x="${ox+c*s}" y="${oy+r*s}" width="${s-2}" height="${s-2}" rx="3" fill="#1f2a44"/>`).join('')}</svg>`;};
+ for(let t=0;t<500;t++){
+  const set=new Set([R(N)*N+R(N)]);
+  while(set.size<size){const x=pick([...set]),r=x/N|0,c=x%N,nb=pick([[r-1,c],[r+1,c],[r,c-1],[r,c+1]]);if(nb[0]>=0&&nb[1]>=0&&nb[0]<N&&nb[1]<N)set.add(nb[0]*N+nb[1]);}
+  const base=[...set].map(x=>[x/N|0,x%N]);
+  const o=[];let cur=base;for(let k=0;k<4;k++){o.push(cur);cur=rot(cur);}o.push(...o.slice(0,4).map(mir));
+  const keys=o.map(key);if(new Set(keys).size<8)continue;
+  const Q={easy:[['flipped left-to-right (a mirror image)',mir(base)],['turned upside down (rotated 180°)',rot(rot(base))]],
+   medium:[['rotated 90° clockwise',rot(base)],['rotated 90° counter-clockwise',rot(rot(rot(base)))]],
+   hard:[['rotated 90° clockwise, then flipped left-to-right',mir(rot(base))],['flipped left-to-right, then rotated 90° clockwise',rot(mir(base))]]}[diff];
+  const [qText,target]=pick(Q);const ti=keys.indexOf(key(target));
+  const tricky=[(ti+4)%8,ti<4?(ti+2)%4:4+(ti+2)%4];
+  const others=shuffle(range(8).filter(k=>k!==ti&&!tricky.includes(k)));
+  const choice=shuffle([ti,...(diff==='easy'?[tricky[0]]:tricky),...others].slice(0,4));
+  const ansIdx=choice.indexOf(ti);let sel=null,btns=[];const L='ABCD';
+  return{
+   prompt:`Which option shows this shape <b>${qText}</b>?`,
+   build(box){box.append(h('div',{class:'shapes',html:draw(base,140)}));const op=h('div',{class:'opts four'});
+    btns=choice.map((k,i)=>{const b=h('button',{class:'opt',html:draw(o[k],78)+`<b>${L[i]}</b>`});b.onclick=()=>{sel=i;btns.forEach(x=>x.classList.toggle('sel',x===b));};op.append(b);return b;});box.append(op);},
+   check(){if(sel===null)return{ok:false,msg:'Tap an option first.'};return sel===ansIdx?{ok:true}:{ok:false,msg:`Option ${L[sel]} isn't it. Picture one corner of the shape and follow it as it moves.`};},
+   hint(i){if(i===0)return 'Pick one distinctive part of the shape, like a corner or a bump, and track only that part as it moves.';
+    const wrong=range(4).filter(k=>k!==ansIdx&&!btns[k].classList.contains('gone'));if(!wrong.length)return 'Only the answer is left!';const k=pick(wrong);btns[k].classList.add('gone');if(sel===k)sel=null;return `Option ${L[k]} is out.`;},
+   reveal(){sel=ansIdx;btns[ansIdx].classList.add('right');btns.forEach(b=>b.disabled=true);},
+   answer:`Option <b>${L[ansIdx]}</b>.`,
+   explain:`The answer is option <b>${L[ansIdx]}</b>. A mirror image and a rotation can look alike, but a rotation never swaps left and right. Tracking one corner as the shape moves is the surest way to tell them apart.`,
+   printable:true};
+ }
+ return null;
+}
+
+/* ===== 9. Memory Grid ===== */
+function genMemory(diff){
+ const [N,K]={easy:[4,4],medium:[5,6],hard:[6,9]}[diff];
+ const target=new Set(shuffle(range(N*N)).slice(0,K)),picked=new Set();let cells=[],phase='ready',showBtn,timer;
+ const flash=ms=>{phase='show';showBtn.disabled=true;cells.forEach((b,i)=>{b.classList.remove('sel');b.classList.toggle('lit',target.has(i));});
+  clearTimeout(timer);timer=setTimeout(()=>{cells.forEach((b,i)=>{b.classList.remove('lit');b.classList.toggle('sel',picked.has(i));});phase='input';showBtn.textContent='Now tap the squares you saw';},ms);};
+ return{
+  prompt:`A pattern of <b>${K} squares</b> will light up for 3 seconds. Memorize it, then tap the same squares.`,
+  build(box){showBtn=h('button',{class:'btn gold'},'Show me the pattern');showBtn.onclick=()=>flash(3000);
+   const g=h('div',{class:'mem'});g.style.gridTemplateColumns=`repeat(${N},1fr)`;
+   cells=range(N*N).map(i=>{const b=h('button',{class:'mc','aria-label':`Square ${i+1}`});b.onclick=()=>{if(phase!=='input')return;picked.has(i)?picked.delete(i):picked.add(i);b.classList.toggle('sel');};g.append(b);return b;});
+   box.append(h('div',{style:'text-align:center'},showBtn),g);},
+  check(){if(phase==='ready')return{ok:false,msg:'Tap "Show me the pattern" first.'};if(phase==='show')return{ok:false,msg:'Wait for the pattern to disappear.'};
+   const right=[...picked].filter(i=>target.has(i)).length,extra=picked.size-right;
+   if(right===K&&!extra)return{ok:true};return{ok:false,msg:`${right} of ${K} right${extra?`, plus ${extra} extra`:''}. Keep going.`};},
+  hint(i){if(phase!=='input')return 'Tap "Show me the pattern" first.';flash(1000);return 'Here\'s a quick one-second second look.';},
+  reveal(){phase='done';clearTimeout(timer);cells.forEach((b,i)=>{b.classList.remove('lit');if(target.has(i)&&picked.has(i))b.classList.add('sel');else if(target.has(i))b.classList.add('miss');else if(picked.has(i)){b.classList.remove('sel');b.classList.add('extra');}b.disabled=true;});},
+  answer:'',explain:'Memory tip: don\'t try to remember each square on its own. Group them into a shape, like an L, a diagonal or "two in the corner," or name their positions (top row, second from left). Chunking like this lets you hold more at once.',
+  printable:false};
+}
+
+/* ===== 10. Word Ladders ===== */
+const WORDS4=[...new Set(`cold cord card ward warm word wore core care cart dart dare date gate hate hare here hire fire fine find kind mind mine line lime time tide ride rode rope hope hole pole pile file mile male mole more mare bare bore bone cone cane lane lake make take tame same sale tale tile toll tell bell ball call fall hall wall mall malt salt silt sift soft loft lift gift sink link pink pine wine wise wipe ripe rice nice mice dice dime dome home hose nose rose rise wide hide side site bite kite mite mate late band bend bond fond font foot boot boat coat cost cast vast fast last list lost most mast mist fist fish dish wish wash cash case cave gave have hive five dive dove love live give lose lone tone tune dune dust must gust bust best rest test text nest west vest pest past part park bark dark mark mask task tusk husk dusk desk deck neck nick pick sick sock rock lock look book cook took tool pool poll pull full fuel duel dull bull bulk milk silk sulk hulk hunk junk bunk bank sank tank rank rink wink wind wand sand send lend land hand hard harm farm form fork work worm worn torn turn burn barn born corn horn herd road load loan lean mean meat heat beat bead head heal real meal seal seam team tear year near neat seat sent rent dent bent tent tend mend read rear dear deer beer peer pear wear bear beam ship shop stop step slip slap snap swap soap soup sour four pour poor door game gale pale page wage cage rage race face fact pact pace lace lice like bike hike lick kick king ring rang sang sung sing wing hold bold bolt gold golf wolf good hood wood wool cool coal goal foal foam roam team tame time tile mile mild wild wind kind king pine pint mint hint hunt hurt curt cart part pert port sort soft sift gift`.split(/\s+/))];
+const WSET=new Set(WORDS4);
+function nbrs(w){const o=[];for(let i=0;i<4;i++)for(const ch of 'abcdefghijklmnopqrstuvwxyz'){if(ch===w[i])continue;const x=w.slice(0,i)+ch+w.slice(i+1);if(WSET.has(x))o.push(x);}return o;}
+function bfs(s){const d={[s]:0},prev={},q=[s];while(q.length){const w=q.shift();for(const x of nbrs(w))if(!(x in d)){d[x]=d[w]+1;prev[x]=w;q.push(x);}}return{d,prev};}
+function genLadder(diff){
+ for(let L={easy:3,medium:4,hard:5}[diff];L>=3;L--)for(let t=0;t<120;t++){
+  const s=pick(WORDS4),{d,prev}=bfs(s),c=Object.keys(d).filter(w=>d[w]===L);if(!c.length)continue;
+  const e=pick(c),path=[e];while(path[0]!==s)path.unshift(prev[path[0]]);
+  let ins=[];const U=x=>x.toUpperCase();
+  return{
+   prompt:`Change <b>${U(s)}</b> into <b>${U(e)}</b> by changing <b>one letter at a time</b>. Every step must be a real word. You have ${L-1} steps in between.`,
+   build(box){const lad=h('div',{class:'ladder'});lad.append(h('div',{class:'w'},U(s)));ins=range(L-1).map(i=>{const x=h('input',{maxlength:'4',autocomplete:'off',autocapitalize:'characters','aria-label':`Step ${i+1}`});lad.append(x);return x;});lad.append(h('div',{class:'w'},U(e)));box.append(lad);},
+   check(){const words=ins.map(x=>x.value.trim().toLowerCase());if(words.some(w=>!w))return{ok:false,msg:'Fill in every step first.'};
+    const chain=[s,...words,e];
+    for(const w of words){if(w.length!==4)return{ok:false,msg:`"${esc(U(w))}" needs exactly 4 letters.`};if(!WSET.has(w))return{ok:false,msg:`"${esc(U(w))}" isn't in our word list. Try another word.`};}
+    for(let i=1;i<chain.length;i++){let diffs=0;for(let k=0;k<4;k++)if(chain[i][k]!==chain[i-1][k])diffs++;if(diffs!==1)return{ok:false,msg:`${U(chain[i-1])} → ${esc(U(chain[i]))} changes ${diffs===0?'no letters':'more than one letter'}.`};}
+    return{ok:true};},
+   hint(i){if(i===0)return `Compare ${U(s)} and ${U(e)}. Which letters already match? Change the others one at a time.`;const k=Math.min(i-1,ins.length-1);ins[k].value=U(path[k+1]);ins[k].disabled=true;return `Step ${k+1} is ${U(path[k+1])}.`;},
+   reveal(){ins.forEach((x,k)=>{x.value=U(path[k+1]);x.disabled=true;});},
+   answer:path.map(U).join(' → '),
+   explain:`One way through: <b>${path.map(U).join(' → ')}</b>. Any path that follows the rules counts. The trick is to change the letters that are already "in the way" first.`,
+   printable:true};
+ }
+ return null;
+}
+
+/* ===== 11. Anagrams ===== */
+const ANA={easy:['apple','beach','chair','eagle','flame','house','juice','music','piano','queen','river','tiger','water','zebra','candy','train','light','money','plant','honey','sugar','bacon','ghost','truck','clock','lucky','magic','robot'],
+ medium:['basket','dragon','guitar','island','jungle','kitten','laptop','market','number','orange','pencil','rabbit','summer','ticket','window','yellow','bottle','cookie','hammer','monkey','puzzle','school','travel','coffee','doctor','frozen','helmet','mirror','button','camera'],
+ hard:['blanket','chicken','diamond','elephant','fantasy','giraffe','harmony','journey','kitchen','library','mystery','notebook','octopus','penguin','rainbow','sandwich','umbrella','volcano','weather','popcorn','pumpkin','morning','curious','history','freedom','captain','balloon','compass','thunder']};
+function genAnagram(diff){
+ const w=pick(ANA[diff]);let sc;do{sc=shuffle(w.split('')).join('');}while(sc===w);
+ let inp;const U=w.toUpperCase();
+ return{
+  prompt:`Unscramble these letters to make a common word (${w.length} letters).`,
+  build(box){box.append(h('div',{class:'scr'},sc.toUpperCase()));inp=h('input',{class:'ans',placeholder:'Your word',autocomplete:'off',autocapitalize:'characters'});box.append(inp);},
+  check(){const v=inp.value.trim().toLowerCase();if(!v)return{ok:false,msg:'Type a word first.'};if(v===w)return{ok:true};
+   if(v.split('').sort().join('')===w.split('').sort().join(''))return{ok:false,msg:'Right letters, but not the word we have in mind. Keep trying.'};return{ok:false,msg:'Not quite. Make sure you use every letter once.'};},
+  hint(i){return [`It starts with ${U[0]}.`,`It starts with ${U.slice(0,2)}.`,`It ends with ${U[U.length-1]}.`][i];},
+  reveal(){inp.value=U;inp.disabled=true;},
+  answer:`<b>${U}</b>`,
+  explain:`The word is <b>${U}</b>. Tip: look for common letter teams like TH, CH, ER, ING and OO, and try the vowels in different spots.`,
+  printable:true};
+}
+
+/* ===== 12. Spot the Flaw ===== */
+const FLAWS={
+ 'Hasty generalization':'Drawing a big conclusion from too few examples.',
+ 'False cause':'Assuming that because one thing came before another, it caused it.',
+ 'False choice':'Pretending there are only two options when there are more.',
+ 'Bandwagon':'Assuming something is true or good because it\'s popular.',
+ 'Attacking the person':'Going after the person instead of their argument.',
+ 'Slippery slope':'Claiming one small step will lead to an extreme outcome, without proof.',
+ 'Wrong expert':'Trusting someone who isn\'t an expert on the topic.',
+ 'Circular reasoning':'Using the conclusion as its own proof.',
+ 'Straw man':'Twisting someone\'s point into a weaker one that\'s easy to knock down.',
+ 'Story over evidence':'Letting one personal story outweigh the broader evidence.',
+ 'Appeal to ignorance':'Claiming something is true just because it hasn\'t been proven false.',
+ 'Appeal to tradition':'Assuming something is right because it\'s always been done that way.',
+ 'Cherry-picking':'Choosing only the evidence that supports your side and ignoring the rest.'};
+const ARGS=[
+ ['My neighbor\'s two dogs bark all night, so all dogs are noisy.','Hasty generalization','Two dogs can\'t tell you about all dogs.'],
+ ['Every time I wash my car, it rains. Washing my car must cause rain.','False cause','The timing is a coincidence. Washing a car has no effect on the weather.'],
+ ['Either you support this new highway, or you don\'t care about this town\'s future.','False choice','Someone can care about the town and still prefer a different plan.'],
+ ['Millions of people buy this vitamin, so it must work.','Bandwagon','Popularity isn\'t proof. Only testing shows whether it works.'],
+ ['You can\'t trust his budget plan. He can\'t even keep his own lawn tidy.','Attacking the person','His lawn says nothing about whether the budget plan adds up.'],
+ ['If we let students use calculators, soon nobody will be able to count, and businesses will collapse.','Slippery slope','It jumps from one small step to a disaster with no evidence for each link.'],
+ ['A famous actor says this diet is the healthiest one there is, so it must be.','Wrong expert','Acting fame isn\'t nutrition expertise.'],
+ ['This book is reliable because the introduction says it\'s reliable.','Circular reasoning','The book is being used to prove itself.'],
+ ['My opponent wants to trim the parks budget a little. Clearly he wants to bulldoze every park in the city.','Straw man','A small trim is turned into an extreme position that\'s easy to attack.'],
+ ['My grandfather smoked every day and lived to 95, so smoking can\'t be that bad.','Story over evidence','One lucky case doesn\'t outweigh decades of research on large groups of people.'],
+ ['Our sales went up the month we changed the logo, so the new logo boosted sales.','False cause','Many things change in a month: season, prices, marketing. Timing alone isn\'t proof.'],
+ ['Nobody has proven this old house isn\'t haunted, so it must be haunted.','Appeal to ignorance','A lack of disproof isn\'t proof.'],
+ ['We should keep doing it this way, because we\'ve always done it this way.','Appeal to tradition','"Always" explains the habit, not whether it\'s the best way.'],
+ ['Three customers loved the new menu, so the whole city will love it.','Hasty generalization','Three people are far too few to speak for a whole city.'],
+ ['You either learn to code, or you\'ll never find a good job.','False choice','There are many paths to a good job besides coding.'],
+ ['Everyone at the office is switching to this phone, so it must be the best one.','Bandwagon','What coworkers buy doesn\'t prove which phone is best.'],
+ ['One study found the treatment works. I\'ll ignore the four studies that found it doesn\'t.','Cherry-picking','Picking the one friendly study and ignoring the rest hides the full picture.'],
+ ['Why listen to her advice on saving money? She drives an old car.','Attacking the person','An old car may be exactly how she saves money. Either way, judge the advice itself.'],
+ ['If we allow one food truck downtown, soon the streets will be nothing but food trucks.','Slippery slope','One permit doesn\'t make the extreme outcome likely without more evidence.'],
+ ['The town\'s new mayor took office in March, and crime dropped by June. The mayor stopped crime.','False cause','Crime numbers shift for many reasons. Three months of timing isn\'t proof.']];
+function genFlaw(diff){
+ const [arg,flaw,why]=pick(ARGS),nOpt={easy:3,medium:4,hard:5}[diff];
+ const opts=shuffle([flaw,...shuffle(Object.keys(FLAWS).filter(f=>f!==flaw)).slice(0,nOpt-1)]);
+ const ansIdx=opts.indexOf(flaw);let sel=null,btns=[];
+ return{
+  prompt:'What\'s the main flaw in this argument?',
+  build(box){box.append(h('div',{class:'arg'},'“'+arg+'”'));const o=h('div',{style:'display:grid;gap:8px'});
+   btns=opts.map((f,i)=>{const b=h('button',{class:'opt text',html:`<b>${f}</b><small style="color:#6b7280">${FLAWS[f]}</small>`});b.onclick=()=>{sel=i;btns.forEach(x=>x.classList.toggle('sel',x===b));};o.append(b);return b;});box.append(o);},
+  check(){if(sel===null)return{ok:false,msg:'Pick an answer first.'};return sel===ansIdx?{ok:true}:{ok:false,msg:'Not that one. Ask yourself: what is the conclusion resting on?'};},
+  hint(i){const wrong=range(opts.length).filter(k=>k!==ansIdx&&!btns[k].classList.contains('gone'));if(!wrong.length)return 'Only the answer is left!';const k=pick(wrong);btns[k].classList.add('gone');if(sel===k)sel=null;return `It's not "${opts[k]}."`;},
+  reveal(){sel=ansIdx;btns[ansIdx].classList.add('right');btns.forEach(b=>b.disabled=true);},
+  answer:`<b>${flaw}</b>. ${why}`,
+  explain:`<b>${flaw}:</b> ${FLAWS[flaw]}<br><br>${why}`,
+  printable:true};
+}
+
+/* ===== shared helpers for the new types ===== */
+function autoWin(){setTimeout(()=>{if(!S.done)$('#check').click();},250);}
+function mcPuzzle({prompt,top,opts,ansIdx,hint0,explain,answer,text=false}){
+ let sel=null,btns=[];
+ return{prompt,
+  build(box){if(top)box.append(h('div',{html:top}));const o=h('div',{class:'opts'});if(text)o.style.gridTemplateColumns='1fr';
+   btns=opts.map((x,i)=>{const b=h('button',{class:'opt'+(text?' text':''),html:x});b.onclick=()=>{sel=i;btns.forEach(y=>y.classList.toggle('sel',y===b));};o.append(b);return b;});box.append(o);},
+  check(){if(sel===null)return{ok:false,msg:'Pick an answer first.'};return sel===ansIdx?{ok:true}:{ok:false,msg:'Not that one. Give it another look.'};},
+  hint(i){if(i===0&&hint0)return hint0;const wrong=range(opts.length).filter(k=>k!==ansIdx&&!btns[k].classList.contains('gone'));if(!wrong.length)return 'Only the answer is left!';const k=pick(wrong);btns[k].classList.add('gone');if(sel===k)sel=null;return 'One wrong answer is crossed out.';},
+  reveal(){sel=ansIdx;btns[ansIdx].classList.add('right');btns.forEach(b=>b.disabled=true);},
+  answer,explain,printable:true};
+}
+function numPuzzle({prompt,top,ans,hints,explain}){
+ let inp;
+ return{prompt,build(box){box.append(h('div',{html:top}));inp=h('input',{class:'ans',inputmode:'numeric',placeholder:'Your answer'});box.append(inp);},
+  check(){const v=inp.value.trim();if(!v)return{ok:false,msg:'Type a number first.'};return +v===ans?{ok:true}:{ok:false,msg:`${esc(v)} isn't it. Try another angle.`};},
+  hint(i){return hints[i];},reveal(){inp.value=ans;inp.disabled=true;},answer:`<b>${ans}</b>`,explain,printable:true};
+}
+
+/* ===== 13. Whodunit ===== */
+const CASES=['Someone ate the last slice of cake.','Someone broke the lamp in the hallway.','Someone hid the TV remote.','Someone left the freezer door open all night.','Someone ate every cookie in the jar.','Someone moved the boss\'s parking cone.','Someone took the last cup of coffee and didn\'t make more.','Someone let the dog onto the couch.'];
+function genWho(diff){
+ const n={easy:3,medium:4,hard:5}[diff];
+ const names=shuffle(['Alice','Bruno','Clara','Dev','Elena','Felix','Grace','Hugo']).slice(0,n);
+ const mode=diff==='hard'?pick(['lie','truth']):'lie';
+ for(let t=0;t<5000;t++){
+  const st=range(n).map(i=>{const o=[{t:'I didn\'t do it.',f:x=>x!==i}];
+   for(let j=0;j<n;j++)if(j!==i){o.push({t:`${names[j]} did it.`,f:x=>x===j},{t:`${names[j]} didn't do it.`,f:x=>x!==j});
+    for(let k=j+1;k<n;k++)if(k!==i)o.push({t:`It was ${names[j]} or ${names[k]}.`,f:x=>x===j||x===k});}
+   if(diff!=='easy')o.push({t:'I did it.',f:x=>x===i});
+   return pick(o);});
+  const good=x=>{const tr=st.filter(s=>s.f(x)).length;return mode==='lie'?tr===n-1:tr===1;};
+  const sols=range(n).filter(good);if(sols.length!==1)continue;const c=sols[0];
+  const rule=mode==='lie'?'<b>Exactly one</b> of them is lying. Everyone else is telling the truth.':'<b>Only one</b> of them is telling the truth. Everyone else is lying.';
+  const top=`<div class="arg" style="font-style:normal">${pick(CASES)}</div><ul class="plain">${st.map((s,i)=>`<li><b>${names[i]}:</b> “${s.t}”</li>`).join('')}</ul><p>${rule}</p>`;
+  return mcPuzzle({prompt:'Who did it?',top,opts:names.map(nm=>`<b>${nm}</b>`),ansIdx:c,
+   hint0:`Try each suspect as the culprit, one at a time. Count how many statements would be ${mode==='lie'?'lies':'true'}. Only one suspect makes the numbers work.`,
+   explain:`It was <b>${names[c]}</b>. If ${names[c]} did it:<ul class="plain">${st.map((s,i)=>`<li>${names[i]}'s statement is ${s.f(c)?'true':'<b>false</b>'}.</li>`).join('')}</ul>That's exactly ${mode==='lie'?'one lie':'one true statement'}, as the rule says. No other suspect fits.`,
+   answer:`<b>${names[c]}</b>`});
+ }
+ return null;
+}
+
+/* ===== 14. Mastermind ===== */
+const MMC=[['#dc2626','Red'],['#2563eb','Blue'],['#16a34a','Green'],['#eab308','Yellow'],['#9333ea','Purple'],['#f97316','Orange']];
+function genMaster(diff){
+ const [P,C,rep]={easy:[3,5,false],medium:[4,6,false],hard:[4,6,true]}[diff],maxG=10,cols=MMC.slice(0,C);
+ const secret=rep?range(P).map(()=>R(C)):shuffle(range(C)).slice(0,P);
+ let cur=Array(P).fill(null),rows=0,board,slots=[];const fixed=Array(P).fill(false);
+ const score=g=>{let bl=0,wh=0;const sc={},gc={};g.forEach((x,i)=>{if(x===secret[i])bl++;else{sc[secret[i]]=(sc[secret[i]]||0)+1;gc[x]=(gc[x]||0)+1;}});for(const k in gc)wh+=Math.min(gc[k],sc[k]||0);return[bl,wh];};
+ const dot=(c,sz=26)=>`<span class="peg" style="width:${sz}px;height:${sz}px;background:${c===null?'#eee':cols[c][0]}"></span>`;
+ const renderCur=()=>slots.forEach((s,i)=>{s.innerHTML=dot(cur[i],36);s.classList.toggle('fixed',fixed[i]);});
+ const code=secret.map(c=>cols[c][1]).join(', ');
+ return{prompt:`Crack the secret code of <b>${P} colors</b>${rep?' (colors <b>can</b> repeat)':' (no repeats)'}. Tap colors to fill the spots, then tap <b>Guess</b>. After each guess: <b>●</b> = right color, right spot. <b>○</b> = right color, wrong spot. You get ${maxG} guesses.`,
+  checkLabel:'Guess',
+  build(box){board=h('div');box.append(board);
+   const row=h('div',{class:'mmrow cur'});slots=range(P).map(i=>{const s=h('button',{class:'slot','aria-label':`Spot ${i+1}`});s.onclick=()=>{if(!fixed[i]){cur[i]=null;renderCur();}};row.append(s);return s;});box.append(row);
+   const pal=h('div',{class:'row',style:'justify-content:center;margin-top:8px'});cols.forEach((c,ci)=>{const b=h('button',{class:'palb',html:dot(ci,38),'aria-label':c[1]});b.onclick=()=>{const k=cur.findIndex((x,i)=>x===null&&!fixed[i]);if(k>=0){cur[k]=ci;renderCur();}};pal.append(b);});box.append(pal);renderCur();},
+  check(){if(rows>=maxG)return{ok:false,msg:'Out of guesses! Tap Show answer to see the code.'};
+   if(cur.some(x=>x===null))return{ok:false,msg:`Fill all ${P} spots first. Tap a color to add it, tap a spot to clear it.`};
+   if(!rep&&new Set(cur).size<P)return{ok:false,msg:'No repeats in this code. Use each color only once.'};
+   const [bl,wh]=score(cur);rows++;board.append(h('div',{class:'mmrow',html:`<span class="gn">${rows}</span>`+cur.map(c=>dot(c)).join('')+`<span class="fbk">${'●'.repeat(bl)}${'○'.repeat(wh)}${!bl&&!wh?'—':''}</span>`}));
+   if(bl===P)return{ok:true};
+   cur=cur.map((x,i)=>fixed[i]?x:null);renderCur();const left=maxG-rows;
+   if(!left)return{ok:false,msg:'Out of guesses! Tap Show answer to see the code.'};
+   return{ok:false,msg:`${bl} right spot, ${wh} right color in the wrong spot. ${left} guess${left>1?'es':''} left.`};},
+  hint(i){if(i===0)return 'Use your first guesses to learn which colors are in the code. Then work out where each one goes.';const k=range(P).find(j=>!fixed[j]);if(k===undefined)return 'Every spot is already set!';fixed[k]=true;cur[k]=secret[k];renderCur();return `Spot ${k+1} is ${cols[secret[k]][1]}. It's locked in.`;},
+  reveal(){cur=secret.slice();fixed.fill(true);renderCur();},
+  answer:code,
+  explain:`The code was <b>${code}</b>. Strategy: make every guess test something new. Comparing two guesses that differ by just one color tells you exactly what that color is doing.`,
+  printable:false};
+}
+
+/* ===== 15. Nonograms ===== */
+function genNono(diff){
+ const n={easy:5,medium:7,hard:8}[diff];
+ let sol;do{sol=range(n*n).map(()=>Math.random()<0.58?1:0);}while(range(n).some(r=>!range(n).some(c=>sol[r*n+c]))||range(n).some(c=>!range(n).some(r=>sol[r*n+c])));
+ const runs=a=>{const o=[];let k=0;a.forEach(v=>{if(v)k++;else if(k){o.push(k);k=0;}});if(k)o.push(k);return o.length?o:[0];};
+ const rowC=range(n).map(r=>runs(range(n).map(c=>sol[r*n+c]))),colC=range(n).map(c=>runs(range(n).map(r=>sol[r*n+c])));
+ let st=Array(n*n).fill(0),cells=[];
+ const paint=i=>{const lock=cells[i].dataset.lock;cells[i].className='nc'+(st[i]===1?' f':st[i]===2?' x':'')+(lock?' hl':'');cells[i].textContent=st[i]===2?'×':'';};
+ const lineOK=g=>({r:range(n).filter(r=>runs(range(n).map(c=>g[r*n+c])).join()!==rowC[r].join()).length,c:range(n).filter(c=>runs(range(n).map(r=>g[r*n+c])).join()!==colC[c].join()).length});
+ return{prompt:'Shade squares to match the numbers. Each number is a run of shaded squares in that row or column, in order, with at least one gap between runs. Tap once to shade, twice to mark ×, three times to clear.',
+  build(box){const sz=n>=8?32:n>=7?36:44;const t=h('table',{class:'nono'});const head=h('tr',{},h('td',{class:'cc'}));colC.forEach(c=>head.append(h('td',{class:'cc',html:c.join('<br>')})));t.append(head);
+   range(n).forEach(r=>{const tr=h('tr',{},h('td',{class:'rc'},rowC[r].join(' ')));range(n).forEach(c=>{const i=r*n+c,td=h('td',{class:'nc'});td.style.width=td.style.height=sz+'px';td.onclick=()=>{if(td.dataset.lock)return;st[i]=(st[i]+1)%3;paint(i);};cells[i]=td;tr.append(td);});t.append(tr);});
+   box.append(h('div',{style:'overflow-x:auto'},t));},
+  check(){const b=lineOK(st.map(v=>v===1?1:0));if(!b.r&&!b.c)return{ok:true};return{ok:false,msg:`${b.r} row${b.r!==1?'s':''} and ${b.c} column${b.c!==1?'s':''} don't match their numbers yet.`};},
+  hint(i){if(i===0)return `Start with the biggest numbers. A long run in a row of ${n} has to cover the middle squares, no matter where it starts.`;
+   const wrong=range(n*n).filter(k=>(st[k]===1)!==(sol[k]===1)&&!cells[k].dataset.lock);if(!wrong.length)return 'Everything shaded so far is right. Keep going!';
+   const pref=wrong.filter(k=>sol[k]);const k=pick(pref.length?pref:wrong);st[k]=sol[k]?1:2;cells[k].dataset.lock='1';paint(k);return `Row ${(k/n|0)+1}, column ${k%n+1} is ${sol[k]?'shaded':'empty'}. It's locked in with a gold border.`;},
+  reveal(){st=sol.map(v=>v?1:2);cells.forEach((c,i)=>{paint(i);c.dataset.lock='1';});},
+  answer:`<div class="mini" style="grid-template-columns:repeat(${n},18px)">${sol.map(v=>`<span style="width:18px;height:18px;background:${v?'#1f2a44':'#fff'}"></span>`).join('')}</div>`,
+  explain:'Each number is a run of shaded squares, in order, with at least one empty square between runs. Big runs pin down the middle of a line, and once a line is complete, mark its other squares with ×. Any shading that matches every number counts as solved.',
+  printable:true};
+}
+
+/* ===== 16. Balance Scales ===== */
+const BSH=[['circle','#2563eb'],['square','#dc2626'],['triangle','#16a34a'],['diamond','#9333ea']];
+const miniShape=(i,s=24)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" style="vertical-align:middle">${shapeSVG(BSH[i][0],BSH[i][1],12,12,9)}</svg>`;
+function genBalance(diff){
+ const nS=diff==='hard'?4:3;
+ for(let t=0;t<800;t++){
+  const w=[1],cand=[[2,3],[3,4,5,6],[5,6,7,8,9,10]];
+  for(let k=1;k<nS;k++){let v,g=0;do{v=pick(cand[k-1]);}while(w.includes(v)&&++g<20);if(w.includes(v))break;w.push(v);}
+  if(w.length<nS)continue;
+  const scales=[];let bad=false;
+  for(let k=1;k<nS&&!bad;k++){
+   const left=Array(nS).fill(0);left[k]=diff==='easy'?1:1+R(2);
+   if(diff!=='easy'&&k>1&&R(2))left[1+R(k-1)]+=1;
+   let V=left.reduce((s,c,i)=>s+c*w[i],0);const right=Array(nS).fill(0);
+   while(V>0){const ok=range(k).filter(i=>w[i]<=V&&!left[i]);if(!ok.length){bad=true;break;}const big=ok.filter(i=>i>0);const i=big.length&&R(3)?pick(big):pick(ok);right[i]++;V-=w[i];}
+   if(right.reduce((a,b)=>a+b,0)>7)bad=true;
+   scales.push([left,right]);
+  }
+  if(bad)continue;
+  const q=Array(nS).fill(0);q[nS-1]=1;if(diff!=='easy')q[1+R(nS-2)]+=1;
+  const ans=q.reduce((s,c,i)=>s+c*w[i],0);
+  const pan=a=>`<div class="pan">${a.map((c,i)=>Array(c).fill(miniShape(i)).join('')).join('')}</div>`;
+  const top=scales.map(([l,r])=>`<div class="scale">${pan(l)}<span class="eqs">⚖️ balances</span>${pan(r)}</div>`).join('')+`<p style="text-align:center;margin-top:14px"><b>How many circles balance this?</b></p><div class="scale">${pan(q)}<span class="eqs">⚖️ balances</span><div class="pan"><b style="font-size:22px">? </b>${miniShape(0)}</div></div>`;
+  const nm=i=>BSH[i][0];
+  return numPuzzle({prompt:'Each scale is perfectly balanced. Work out what each shape weighs in circles.',top,ans,
+   hints:['Start with the scale that has only one new shape, and swap everything into circles.',`1 ${nm(1)} weighs the same as ${w[1]} circles.`,`1 ${nm(2)} weighs the same as ${w[2]} circles.`],
+   explain:`The answer is <b>${ans} circles</b>.<ul class="plain">${range(nS).slice(1).map(i=>`<li>1 ${nm(i)} = ${w[i]} circles</li>`).join('')}</ul>Add up the shapes in the question: ${q.map((c,i)=>c?`${c} ${nm(i)}${c>1?'s':''} (${c*w[i]})`:'').filter(Boolean).join(' + ')} = <b>${ans}</b>.`});
+ }
+ return null;
+}
+
+/* ===== 17. Probability ===== */
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const fr=(n,d)=>{const g=gcd(n,d);return[n/g,d/g];};
+const frS=([n,d])=>d===1?String(n):`${n}/${d}`;
+const DSUM=s=>6-Math.abs(7-s);
+const PROB={
+ easy:[
+  ()=>{const n=2+R(2);return{q:`You flip a coin ${n} times. What's the chance it lands heads <b>every time</b>?`,a:fr(1,2**n),w:[fr(1,n),fr(1,2),fr(1,2*n)],why:`Each flip is 1/2, so multiply: ${Array(n).fill('1/2').join(' × ')} = 1/${2**n}.`};},
+  ()=>{const k=2+R(3);return{q:`You roll one die. What's the chance of rolling <b>higher than ${k}</b>?`,a:fr(6-k,6),w:[fr(7-k,6),fr(k,6),fr(1,6)],why:`${6-k} of the 6 faces are higher than ${k} (${range(6-k).map(i=>k+1+i).join(', ')}), so ${6-k}/6${gcd(6-k,6)>1?` = ${frS(fr(6-k,6))}`:''}.`};},
+  ()=>{const r=2+R(5),b=2+R(6);return{q:`A bag holds ${r} red and ${b} blue marbles. You pick one without looking. What's the chance it's <b>red</b>?`,a:fr(r,r+b),w:[fr(r,b),fr(b,r+b),fr(1,r)],why:`${r} of the ${r+b} marbles are red, so ${r}/${r+b}${gcd(r,r+b)>1?` = ${frS(fr(r,r+b))}`:''}.`};},
+  ()=>{const c=pick([['a heart',13,'13 hearts'],['a face card (jack, queen or king)',12,'12 face cards'],['an ace',4,'4 aces'],['a red card',26,'26 red cards']]);return{q:`You draw one card from a regular 52-card deck. What's the chance it's <b>${c[0]}</b>?`,a:fr(c[1],52),w:[fr(1,13),fr(1,4),fr(3,13),fr(1,2),fr(1,52)].filter(x=>frS(x)!==frS(fr(c[1],52))).slice(0,3),why:`There are ${c[2]} in 52 cards: ${c[1]}/52 = ${frS(fr(c[1],52))}.`};}],
+ medium:[
+  ()=>{const s=pick([4,5,6,8,9,10]),k=DSUM(s);return{q:`You roll two dice and add them up. What's the chance the total is <b>${s}</b>?`,a:fr(k,36),w:[fr(1,11),fr(k,12),fr(k+1,36)],why:`Two dice make 36 equally likely pairs. ${k} of them add to ${s}, so ${k}/36${gcd(k,36)>1?` = ${frS(fr(k,36))}`:''}. (The totals 2 to 12 are <i>not</i> equally likely.)`};},
+  ()=>{const n=2+R(2);return{q:`You flip a coin ${n} times. What's the chance of getting <b>exactly one</b> head?`,a:fr(n,2**n),w:[fr(1,2**n),fr(1,n),fr(1,2)].filter(x=>frS(x)!==frS(fr(n,2**n))),why:`There are ${2**n} equally likely outcomes, and ${n} of them have exactly one head (the head can come on any one of the ${n} flips). So ${n}/${2**n}${gcd(n,2**n)>1?` = ${frS(fr(n,2**n))}`:''}.`};},
+  ()=>{const r=3+R(3),b=2+R(4),n=r+b;return{q:`A bag holds ${r} red and ${b} blue marbles. You pick two without putting the first back. What's the chance <b>both</b> are red?`,a:fr(r*(r-1),n*(n-1)),w:[fr(r*r,n*n),fr(r,n),fr(r-1,n-1)],why:`First pick: ${r}/${n}. Then ${r-1} reds are left out of ${n-1}: ${r-1}/${n-1}. Multiply: ${r*(r-1)}/${n*(n-1)} = ${frS(fr(r*(r-1),n*(n-1)))}.`};}],
+ hard:[
+  ()=>{const n=2+R(2);return{q:`You roll a die ${n} times. What's the chance of getting <b>at least one 6</b>?`,a:fr(6**n-5**n,6**n),w:[fr(n,6),fr(1,6**n),fr(5**n,6**n)],why:`Flip it around: the chance of <i>no</i> 6 is (5/6)${n===2?'²':'³'} = ${5**n}/${6**n}. So at least one 6 is 1 − ${5**n}/${6**n} = ${frS(fr(6**n-5**n,6**n))}. (Adding 1/6 each time would overcount.)`};},
+  ()=>{const s=pick([9,10,11]);let k=0;for(let x=s;x<=12;x++)k+=DSUM(x);return{q:`You roll two dice. What's the chance the total is <b>${s} or more</b>?`,a:fr(k,36),w:[fr(13-s,11),fr(k-DSUM(s),36),fr(DSUM(s),36)],why:`Count the pairs: ${range(13-s).map(i=>`${s+i} has ${DSUM(s+i)}`).join(', ')}. That's ${k} of 36, so ${frS(fr(k,36))}.`};},
+  ()=>{const r=3+R(3),b=2+R(4),n=r+b;return{q:`A bag holds ${r} red and ${b} blue marbles. You pick two without putting the first back. What's the chance they're the <b>same color</b>?`,a:fr(r*(r-1)+b*(b-1),n*(n-1)),w:[fr(r*r+b*b,n*n),fr(1,2),fr(r*(r-1),n*(n-1))],why:`Both red: ${r}/${n} × ${r-1}/${n-1} = ${r*(r-1)}/${n*(n-1)}. Both blue: ${b}/${n} × ${b-1}/${n-1} = ${b*(b-1)}/${n*(n-1)}. Add them: ${r*(r-1)+b*(b-1)}/${n*(n-1)} = ${frS(fr(r*(r-1)+b*(b-1),n*(n-1)))}.`};}]
+};
+function genProb(diff){
+ const p=pick(PROB[diff])(),A=frS(p.a);const seen=new Set([A]),opts=[A];
+ for(const x of [...p.w,[1,3],[1,4],[2,3],[1,6],[5,6],[3,4]]){const s=frS(x);if(!seen.has(s)&&x[0]>0&&x[0]<=x[1]){seen.add(s);opts.push(s);}if(opts.length===4)break;}
+ const sh=shuffle(opts);
+ return mcPuzzle({prompt:'What are the odds?',top:`<div class="arg" style="font-style:normal">${p.q}</div>`,opts:sh.map(s=>`<b style="font-size:20px">${s}</b>`),ansIdx:sh.indexOf(A),
+  hint0:'Count all the equally likely outcomes, then count the ones you want. Chance = wanted ÷ total.',explain:`The answer is <b>${A}</b>. ${p.why}`,answer:`<b>${A}</b>. ${p.why}`});
+}
+
+/* ===== 18. Missing Rule ===== */
+const RULES={easy:[k=>({f:x=>x+k,why:`Add ${k} to the input.`,h:'Is each output bigger than its input by the same amount?'}),k=>{const m=k%3+2;return{f:x=>x*m,why:`Multiply the input by ${m}.`,h:'Is each output a multiple of its input?'};}],
+ medium:[k=>({f:x=>2*x+k,why:`Double the input, then add ${k}.`,h:'Try doubling the input. How far off are you?'}),k=>({f:x=>3*x-k,why:`Triple the input, then subtract ${k}.`,h:'Try tripling the input. How far off are you?'}),()=>({f:x=>x*x,why:'Multiply the input by itself.',h:'The outputs grow fast. Try multiplying the input by itself.'})],
+ hard:[k=>({f:x=>x*x+k,why:`Multiply the input by itself, then add ${k}.`,h:'Try multiplying the input by itself. How far off are you?'}),()=>({f:x=>x*(x+1),why:'Multiply the input by the next number up (5 becomes 5×6).',h:'Try multiplying the input by a number close to it.'}),()=>({f:x=>x*x-x,why:'Multiply the input by the number just below it (5 becomes 5×4).',h:'Try multiplying the input by a number close to it.'}),k=>({f:x=>(x+k)*2,why:`Add ${k}, then double.`,h:'Try adding something first, then multiplying.'})]};
+function genRule(diff){
+ const k=2+R(7),r=pick(RULES[diff])(k),xs=shuffle(range(12).map(x=>x+1)).slice(0,5),shown=xs.slice(0,4),q=xs[4],ans=r.f(q);
+ const extra=range(15).map(x=>x+1).find(x=>!xs.includes(x));
+ const top=`<table class="lg" style="max-width:260px;margin:12px auto"><tr><th>In</th><th>Out</th></tr>${shown.map(x=>`<tr><td>${x}</td><td>${r.f(x)}</td></tr>`).join('')}<tr><td><b>${q}</b></td><td><b>?</b></td></tr></table>`;
+ return numPuzzle({prompt:'A secret rule turns each <b>In</b> number into its <b>Out</b> number. Find the rule and fill in the missing output.',top,ans,
+  hints:[r.h,`One more example: ${extra} becomes ${r.f(extra)}.`,`The rule: ${r.why}`],explain:`The rule: ${r.why} So ${q} becomes <b>${ans}</b>.`});
+}
+
+/* ===== 19. Odd One Out ===== */
+const isPrime=n=>{if(n<2)return false;for(let k=2;k*k<=n;k++)if(n%k===0)return false;return true;};
+const OOO=[{id:'even',t:'even',f:n=>n%2===0},{id:'odd',t:'odd',f:n=>n%2===1},{id:'m3',t:'multiples of 3',f:n=>n%3===0},{id:'m4',t:'multiples of 4',f:n=>n%4===0},{id:'m5',t:'multiples of 5',f:n=>n%5===0},{id:'m6',t:'multiples of 6',f:n=>n%6===0},{id:'m7',t:'multiples of 7',f:n=>n%7===0},{id:'m9',t:'multiples of 9',f:n=>n%9===0},{id:'m10',t:'multiples of 10',f:n=>n%10===0},{id:'m11',t:'multiples of 11',f:n=>n%11===0},{id:'prime',t:'prime numbers (they divide evenly only by 1 and themselves)',f:isPrime},{id:'sq',t:'square numbers (a number times itself)',f:n=>Number.isInteger(Math.sqrt(n))},{id:'two',t:'two-digit numbers',f:n=>n>=10}];
+const OOO_BY={easy:['even','odd','m5','m10'],medium:['m3','m4','sq','m11'],hard:['prime','m7','sq','m9','m6']};
+function genOdd(diff){
+ for(let t=0;t<3000;t++){
+  const rid=pick(OOO_BY[diff]),rule=OOO.find(r=>r.id===rid),pool=range(98).map(x=>x+2);
+  const yes=shuffle(pool.filter(rule.f)),no=shuffle(pool.filter(n=>!rule.f(n)));
+  const odd=no[0],nums=shuffle([...yes.slice(0,5),odd]);
+  if(OOO.some(r=>{const ins=nums.filter(r.f),outs=nums.filter(n=>!r.f(n));return (outs.length===1&&outs[0]!==odd)||(ins.length===1&&ins[0]!==odd);}))continue;
+  return mcPuzzle({prompt:'Which number doesn\'t belong with the others?',opts:nums.map(n=>`<b style="font-size:24px">${n}</b>`),ansIdx:nums.indexOf(odd),
+   hint0:'What do most of these numbers have in common? Even or odd? Multiples of something? Special numbers?',
+   explain:`<b>${odd}</b> is the odd one out. The others are all ${rule.t}, and ${odd} isn't.`,answer:`<b>${odd}</b>. The others are ${rule.t}.`});
+ }
+ return null;
+}
+
+/* ===== 20. Mazes ===== */
+function genMaze(diff){
+ const n={easy:7,medium:10,hard:13}[diff],D={N:[-1,0,'S'],S:[1,0,'N'],E:[0,1,'W'],W:[0,-1,'E']};
+ const walls=range(n*n).map(()=>({N:1,S:1,E:1,W:1})),seen=Array(n*n).fill(false),stack=[0];seen[0]=true;
+ while(stack.length){const cur=stack[stack.length-1],r=cur/n|0,c=cur%n;
+  const nb=Object.entries(D).filter(([,[dr,dc]])=>{const rr=r+dr,cc=c+dc;return rr>=0&&cc>=0&&rr<n&&cc<n&&!seen[rr*n+cc];});
+  if(!nb.length){stack.pop();continue;}const [d,[dr,dc,op]]=pick(nb),nx=(r+dr)*n+c+dc;walls[cur][d]=0;walls[nx][op]=0;seen[nx]=true;stack.push(nx);}
+ const goal=n*n-1;
+ const pathFrom=s=>{const prev={[s]:-1},q=[s];while(q.length){const x=q.shift();if(x===goal)break;const r=x/n|0,c=x%n;for(const [d,[dr,dc]] of Object.entries(D)){if(walls[x][d])continue;const y=(r+dr)*n+c+dc;if(!(y in prev)){prev[y]=x;q.push(y);}}}const p=[goal];while(p[0]!==s)p.unshift(prev[p[0]]);return p;};
+ const S_=Math.floor(300/n),pt=x=>`${(x%n)*S_+S_/2},${(x/n|0)*S_+S_/2}`;
+ const svg=(trail,show,pos)=>{let s=`<svg viewBox="-3 -3 ${n*S_+6} ${n*S_+6}" width="${n*S_+6}" style="max-width:100%;display:block;margin:12px auto">`;
+  s+=`<rect x="${(n-1)*S_+2}" y="${(n-1)*S_+2}" width="${S_-4}" height="${S_-4}" fill="#b7e2c8"/>`;
+  if(show.length>1)s+=`<polyline points="${show.map(pt).join(' ')}" fill="none" stroke="#c99a2e" stroke-width="${Math.max(3,S_/4)}" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>`;
+  if(trail.length>1)s+=`<polyline points="${trail.map(pt).join(' ')}" fill="none" stroke="#93a8d6" stroke-width="${Math.max(2,S_/6)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  s+='<g stroke="#1f2a44" stroke-width="2.5" stroke-linecap="round">';
+  for(let i=0;i<n*n;i++){const r=i/n|0,c=i%n,x=c*S_,y=r*S_,w=walls[i];
+   if(w.N&&i!==0)s+=`<line x1="${x}" y1="${y}" x2="${x+S_}" y2="${y}"/>`;if(w.W)s+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+S_}"/>`;
+   if(r===n-1&&w.S&&i!==goal)s+=`<line x1="${x}" y1="${y+S_}" x2="${x+S_}" y2="${y+S_}"/>`;if(c===n-1&&w.E)s+=`<line x1="${x+S_}" y1="${y}" x2="${x+S_}" y2="${y+S_}"/>`;}
+  s+='</g>';if(pos!=null)s+=`<circle cx="${(pos%n)*S_+S_/2}" cy="${(pos/n|0)*S_+S_/2}" r="${S_/3}" fill="#dc2626"/>`;return s+'</svg>';};
+ let pos=0,trail=[0],show=[],area;
+ const draw=()=>{area.innerHTML=svg(trail,show,pos);};
+ const move=d=>{if(S.done||walls[pos][d])return;const [dr,dc]=D[d];pos=((pos/n|0)+dr)*n+pos%n+dc;if(trail.length>1&&trail[trail.length-2]===pos)trail.pop();else trail.push(pos);draw();if(pos===goal)autoWin();};
+ const keyMap={ArrowUp:'N',ArrowDown:'S',ArrowLeft:'W',ArrowRight:'E'};
+ return{prompt:'Guide the <b style="color:#dc2626">red dot</b> from the top-left corner to the <b style="color:#1f8a4c">green square</b> at the bottom right. Use the arrow buttons (or your keyboard\'s arrow keys).',
+  build(box){area=h('div');box.append(area);const pad=h('div',{class:'dpad'});
+   [['','',''],['▲','N'],['',''],['◀','W'],['',''],['▶','E'],['',''],['▼','S'],['','']].forEach(([lab,d])=>{if(!d){pad.append(h('span'));return;}const b=h('button',{class:'btn','aria-label':d},lab);b.onclick=()=>move(d);pad.append(b);});
+   box.append(pad);draw();},
+  onKey(e){const d=keyMap[e.key];if(d){e.preventDefault();move(d);}},
+  check(){return pos===goal?{ok:true}:{ok:false,msg:'Keep going. Get the red dot to the green square.'};},
+  hint(i){show=pathFrom(pos).slice(0,1+[6,10,16][i]);draw();return i===0?'The gold line shows your next few steps. Tip: in mazes like this, keeping one hand on the same wall always gets you out eventually.':'The gold line shows a few more steps.';},
+  reveal(){show=pathFrom(0);pos=goal;draw();},
+  answer:svg([],pathFrom(0),null),
+  explain:'The gold line shows the one true path through. Tip: when you hit a dead end, back up only to the last fork you haven\'t fully explored. And "one hand on the wall" works in any maze where all the walls connect, like this one.',
+  printable:true};
+}
+
+/* ===== 21. Matchstick Math ===== */
+const SEG={0:'abcdef',1:'bc',2:'abdeg',3:'abcdg',4:'bcfg',5:'acdfg',6:'acdefg',7:'abc',8:'abcdefg',9:'abcdfg'},SEG2D={};for(const d in SEG)SEG2D[SEG[d]]=+d;
+const segKey=s=>[...s].sort().join('');
+const tokStr=t=>{if(t.k==='=')return '=';if(t.k==='o'){const k=segKey(t.s);return k==='h'?'-':k==='hv'?'+':null;}const d=SEG2D[segKey(t.s)];return d===undefined?null:String(d);};
+const eqStr=toks=>{let s='';for(const t of toks){const c=tokStr(t);if(c===null)return null;s+=c;}return s;};
+const fmtOK=s=>{const m=s.match(/^(\d+)([+-])(\d+)=(\d+)$/);return !!m&&[m[1],m[3],m[4]].every(x=>x.length===1||x[0]!=='0');};
+const eqTrue=s=>{if(!fmtOK(s))return false;const m=s.match(/^(\d+)([+-])(\d+)=(\d+)$/);return (m[2]==='+'?+m[1]+ +m[3]:+m[1]-+m[3])===+m[4];};
+const makeToks=s=>s.split('').map(ch=>ch==='='?{k:'='}:ch==='+'?{k:'o',s:new Set('hv')}:ch==='-'?{k:'o',s:new Set('h')}:{k:'d',s:new Set(SEG[ch])});
+function oneMoves(toks){const out=new Map();
+ toks.forEach((t,i)=>{if(t.k==='=')return;[...t.s].forEach(m=>{toks.forEach((u,j)=>{if(u.k==='=')return;
+  for(const nn of (u.k==='d'?'abcdefg':'hv')){if(i===j&&nn===m)continue;const base=i===j?new Set([...t.s].filter(x=>x!==m)):u.s;if(base.has(nn))continue;
+   const nt=toks.map(x=>x.k==='='?x:{k:x.k,s:new Set(x.s)});nt[i].s.delete(m);nt[j].s.add(nn);const s=eqStr(nt);if(s&&fmtOK(s)&&!out.has(s))out.set(s,{from:i,to:j});}});});});
+ return out;}
+function matchSVG(eq){const toks=makeToks(eq);let x=0,parts='';const H=76,on='#d9a35b',off='#efe9df';
+ const stick=(x1,y1,x2,y2,act)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${act?on:off}" stroke-width="6" stroke-linecap="round"/>`+(act?`<circle cx="${x1}" cy="${y1}" r="4.2" fill="#c0392b"/>`:'');
+ toks.forEach(t=>{if(t.k==='d'){const S=t.s,a=x;parts+=stick(a+10,8,a+34,8,S.has('a'))+stick(a+38,12,a+38,34,S.has('b'))+stick(a+38,42,a+38,64,S.has('c'))+stick(a+10,68,a+34,68,S.has('d'))+stick(a+6,42,a+6,64,S.has('e'))+stick(a+6,12,a+6,34,S.has('f'))+stick(a+10,38,a+34,38,S.has('g'));x+=50;}
+  else if(t.k==='o'){parts+=stick(x+6,38,x+30,38,true)+(t.s.has('v')?stick(x+18,26,x+18,50,true):'');x+=40;}
+  else{parts+=stick(x+6,30,x+30,30,true)+stick(x+6,46,x+30,46,true);x+=40;}});
+ return `<svg viewBox="0 0 ${x} ${H}" width="${Math.min(x*1.1,340)}" style="max-width:100%">${parts}</svg>`;}
+function genMatch(diff){
+ const max=diff==='hard'?19:9;
+ for(let t=0;t<800;t++){
+  const op=pick(['+','-']),a=R(max+1),b=R(max+1),c=op==='+'?a+b:a-b;if(c<0||c>max)continue;
+  const E=`${a}${op}${b}=${c}`;if(diff==='hard'&&!/\d\d/.test(E))continue;
+  const fs=[...oneMoves(makeToks(E)).entries()].filter(([s])=>!eqTrue(s));if(!fs.length)continue;
+  const [F,mv]=pick(fs),answers=[...oneMoves(makeToks(F)).keys()].filter(eqTrue);if(!answers.includes(E))continue;
+  if(diff==='easy'&&answers.length>2)continue;
+  const desc=k=>`the ${F[k]==='+'?'plus sign':F[k]==='-'?'minus sign':F[k]} (symbol ${k+1} from the left)`;
+  let inp,msEl;const norm=v=>v.replace(/\s/g,'').replace(/[−–—]/g,'-');
+  const others=answers.filter(x=>x!==E);
+  return{prompt:'This equation is wrong. <b>Move exactly one match</b> to make it true, then type the fixed equation.',
+   build(box){msEl=h('div',{class:'ms',html:matchSVG(F)});box.append(msEl);inp=h('input',{class:'ans',placeholder:'Like 3+5=8',autocomplete:'off'});box.append(inp);},
+   check(){const v=norm(inp.value);if(!v)return{ok:false,msg:'Type the fixed equation first, like 3+5=8.'};if(answers.includes(v))return{ok:true};
+    if(eqTrue(v))return{ok:false,msg:'That equation is true, but it takes more than one match move to get there.'};return{ok:false,msg:'That equation isn\'t true (or isn\'t written like 3+5=8).'};},
+   hint(i){return ['Look for a symbol that turns into another one by adding or removing a single match: 9 and 8, 6 and 5, 3 and 9, + and −.',`Take a match from ${desc(mv.to)}.`,`Put it on ${desc(mv.from)}.`][i];},
+   reveal(){inp.value=E;inp.disabled=true;msEl.innerHTML=matchSVG(E);},
+   answer:`<b>${E}</b>`,
+   explain:`Move one match and <b>${F}</b> becomes <b>${E}</b>.`+(others.length?` Other one-move fixes also count: ${others.join(', ')}.`:''),
+   printable:true};
+ }
+ return null;
+}
+
+/* ===== 22. River Crossing ===== */
+const RIVER=[{kn:'farmer',ke:'🧑‍🌾',items:[['🦊','fox'],['🐔','hen'],['🌾','grain'],['🐕','dog'],['🐈','cat']]},{kn:'farmer',ke:'🧑‍🌾',items:[['🐺','wolf'],['🐐','goat'],['🥬','cabbage'],['🐕','dog'],['🐇','rabbit']]},{kn:'pet sitter',ke:'🧑',items:[['🐱','cat'],['🐭','mouse'],['🧀','cheese'],['🐶','dog'],['🐿️','squirrel']]}];
+function genRiver(diff){
+ const allPairs=[[0,1],[1,2],[3,0],[3,4]];
+ for(let t=0;t<300;t++){
+  const th=pick(RIVER);let n,cap,pairs;
+  if(diff==='easy'){n=3;cap=1;pairs=[[0,1],[1,2]];}else if(diff==='medium'){n=4;cap=1;pairs=[[0,1],pick([[1,2],[3,0]])];}else{n=5;cap=2;pairs=allPairs;}
+  const full=(1<<n)-1,nm=i=>th.items[i][1];
+  const badPair=(far,farm)=>pairs.find(([a,b])=>{const sa=(far>>a)&1,sb=(far>>b)&1;return sa===sb&&sa!==farm;});
+  const solve=(f0,m0)=>{const key=(f,m)=>f*2+m,prev={[key(f0,m0)]:null},q=[[f0,m0]];
+   while(q.length){const [f,m]=q.shift();if(f===full&&m===1){const path=[];let k=key(f,m);while(prev[k]){path.unshift(prev[k].mv);k=prev[k].from;}return path;}
+    const here=range(n).filter(i=>((f>>i)&1)===m),loads=[[],...here.map(i=>[i])];if(cap>=2)for(let x=0;x<here.length;x++)for(let y=x+1;y<here.length;y++)loads.push([here[x],here[y]]);
+    for(const L of loads){let nf=f;L.forEach(i=>nf^=1<<i);const nm2=1-m;if(badPair(nf,nm2))continue;const k=key(nf,nm2);if(k in prev)continue;prev[k]={from:key(f,m),mv:L};q.push([nf,nm2]);}}return null;};
+  const sol=solve(0,0);if(!sol||sol.length<5)continue;
+  let far=0,farm=0,sel=new Set(),cross=0,area,crossBtn;
+  const names=L=>listJoin(L.map(i=>nm(i)));
+  const stepTxt=(L,k)=>L.length?`Take the ${names(L)} ${k%2?'back':'across'}.`:`Go ${k%2?'back':'across'} alone.`;
+  const render=()=>{area.innerHTML='';const bank=side=>{const b=h('div',{class:'bank'},h('h5',{},side?'Far side':'Near side'));
+    if(farm===side)b.append(h('span',{style:'font-size:30px'},th.ke));
+    range(n).filter(i=>((far>>i)&1)===side&&!sel.has(i)).forEach(i=>{const it=h('button',{class:'itm','aria-label':nm(i)},th.items[i][0]);if(farm===side)it.onclick=()=>{if(sel.size<cap){sel.add(i);render();}};else it.disabled=true;b.append(it);});return b;};
+   const boat=h('div',{class:'water'},h('div',{style:'font-size:12px;color:#1e3a8a'},'boat'),h('div',{},'⛵'),[...sel].map(i=>{const it=h('button',{class:'itm sel'},th.items[i][0]);it.onclick=()=>{sel.delete(i);render();};return it;}));
+   area.append(h('div',{class:'banks'},bank(0),boat,bank(1)),h('div',{style:'text-align:center;color:#555;font-size:14px'},`Crossings: ${cross} · Best possible: ${sol.length}`));};
+  const doCross=()=>{if(S.done)return;sel.forEach(i=>far^=1<<i);farm=1-farm;cross++;sel.clear();const bp=badPair(far,farm);
+   if(bp){setFb('bad',`Oh no! The ${nm(bp[0])} and the ${nm(bp[1])} were left alone together. Starting over.`);far=0;farm=0;cross=0;render();return;}
+   render();if(far===full&&farm===1)autoWin();};
+  return{prompt:`Get everyone to the far side. The boat holds the ${th.kn} plus ${cap===1?'<b>one</b> passenger':'<b>up to two</b> passengers'}, and only the ${th.kn} can row. ${pairs.map(([a,b])=>`Never leave the <b>${nm(a)}</b> alone with the <b>${nm(b)}</b>.`).join(' ')} Tap to load the boat, then cross.`,
+   build(box){area=h('div');crossBtn=h('button',{class:'btn primary',style:'display:block;margin:8px auto'},'Cross the river ⛵');crossBtn.onclick=doCross;box.append(area,crossBtn);render();},
+   check(){return far===full&&farm===1?{ok:true}:{ok:false,msg:'Not yet. Everyone needs to reach the far side.'};},
+   hint(i){const p=solve(far,farm);if(!p||!p.length)return 'Start over from the beginning and try a new plan.';const L=p[0];return (i===0?'Sometimes you have to bring someone back across. ':'')+'Next move: '+(L.length?`take the ${names(L)} ${farm?'back':'across'}.`:`go ${farm?'back':'across'} alone.`);},
+   reveal(){far=full;farm=1;sel.clear();render();crossBtn.disabled=true;},
+   answer:'',explain:`One shortest solution (${sol.length} crossings):<ol>${sol.map((L,k)=>`<li>${stepTxt(L,k)}</li>`).join('')}</ol>The key move is realizing you can bring a passenger <i>back</i> to keep the dangerous pairs apart.`,
+   printable:false};
+ }
+ return null;
+}
+
+/* ===== 23. Tower Puzzle ===== */
+function genTower(diff){
+ const n={easy:3,medium:4,hard:5}[diff],min=2**n-1,colors=['#dc2626','#f97316','#eab308','#16a34a','#2563eb'];
+ let pegs=[range(n).map(i=>n-i),[],[]],held=null,moves=0,area;
+ const posOf=()=>{const p={};pegs.forEach((pg,pi)=>pg.forEach(d=>p[d]=pi));return p;};
+ const next=(pos,d,target)=>{for(let k=d;k>=1;k--){if(pos[k]!==target){const other=3-pos[k]-target;return next(pos,k-1,other)||[pos[k],target];}}return null;};
+ const render=()=>{area.innerHTML='';const g=h('div',{class:'towers'});
+  pegs.forEach((pg,pi)=>{const p=h('div',{class:'tpeg'+(held===pi?' held':'')},h('div',{class:'plab'},'ABC'[pi]));pg.forEach((d,k)=>{const dk=h('div',{class:'disk'+(held===pi&&k===pg.length-1?' up':'')});dk.style.width=(30+d*(60/n))+'%';dk.style.background=colors[d-1];p.append(dk);});p.onclick=()=>tap(pi);g.append(p);});
+  area.append(g,h('div',{style:'text-align:center;color:#555;font-size:14px'},`Moves: ${moves} · Fewest possible: ${min}`));};
+ const tap=pi=>{if(S.done)return;if(held===null){if(pegs[pi].length){held=pi;render();}return;}
+  if(held===pi){held=null;render();return;}const d=pegs[held][pegs[held].length-1],top=pegs[pi][pegs[pi].length-1];
+  if(top!==undefined&&top<d){setFb('bad','A bigger disk can\'t go on a smaller one.');held=null;render();return;}
+  pegs[pi].push(pegs[held].pop());held=null;moves++;$('#fb').className='fb';render();if(pegs[2].length===n)autoWin();};
+ return{prompt:`Move the whole stack from peg <b>A</b> to peg <b>C</b>. Move one disk at a time, and never put a bigger disk on a smaller one. Tap a peg to pick up its top disk, then tap where to drop it.`,
+  build(box){area=h('div');box.append(area);render();},
+  check(){return pegs[2].length===n?{ok:true}:{ok:false,msg:'Not yet. The whole stack needs to end up on peg C.'};},
+  hint(i){const m=next(posOf(),n,2);if(!m)return 'Already solved!';return (i===0?'The smallest disk moves every other turn. ':'')+`Next move: peg ${'ABC'[m[0]]} to peg ${'ABC'[m[1]]}.`;},
+  reveal(){pegs=[[],[],range(n).map(i=>n-i)];held=null;render();},
+  answer:'',explain:`With ${n} disks, the fewest possible moves is ${min} (that's 2 multiplied by itself ${n} times, minus 1). The pattern: to move a stack, first move everything above the bottom disk out of the way, move the bottom disk, then rebuild the smaller stack on top. Same trick, over and over.`,
+  printable:false};
+}
+
+/* ===== 24. Rebus ===== */
+const ov=(a,b)=>`<div class="ov"><span>${a}</span><span>${b}</span></div>`;
+const REBUS=[
+ [ov('MIND','MATTER'),'Mind over matter','MIND sits over MATTER.'],
+ [ov('STAND','I'),'I understand','I sits under STAND.'],
+ ['<div class="ln"></div>READING<div class="ln"></div>','Reading between the lines','READING sits between two lines.'],
+ [ov('HEAD','HEELS'),'Head over heels','HEAD sits over HEELS.'],
+ ['ECNALG','A backward glance','GLANCE is written backward.'],
+ [ov('MAN','BOARD'),'Man overboard','MAN sits over BOARD.'],
+ [ov('GROUND','<small style="font-size:15px">FEET FEET FEET<br>FEET FEET FEET</small>'),'Six feet underground','Six FEETs sit under GROUND.'],
+ ['CYCLE CYCLE CYCLE','Tricycle','Three ("tri") CYCLEs.'],
+ [ov('WEAR','LONG'),'Long underwear','LONG sits under WEAR.'],
+ ['SYMPHON','Unfinished symphony','SYMPHONY is missing its last letter.'],
+ ['HISTORY<br>HISTORY','History repeats itself','HISTORY appears twice.'],
+ ['BAN&nbsp;&nbsp;&nbsp;&nbsp;ANA','Banana split','BANANA is split in two.'],
+ [ov('ONE','ONE'),'One on one','ONE sits on ONE.'],
+ ['LE&nbsp;&nbsp;&nbsp;&nbsp;VEL','Split level','LEVEL is split in two.'],
+ ['DICE DICE','Paradise','A pair of DICE sounds like "paradise."'],
+ ['<span style="font-size:13px;letter-spacing:0">world</span>','Small world','The word "world" is written small.'],
+ ['COF&nbsp;&nbsp;&nbsp;&nbsp;FEE','Coffee break','COFFEE has a break in it.'],
+ ['SIDE SIDE','Side by side','SIDE sits by SIDE.'],
+ ['YOU JUST ME','Just between you and me','JUST sits between YOU and ME.'],
+ ['GET IT GET IT<br>GET IT GET IT','Forget it','Four GET ITs sounds like "for get it."'],
+ ['<div style="line-height:1.05">T<br>O<br>U<br>C<br>H</div>','Touchdown','TOUCH is written going down.'],
+ [ov('TRAVEL','CCCCCCC'),'Travel overseas','TRAVEL sits over the Cs ("seas").']];
+function genRebus(diff){
+ const k=R(REBUS.length),[html,ans,why]=REBUS[k],n=diff==='easy'?3:diff==='medium'?4:5;
+ const opts=shuffle([ans,...shuffle(REBUS.filter((_,i)=>i!==k).map(x=>x[1])).slice(0,n-1)]);
+ return mcPuzzle({prompt:'What common phrase or word does this picture puzzle show?',top:`<div class="rb">${html}</div>`,opts:opts.map(o=>`<b>${o}</b>`),ansIdx:opts.indexOf(ans),text:true,
+  hint0:'Pay attention to <i>where</i> the words sit (over, under, between), how big they are, and how many times they appear.',explain:`<b>${ans}.</b> ${why}`,answer:`<b>${ans}</b>`});
+}
+
+const GEN={who:genWho,master:genMaster,nono:genNono,balance:genBalance,prob:genProb,rule:genRule,odd:genOdd,maze:genMaze,match:genMatch,river:genRiver,tower:genTower,rebus:genRebus,logic:genLogic,truth:genTruth,sudoku:genSudoku,math:genMath,seq:genSeq,matrix:genMatrix,code:genCode,shape:genShape,memory:genMemory,ladder:genLadder,anagram:genAnagram,flaw:genFlaw};
+
+/* ---------- app ---------- */
+const S={sel:new Set(),diff:'medium',theme:'everyday',score:0,solved:0,stats:{},last:null,cur:null,type:null,hints:0,done:false};
+function renderMenu(){
+ const tw=$('#types');tw.innerHTML='';
+ [...new Set(TYPES.map(t=>t.skill))].forEach(sk=>{tw.append(h('h3',{class:'grp'},sk));const g=h('div',{class:'types'});
+  TYPES.filter(t=>t.skill===sk).forEach(t=>{const b=h('button',{class:'type'+(S.sel.has(t.id)?' on':'')},h('span',{class:'ck'},'✓'),h('b',{},t.name),h('small',{},t.desc));
+   b.onclick=()=>{S.sel.has(t.id)?S.sel.delete(t.id):S.sel.add(t.id);b.classList.toggle('on');$('#note').textContent='';};g.append(b);});tw.append(g);});
+ const dw=$('#diffs');dw.innerHTML='';
+ DIFFS.forEach(([id,lab])=>{const b=h('button',{class:'btn'+(S.diff===id?' on':'')},lab);b.onclick=()=>{S.diff=id;renderMenu();};dw.append(b);});
+ const ts=$('#theme');if(!ts.options.length){Object.entries(THEMES).forEach(([k,v])=>ts.append(h('option',{value:k},v.label)));ts.onchange=()=>S.theme=ts.value;}
+ const ss=$('#session');ss.innerHTML='';
+ if(Object.keys(S.stats).length){
+  ss.append(h('h2',{},'Your session'),h('p',{class:'sub'},`${S.score} points · ${S.solved} solved`));
+  const g=h('div',{class:'stats'});Object.entries(S.stats).forEach(([k,v])=>g.append(h('div',{class:'stat',html:`<b>${k}</b><br>${v.solved} of ${v.tried} solved`})));ss.append(g);}
+}
+function show(id){$('#menu').hidden=id!=='menu';$('#play').hidden=id!=='play';window.scrollTo(0,0);}
+function setFb(cls,html){const f=$('#fb');f.className='fb '+cls;f.innerHTML=html;}
+function finish(){S.done=true;['#check','#hint','#reveal'].forEach(s=>$(s).disabled=true);const e=$('#explain');e.innerHTML='<h4>Why it works</h4>'+S.cur.explain;e.style.display='block';}
+function stat(solved){const sk=S.type.skill;S.stats[sk]=S.stats[sk]||{solved:0,tried:0};S.stats[sk].tried++;if(solved)S.stats[sk].solved++;}
+function nextPuzzle(){
+ const ids=[...S.sel];let id=pick(ids);if(ids.length>1)while(id===S.last)id=pick(ids);S.last=id;
+ S.type=TYPES.find(t=>t.id===id);S.curDiff=S.diff==='mixed'?pick(['easy','medium','hard']):S.diff;
+ $('#ptype').textContent=S.type.name;$('#pdiff').textContent=cap(S.curDiff);
+ $('#prompt').innerHTML='Building your puzzle…';$('#pbox').innerHTML='';$('#fb').className='fb';$('#explain').style.display='none';
+ ['#check','#hint','#reveal','#print','#next'].forEach(s=>$(s).disabled=true);
+ setTimeout(()=>{
+  let p=null;for(let k=0;k<3&&!p;k++){try{p=GEN[id](S.curDiff,S.theme);}catch(e){console.error(e);}}
+  if(!p){$('#prompt').textContent='That one didn\'t come out right. Tap Next for a fresh puzzle.';$('#next').disabled=false;return;}
+  S.cur=p;S.hints=0;S.done=false;
+  $('#prompt').innerHTML=p.prompt;p.build($('#pbox'));
+  ['#check','#hint','#reveal','#next'].forEach(s=>$(s).disabled=false);$('#print').disabled=!p.printable;
+  $('#hint').textContent='Hint (3 left)';$('#check').textContent=p.checkLabel||'Check';
+ },30);
+}
+$('#surprise').onclick=()=>{TYPES.forEach(t=>S.sel.add(t.id));S.diff='mixed';renderMenu();show('play');nextPuzzle();};
+$('#all').onclick=()=>{TYPES.forEach(t=>S.sel.add(t.id));renderMenu();};
+$('#none').onclick=()=>{S.sel.clear();renderMenu();};
+$('#start').onclick=()=>{if(!S.sel.size){$('#note').textContent='Pick at least one puzzle type above.';return;}show('play');nextPuzzle();};
+$('#back').onclick=()=>{renderMenu();show('menu');};
+$('#next').onclick=()=>{if(S.cur&&!S.done)stat(false);nextPuzzle();window.scrollTo(0,0);};
+$('#check').onclick=()=>{if(S.done)return;const r=S.cur.check();
+ if(r.ok){const pts=Math.max(1,Math.round(BASE[S.curDiff]*(1-.25*S.hints)));S.score+=pts;S.solved++;stat(true);
+  $('#score').textContent=S.score;$('#solvedN').textContent=S.solved;setFb('ok',`<b>Solved!</b> +${pts} points${S.hints?` (${S.hints} hint${S.hints>1?'s':''} used)`:''}.`);finish();}
+ else setFb('bad',r.msg);};
+$('#hint').onclick=()=>{if(S.done||S.hints>=3)return;const m=S.cur.hint(S.hints);S.hints++;setFb('info',`<b>Hint ${S.hints}:</b> ${m}`);
+ const left=3-S.hints;$('#hint').textContent=left?`Hint (${left} left)`:'No hints left';if(!left)$('#hint').disabled=true;};
+$('#reveal').onclick=()=>{if(S.done)return;S.cur.reveal();stat(false);setFb('info','Here\'s the answer. No points this time, but now you know the trick.');finish();};
+$('#print').onclick=()=>{const p=S.cur;if(!p)return;
+ $('#printBody').innerHTML=`<h2 style="margin-top:0">The Puzzle Parlor: ${S.type.name} (${cap(S.curDiff)})</h2><div class="prompt">${p.prompt}</div>${$('#pbox').innerHTML}<div class="pa"><h3>Answer</h3>${p.answer}</div>`;
+ $('#printBody').querySelectorAll('input,select,button').forEach(e=>{e.disabled=false;e.classList.remove('sel','right','gone','on','hinted');if(e.tagName==='INPUT'&&!e.closest('.given'))e.value='';});
+ $('#printView').style.display='block';};
+$('#doPrint').onclick=()=>{try{window.print();}catch(e){}};
+$('#closePrint').onclick=()=>{$('#printView').style.display='none';};
+window.addEventListener('keydown',e=>{if(!$('#play').hidden&&S.cur&&S.cur.onKey&&!S.done)S.cur.onKey(e);});
+renderMenu();
+</script>
+</body>
+</html>
