@@ -1181,7 +1181,7 @@ function loadImg(src){return new Promise((ok,bad)=>{const i=new Image();if(/^htt
 /* ---------- state ---------- */
 let J=null,IMG=null,pick={cat:'landscapes',pic:'landscapes:0',photo:null,n:120};
 const saveLoad=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}};
-let saveT=0;function save(){if(!J)return;clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify({pic:J.pic,photo:J.photo,n:J.n,cols:J.cols,rows:J.rows,seed:J.seed,elapsed:J.elapsed+(Date.now()-J.t0),pos:J.pieces.map(p=>[+p.x.toFixed(3),+p.y.toFixed(3),p.placed?1:0])}));}catch(e){}},250);}
+let saveT=0;function save(){if(!J)return;clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify({pic:J.pic,photo:J.photo,n:J.n,cols:J.cols,rows:J.rows,seed:J.seed,elapsed:J.elapsed+(Date.now()-J.t0),hints:J.hints||0,pos:J.pieces.map(p=>[+p.x.toFixed(3),+p.y.toFixed(3),p.placed?1:0])}));}catch(e){}},250);}
 function clearSave(){try{localStorage.removeItem(KEY);}catch(e){}}
 
 /* ---------- UI ---------- */
@@ -1200,7 +1200,7 @@ function ensureUI(){
  <p class="sub" style="margin-top:8px">120 pieces: a relaxed puzzle. 240 pieces: a bigger challenge, best on a computer.</p>
  <button class="btn gold start" id="jGo">Start the jigsaw →</button>
  <p class="sub">Landscape and landmark photos are public domain, from Wikimedia Commons. Photos you add stay on your device and are never uploaded.</p></div>
- <div id="jPlay" hidden><div class="jtools"><button class="btn" id="jPeek">👁 Peek at picture</button><button class="btn" id="jEdges">🧩 Edge pieces first</button><button class="btn" id="jShuffle">🔀 Spread out pieces</button><button class="btn" id="jPhoto">📷 Use my photo</button><button class="btn" id="jNew">New jigsaw</button></div>
+ <div id="jPlay" hidden><div class="jtools"><button class="btn" id="jHint">💡 Hint</button><button class="btn" id="jPeek">👁 Peek at picture</button><button class="btn" id="jEdges">🧩 Edge pieces first</button><button class="btn" id="jShuffle">🔀 Spread out pieces</button><button class="btn" id="jPhoto">📷 Use my photo</button><button class="btn" id="jNew">New jigsaw</button></div>
  <div id="jwin"><h3>You did it! 🎉</h3><p id="jWinTxt"></p><button class="btn gold" id="jAgain">Start a new jigsaw</button></div>
  <div id="jtable"><div id="jboard"><img id="jghost" alt=""></div></div>
  <p class="sub" id="jCredit" style="margin-top:8px"></p><p class="sub" style="margin-top:4px">Drag a piece close to its spot and it snaps into place. Your progress saves automatically.</p></div>`;
@@ -1210,7 +1210,7 @@ function ensureUI(){
  q('#jNew').onclick=()=>{if(J&&J.pieces.some(p=>p.placed)&&!J.done&&!confirmNew())return;clearSave();J=null;showSetup();};
  q('#jAgain').onclick=()=>{clearSave();J=null;showSetup();};
  const pk=q('#jPeek');const peek=v=>{q('#jghost').style.opacity=v?'.35':'0';};pk.onpointerdown=()=>peek(1);pk.onpointerup=pk.onpointerleave=()=>peek(0);pk.onclick=e=>e.preventDefault();
- q('#jEdges').onclick=edgesFirst;q('#jPhoto').onclick=()=>{if(J&&J.pieces.some(p=>p.placed)&&!J.done&&!confirmBtn(q('#jPhoto'),'📷 Use my photo'))return;pickPhoto(()=>{pick.n=J?J.n:pick.n;clearSave();startNew();});};q('#jShuffle').onclick=()=>{scatter(false);layout();save();};
+ q('#jEdges').onclick=edgesFirst;q('#jHint').onclick=hint;q('#jPhoto').onclick=()=>{if(J&&J.pieces.some(p=>p.placed)&&!J.done&&!confirmBtn(q('#jPhoto'),'📷 Use my photo'))return;pickPhoto(()=>{pick.n=J?J.n:pick.n;clearSave();startNew();});};q('#jShuffle').onclick=()=>{scatter(false);layout();save();};
  window.addEventListener('resize',()=>{if(J&&!q('#jPlay').hidden)build();});
  renderCard();
 }
@@ -1255,7 +1255,7 @@ function piecePath(ctx,o,s,sd){ctx.beginPath();ctx.moveTo(o,o);edge(ctx,o,o,o+s,
 async function startNew(){const [cols,rows]=COUNTS[pick.n];J={pic:pick.photo?null:pick.pic,photo:pick.photo,n:pick.n,cols,rows,seed:Math.floor(Math.random()*1e9)+1,pieces:[],elapsed:0,t0:Date.now(),done:false};
  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)J.pieces.push({c,r,x:0,y:0,placed:false});
  J.edges=makeEdges(cols,rows,J.seed);await prepImage();scatter(true);openRoom();showPlay();build();save();}
-async function resume(sv){J={pic:sv.pic,photo:sv.photo,n:sv.n,cols:sv.cols,rows:sv.rows,seed:sv.seed,elapsed:sv.elapsed||0,t0:Date.now(),done:false,pieces:[]};let i=0;
+async function resume(sv){J={pic:sv.pic,photo:sv.photo,n:sv.n,cols:sv.cols,rows:sv.rows,seed:sv.seed,elapsed:sv.elapsed||0,hints:sv.hints||0,t0:Date.now(),done:false,pieces:[]};let i=0;
  for(let r=0;r<J.rows;r++)for(let c=0;c<J.cols;c++){const p=sv.pos[i++]||[0,0,0];J.pieces.push({c,r,x:p[0],y:p[1],placed:!!p[2]});}
  J.edges=makeEdges(J.cols,J.rows,J.seed);try{await prepImage();}catch(e){clearSave();renderCard();return;}openRoom();showPlay();build();}
 async function prepImage(){let im;const info=J.photo?null:picInfo(J.pic);try{im=await loadImg(J.photo||info.url);}catch(e){if(J.photo)throw e;J.pic=SCENES[Math.floor(Math.random()*SCENES.length)][0];im=await loadImg(sceneURL(J.pic));}
@@ -1283,6 +1283,22 @@ function build(){const tbl=q('#jtable');tbl.querySelectorAll('canvas.jp').forEac
 function layout(){let z=10;J.pieces.forEach(p=>{if(p.placed){p.x=p.c;p.y=p.r;}p.cv.style.transform=`translate(${p.x*S-PAD}px,${p.y*S-PAD}px)`;p.cv.style.zIndex=p.placed?1:(p.z||(z++));p.cv.classList.toggle('placed',p.placed);});}
 function status(){const n=J.pieces.filter(p=>p.placed).length;q('#jStat').textContent=`${n} of ${J.n} pieces placed`;}
 function hit(e){const els=document.elementsFromPoint(e.clientX,e.clientY);for(const c of els){if(!c.classList||!c.classList.contains('jp')||c.classList.contains('placed'))continue;const r=c.getBoundingClientRect(),dpr=c.width/r.width;const a=c.getContext('2d',{willReadFrequently:true}).getImageData(Math.floor((e.clientX-r.left)*dpr),Math.floor((e.clientY-r.top)*dpr),1,1).data[3];if(a>20)return c;}return null;}
+
+function hint(){if(!J||J.done||hinting)return;const loose=J.pieces.filter(p=>!p.placed);if(!loose.length)return;
+ const placedAt=new Set(J.pieces.filter(p=>p.placed).map(p=>p.c+','+p.r));
+ const near=p=>[[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>placedAt.has((p.c+a)+','+(p.r+b)));
+ const edge=p=>p.c===0||p.r===0||p.c===J.cols-1||p.r===J.rows-1;
+ let pool=loose.filter(near);if(!pool.length)pool=loose.filter(edge);if(!pool.length)pool=loose;
+ const p=pool[Math.floor(Math.random()*pool.length)];hinting=true;J.hints=(J.hints||0)+1;
+ p.z=++topZ;p.cv.style.zIndex=p.z;p.cv.classList.add('drag');
+ const tbl=q('#jtable').getBoundingClientRect(),top=tbl.top+p.y*S+window.scrollY-120;window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+ p.cv.animate([{transform:p.cv.style.transform+' scale(1)'},{transform:p.cv.style.transform+' scale(1.25)'},{transform:p.cv.style.transform+' scale(1)'}],{duration:700});
+ setTimeout(()=>{p.cv.style.transition='transform 1.1s cubic-bezier(.4,.1,.2,1)';p.x=p.c;p.y=p.r;p.cv.style.transform=`translate(${p.x*S-PAD}px,${p.y*S-PAD}px)`;
+  setTimeout(()=>{p.cv.style.transition='';p.cv.classList.remove('drag');p.placed=true;layout();status();hinting=false;
+   if(J.pieces.every(x=>x.placed))finish();else save();},1150);},750);}
+let hinting=false;
+function finish(){J.done=true;const secs=Math.round((J.elapsed+(Date.now()-J.t0))/1000),m=Math.floor(secs/60);
+ q('#jWinTxt').textContent=`All ${J.n} pieces in place${m?` in ${m} minute${m>1?'s':''}`:''}${J.hints?` with ${J.hints} hint${J.hints>1?'s':''}`:''}. Nice work!`;q('#jwin').style.display='block';q('#jwin').scrollIntoView({behavior:'smooth',block:'center'});clearSave();}
 let drag=null,topZ=1000;
 document.addEventListener('pointerdown',e=>{if(!J||!q('#jtable')||!q('#jtable').contains(e.target))return;const c=hit(e);if(!c)return;const p=J.pieces.find(x=>x.cv===c);if(!p||p.placed)return;e.preventDefault();
  const tr=q('#jtable').getBoundingClientRect();drag={p,ox:(e.clientX-tr.left)/S-p.x,oy:(e.clientY-tr.top)/S-p.y,id:e.pointerId};p.z=++topZ;c.style.zIndex=p.z;c.classList.add('drag');});
@@ -1290,7 +1306,7 @@ document.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)retu
  p.x=Math.max(-.3,Math.min(J.cols-.7,(e.clientX-tr.left)/S-drag.ox));p.y=Math.max(-.3,Math.min(J.rows+trayRows()-.6,(e.clientY-tr.top)/S-drag.oy));p.cv.style.transform=`translate(${p.x*S-PAD}px,${p.y*S-PAD}px)`;},{passive:false});
 function drop(e){if(!drag||e.pointerId!==drag.id)return;const p=drag.p;p.cv.classList.remove('drag');drag=null;
  if(Math.abs(p.x-p.c)<.28&&Math.abs(p.y-p.r)<.28){p.placed=true;p.x=p.c;p.y=p.r;layout();status();
-  if(J.pieces.every(x=>x.placed)){J.done=true;const secs=Math.round((J.elapsed+(Date.now()-J.t0))/1000),m=Math.floor(secs/60);q('#jWinTxt').textContent=`All ${J.n} pieces in place${m?` in ${m} minute${m>1?'s':''}`:''}. Nice work!`;q('#jwin').style.display='block';clearSave();return;}}
+  if(J.pieces.every(x=>x.placed)){finish();return;}}
  save();}
 document.addEventListener('pointerup',drop);document.addEventListener('pointercancel',drop);
 window.addEventListener('pagehide',save);
