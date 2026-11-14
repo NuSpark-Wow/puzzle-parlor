@@ -1086,6 +1086,7 @@ renderMenu();
 #jig .jpic span{display:block;padding:6px 9px;font-size:13px;font-weight:700}
 #jig .jupload{display:flex;align-items:center;justify-content:center;flex-direction:column;aspect-ratio:4/3;background:#f3efe4;color:var(--navy);font-weight:700;font-size:14px;gap:4px}
 #jig .jupload b{font-size:30px}
+#jig .jtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}#jig .jtabs .btn.on,#jig .jcounts .btn.on{background:var(--navy);color:#fff}#jig .jprev{position:relative;border-radius:14px;overflow:hidden;background:#222;box-shadow:0 4px 14px rgba(0,0,0,.18)}#jig .jprev img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}#jig .jcap{position:absolute;left:0;right:0;bottom:0;padding:10px 14px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff}#jig .jcap b{display:block;font-size:17px}#jig .jcap small{font-size:11.5px;opacity:.9}#jig .jprevbtns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}#jig .jthumbs{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px}#jig .jth{flex:none;width:92px;padding:0;border:3px solid transparent;border-radius:8px;overflow:hidden;background:#ddd;cursor:pointer}#jig .jth.on{border-color:var(--gold)}#jig .jth img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 #jig .jcounts{display:flex;gap:10px;flex-wrap:wrap}
 #jig .jcounts .btn.on{background:var(--navy);color:#fff}
 #jig .jtip{background:#fff8e6;border:1px solid #f3dca0;border-left:5px solid var(--gold);border-radius:9px;padding:9px 13px;font-size:14px;margin:12px 0}
@@ -1172,11 +1173,13 @@ function sceneFruit(r){let s=`<rect width="1600" height="1200" fill="#f3e3c3"/>`
  return s;}
 const SCENES=[['balloons','Hot-Air Balloons',sceneBalloons,11],['lighthouse','Lighthouse at Sunset',sceneLighthouse,23],['garden','Flower Garden',sceneGarden,37],['mountains','Mountain Lake',sceneMountains,41],['city','City at Night',sceneCity,53],['fruit','Fruit Basket',sceneFruit,67]];
 function sceneSVG(id){const sc=SCENES.find(x=>x[0]===id)||SCENES[0];return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="1600" height="1200">${sc[2](rng(sc[3]))}</svg>`;}
+
+const PHOTOS={"landmarks": [["Great Wall of China", "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Great_Wall_of_China_July_2006.JPG/1920px-Great_Wall_of_China_July_2006.JPG", "Velatrix", "CC0"], ["The Parthenon, Athens", "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Parthenon_east_side_Acropolis_Athens%2C_Greece.jpg/1920px-Parthenon_east_side_Acropolis_Athens%2C_Greece.jpg", "Jebulon", "CC0"], ["Golden Gate Bridge", "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Golden_Gate_Bridge%2C_San_Francisco%2C_California_LCCN2013633353.tif/lossy-page1-1920px-Golden_Gate_Bridge%2C_San_Francisco%2C_California_LCCN2013633353.tif.jpg", "Carol M. Highsmith", "Public domain"], ["Statue of Liberty", "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/HIghsmith_2017_LOC_Statue_of_Liberty_NY_Harbor.jpg/1920px-HIghsmith_2017_LOC_Statue_of_Liberty_NY_Harbor.jpg", "Carol M. Highsmith", "CC0"], ["Empire State Building", "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Empire_State_Building_during_sunset.jpg/1920px-Empire_State_Building_during_sunset.jpg", "Michael Discenza", "CC0"], ["Washington Monument", "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/Washington_Monument_and_the_National_Mall.jpg/1920px-Washington_Monument_and_the_National_Mall.jpg", "Kurt Kaiser", "CC0"], ["Sydney Opera House", "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Sydney_Opera_House_in_2011.jpg/1920px-Sydney_Opera_House_in_2011.jpg", "Bernard Spragg", "Public domain"], ["The Colosseum, Rome", "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/Colosseum_of_Rome%2C_Italy.jpg/1920px-Colosseum_of_Rome%2C_Italy.jpg", "Wilfredor", "CC0"], ["Big Ben, London", "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Big_Ben_from_the_Westminster_Bridge.jpg/1920px-Big_Ben_from_the_Westminster_Bridge.jpg", "Ryan Schwark", "CC0"], ["U.S. Capitol", "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/US_Capitol_Building_at_night_Jan_2006.jpg/1920px-US_Capitol_Building_at_night_Jan_2006.jpg", "Diliff", "Public domain"], ["Mount Rushmore", "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Mount_Rushmore_-a.jpg/1920px-Mount_Rushmore_-a.jpg", "HaloJim", "CC0"], ["Neuschwanstein Castle", "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Neuschwanstein_Castle_2024.jpg/1920px-Neuschwanstein_Castle_2024.jpg", "Wilfredor", "CC0"]], "landscapes": [["Yosemite Valley", "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Yosemite_meadows_2004-09-04.jpg/1920px-Yosemite_meadows_2004-09-04.jpg", "Jon Sullivan", "Public domain"], ["Grand Prismatic Spring", "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Grand_prismatic_spring.jpg/1920px-Grand_prismatic_spring.jpg", "Jim Peaco, National Park Service", "Public domain"], ["Mount Rainier Wildflowers", "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Mount_Rainier%27s_wildflowers_%286851616406%29.jpg/1920px-Mount_Rainier%27s_wildflowers_%286851616406%29.jpg", "Mount Rainier National Park", "Public domain"], ["Denali", "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Road_Lottery_2017_Mount_McKinley_%2836915785690%29.jpg/1920px-Road_Lottery_2017_Mount_McKinley_%2836915785690%29.jpg", "Denali National Park and Preserve", "Public domain"], ["Grand Teton", "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/Grand_Teton_National_Park_Mountains.jpg/1920px-Grand_Teton_National_Park_Mountains.jpg", "The People's Internet", "CC0"], ["Zion Canyon", "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/Zion_National_Park_-_HCP_-_October_02%2C_2022_-_021_-_Zion_Canyon_Scenic_Drive.jpg/1920px-Zion_National_Park_-_HCP_-_October_02%2C_2022_-_021_-_Zion_Canyon_Scenic_Drive.jpg", "Vulturesong", "CC0"], ["Crater Lake", "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/Crater_Lake_National_Park_-_HCP_-_October_13%2C_2022_-_033.jpg/1920px-Crater_Lake_National_Park_-_HCP_-_October_13%2C_2022_-_033.jpg", "Vulturesong", "CC0"], ["Grand Canyon Sunrise", "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Sunrise_from_Grand_Canyon_Village_-_8349_%2855121088440%29.jpg/1920px-Sunrise_from_Grand_Canyon_Village_-_8349_%2855121088440%29.jpg", "Grand Canyon National Park", "Public domain"], ["Glacier National Park", "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Snyder_Lake_in_Glacier_National_Park.jpg/1920px-Snyder_Lake_in_Glacier_National_Park.jpg", "Whubsch", "CC0"], ["Monument Valley", "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Oljato-Monument_Valley%2C_United_States_%28Unsplash_R9S19dOFlcs%29.jpg/1920px-Oljato-Monument_Valley%2C_United_States_%28Unsplash_R9S19dOFlcs%29.jpg", "Dawn Armfield", "CC0"], ["Blue Ridge Parkway in Autumn", "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Blue_Ridge_Parkway_-_Nature%27s_Palette_on_the_Blue_Ridge_Parkway_-_NARA_-_7717421.jpg/1920px-Blue_Ridge_Parkway_-_Nature%27s_Palette_on_the_Blue_Ridge_Parkway_-_NARA_-_7717421.jpg", "U.S. National Archives", "Public domain"], ["Tropical Beach", "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ginowan_Tropical_Beach.JPG/1920px-Ginowan_Tropical_Beach.JPG", "Abasaa", "Public domain"]]};
 function sceneURL(id){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sceneSVG(id));}
-function loadImg(src){return new Promise((ok,bad)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=bad;i.src=src;});}
+function loadImg(src){return new Promise((ok,bad)=>{const i=new Image();if(/^https?:/.test(src))i.crossOrigin='anonymous';i.onload=()=>ok(i);i.onerror=bad;i.src=src;});}
 
 /* ---------- state ---------- */
-let J=null,IMG=null,pick={pic:'balloons',photo:null,n:120};
+let J=null,IMG=null,pick={cat:'landscapes',pic:'landscapes:0',photo:null,n:120};
 const saveLoad=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}};
 let saveT=0;function save(){if(!J)return;clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify({pic:J.pic,photo:J.photo,n:J.n,cols:J.cols,rows:J.rows,seed:J.seed,elapsed:J.elapsed+(Date.now()-J.t0),pos:J.pieces.map(p=>[+p.x.toFixed(3),+p.y.toFixed(3),p.placed?1:0])}));}catch(e){}},250);}
 function clearSave(){try{localStorage.removeItem(KEY);}catch(e){}}
@@ -1186,43 +1189,58 @@ function ensureUI(){
  if(q('#jig'))return;
  const menu=q('#menu');
  const card=el('div',{id:'jigCard'});
- card.innerHTML=`<svg class="jc-ico" viewBox="0 0 64 64"><path d="M8 8 h18 a6 6 0 1 1 12 0 h18 v18 a6 6 0 1 1 0 12 v18 h-18 a6 6 0 1 0 -12 0 h-18 v-18 a6 6 0 1 0 0 -12z" fill="#c99a2e" stroke="#1f2a44" stroke-width="2.5"/></svg><div class="jc-txt"><div class="jc-k">Bonus game</div><h3>The Jigsaw Room</h3><p>Pick a picture or use your own photo, then choose 120 or 240 pieces. Your progress saves on this device. Best played on a computer or tablet.</p></div><div class="jc-btns" id="jcBtns"></div>`;
+ card.innerHTML=`<svg class="jc-ico" viewBox="0 0 64 64"><path d="M8 8 h18 a6 6 0 1 1 12 0 h18 v18 a6 6 0 1 1 0 12 v18 h-18 a6 6 0 1 0 -12 0 h-18 v-18 a6 6 0 1 0 0 -12z" fill="#c99a2e" stroke="#1f2a44" stroke-width="2.5"/></svg><div class="jc-txt"><div class="jc-k">Bonus game</div><h3>The Jigsaw Room</h3><p>Pick a landscape, a famous landmark or your own photo, then choose 120 or 240 pieces. Your progress saves on this device. Best played on a computer or tablet.</p></div><div class="jc-btns" id="jcBtns"></div>`;
  menu.append(card);
  const sec=el('section',{id:'jig',hidden:''});
  sec.innerHTML=`<div class="jbar"><button class="link" id="jBack">← Puzzle menu</button><span class="jstat" id="jStat"></span></div>
  <div id="jSetup" class="jopts"><h2>The Jigsaw Room <span style="font-size:14px;color:var(--muted);font-family:inherit">· Bonus game</span></h2>
  <div class="jtip">💻 Best played on a computer or tablet. Pieces are small on a phone.</div>
- <h2>1. Pick a picture</h2><div class="jpics" id="jPics"></div>
+ <h2>1. Pick a picture</h2><div class="jtabs" id="jTabs"></div><div class="jprev" id="jPrev"></div><div class="jprevbtns" id="jPrevBtns"></div><div class="jthumbs" id="jThumbs"></div>
  <h2>2. How many pieces?</h2><div class="jcounts" id="jCounts"></div>
  <p class="sub" style="margin-top:8px">120 pieces: a relaxed puzzle. 240 pieces: a bigger challenge, best on a computer.</p>
  <button class="btn gold start" id="jGo">Start the jigsaw →</button>
- <p class="sub">Photos you add stay on your device. They are never uploaded.</p></div>
- <div id="jPlay" hidden><div class="jtools"><button class="btn" id="jPeek">👁 Peek at picture</button><button class="btn" id="jEdges">🧩 Edge pieces first</button><button class="btn" id="jShuffle">🔀 Spread out pieces</button><button class="btn" id="jNew">New jigsaw</button></div>
+ <p class="sub">Landscape and landmark photos are public domain, from Wikimedia Commons. Photos you add stay on your device and are never uploaded.</p></div>
+ <div id="jPlay" hidden><div class="jtools"><button class="btn" id="jPeek">👁 Peek at picture</button><button class="btn" id="jEdges">🧩 Edge pieces first</button><button class="btn" id="jShuffle">🔀 Spread out pieces</button><button class="btn" id="jPhoto">📷 Use my photo</button><button class="btn" id="jNew">New jigsaw</button></div>
  <div id="jwin"><h3>You did it! 🎉</h3><p id="jWinTxt"></p><button class="btn gold" id="jAgain">Start a new jigsaw</button></div>
  <div id="jtable"><div id="jboard"><img id="jghost" alt=""></div></div>
- <p class="sub" style="margin-top:8px">Drag a piece close to its spot and it snaps into place. Your progress saves automatically.</p></div>`;
+ <p class="sub" id="jCredit" style="margin-top:8px"></p><p class="sub" style="margin-top:4px">Drag a piece close to its spot and it snaps into place. Your progress saves automatically.</p></div>`;
  menu.after(sec);
  q('#jBack').onclick=()=>{save();showMenu();};
  q('#jGo').onclick=startNew;
  q('#jNew').onclick=()=>{if(J&&J.pieces.some(p=>p.placed)&&!J.done&&!confirmNew())return;clearSave();J=null;showSetup();};
  q('#jAgain').onclick=()=>{clearSave();J=null;showSetup();};
  const pk=q('#jPeek');const peek=v=>{q('#jghost').style.opacity=v?'.35':'0';};pk.onpointerdown=()=>peek(1);pk.onpointerup=pk.onpointerleave=()=>peek(0);pk.onclick=e=>e.preventDefault();
- q('#jEdges').onclick=edgesFirst;q('#jShuffle').onclick=()=>{scatter(false);layout();save();};
+ q('#jEdges').onclick=edgesFirst;q('#jPhoto').onclick=()=>{if(J&&J.pieces.some(p=>p.placed)&&!J.done&&!confirmBtn(q('#jPhoto'),'📷 Use my photo'))return;pickPhoto(()=>{pick.n=J?J.n:pick.n;clearSave();startNew();});};q('#jShuffle').onclick=()=>{scatter(false);layout();save();};
  window.addEventListener('resize',()=>{if(J&&!q('#jPlay').hidden)build();});
  renderCard();
 }
+function confirmBtn(b,lab){if(b.dataset.sure){delete b.dataset.sure;b.textContent=lab;return true;}b.dataset.sure='1';b.textContent='Tap again to replace this jigsaw';setTimeout(()=>{delete b.dataset.sure;b.textContent=lab;},3000);return false;}
 function confirmNew(){const b=q('#jNew');if(b.dataset.sure){delete b.dataset.sure;b.textContent='New jigsaw';return true;}b.dataset.sure='1';b.textContent='Tap again to start over';setTimeout(()=>{delete b.dataset.sure;b.textContent='New jigsaw';},3000);return false;}
 function renderCard(){const b=q('#jcBtns');if(!b)return;b.innerHTML='';const sv=saveLoad();
  if(sv){const placed=sv.pos.filter(p=>p[2]).length;b.append(el('button',{class:'btn gold',onclick:()=>resume(sv)},`▶ Continue (${placed} of ${sv.n})`));b.append(el('button',{class:'btn',onclick:()=>{openRoom();showSetup();}},'New jigsaw'));}
  else b.append(el('button',{class:'btn gold',onclick:()=>{openRoom();showSetup();}},'🧩 Open the Jigsaw Room'));}
 function openRoom(){q('#menu').hidden=true;q('#play')&&(q('#play').hidden=true);q('#jig').hidden=false;window.scrollTo(0,0);}
 function showMenu(){q('#jig').hidden=true;q('#menu').hidden=false;renderCard();window.scrollTo(0,0);}
+function picInfo(key){if(!key)return null;const [c,i]=key.split(':');if(PHOTOS[c]&&PHOTOS[c][+i]){const x=PHOTOS[c][+i];return {name:x[0],url:x[1],by:x[2],lic:x[3],cat:c};}const sc=SCENES.find(z=>z[0]===key);return sc?{name:sc[1],url:sceneURL(key),by:'',lic:'',cat:'art'}:null;}
+function thumb(u){return u.replace('/1920px-','/400px-').replace('lossy-page1-1920px-','lossy-page1-400px-');}
+function randKey(cat,not){const cats=cat==='surprise'?['landscapes','landmarks']:[cat];let k;do{const c=cats[Math.floor(Math.random()*cats.length)];k=c+':'+Math.floor(Math.random()*PHOTOS[c].length);}while(k===not&&(cat==='surprise'||PHOTOS[cat].length>1));return k;}
+function credit(info){return info&&info.by?`Photo: ${info.by} · ${info.lic==='CC0'?'Public domain (CC0)':'Public domain'} · via Wikimedia Commons`:'';}
 function showSetup(){q('#jSetup').hidden=false;q('#jPlay').hidden=true;q('#jStat').textContent='';
- const pics=q('#jPics');pics.innerHTML='';
- SCENES.forEach(([id,name])=>{const b=el('button',{class:'jpic'+(pick.pic===id&&!pick.photo?' on':''),onclick:()=>{pick.pic=id;pick.photo=null;showSetup();}},[el('img',{src:sceneURL(id),alt:name}),el('span',{},name)]);pics.append(b);});
- const inp=el('input',{type:'file',accept:'image/*',style:'display:none'});inp.onchange=async()=>{const f=inp.files[0];if(!f)return;try{pick.photo=await shrinkPhoto(f);showSetup();}catch(e){alert('That photo could not be opened. Try a JPG or PNG.');}};
- const up=el('button',{class:'jpic'+(pick.photo?' on':''),onclick:()=>inp.click()},[pick.photo?el('img',{src:pick.photo,alt:'Your photo'}):el('div',{class:'jupload',html:'<b>＋</b>Use my own photo'}),el('span',{},pick.photo?'Your photo ✓':'Your photo')]);pics.append(up,inp);
+ const tabs=q('#jTabs');tabs.innerHTML='';
+ [['landscapes','🏞 Landscapes'],['landmarks','🏛 Landmarks'],['surprise','🎲 Surprise Me'],['photo','📷 My Photo']].forEach(([k,lab])=>tabs.append(el('button',{class:'btn'+(pick.cat===k?' on':''),onclick:()=>{if(k==='photo'){pickPhoto();return;}pick.cat=k;pick.photo=null;pick.pic=randKey(k);showSetup();}},lab)));
+ const pv=q('#jPrev');pv.innerHTML='';
+ if(pick.photo){pv.append(el('img',{src:pick.photo,alt:'Your photo'}),el('div',{class:'jcap'},[el('b',{},'Your photo'),el('small',{},'Stays on your device. Never uploaded.')]));}
+ else{const info=picInfo(pick.pic);const im=el('img',{src:thumb(info.url).replace('/400px-','/960px-').replace('lossy-page1-400px-','lossy-page1-960px-'),alt:info.name});im.onerror=()=>{im.onerror=null;im.src=info.url;};pv.append(im,el('div',{class:'jcap'},[el('b',{},info.name),el('small',{},credit(info))]));}
+ const ac=q('#jPrevBtns');ac.innerHTML='';
+ if(!pick.photo)ac.append(el('button',{class:'btn',onclick:()=>{pick.pic=randKey(pick.cat==='photo'?'surprise':pick.cat,pick.pic);showSetup();}},'⏭ Skip to another'));
+ ac.append(el('button',{class:'btn',onclick:pickPhoto},pick.photo?'📷 Choose a different photo':'📷 Upload a photo'));
+ if(pick.photo)ac.append(el('button',{class:'btn',onclick:()=>{pick.photo=null;pick.cat='landscapes';pick.pic=randKey('landscapes');showSetup();}},'Back to pictures'));
+ const strip=q('#jThumbs');strip.innerHTML='';
+ if(!pick.photo){const cats=pick.cat==='surprise'?['landscapes','landmarks']:[pick.cat];cats.forEach(c=>PHOTOS[c].forEach((x,i)=>{const key=c+':'+i;strip.append(el('button',{class:'jth'+(pick.pic===key?' on':''),title:x[0],onclick:()=>{pick.pic=key;showSetup();}},el('img',{src:thumb(x[1]),alt:x[0],loading:'lazy'})));}));}
  const cc=q('#jCounts');cc.innerHTML='';[120,240].forEach(n=>cc.append(el('button',{class:'btn'+(pick.n===n?' on':''),onclick:()=>{pick.n=n;showSetup();}},`${n} pieces`)));}
+let fileInp=null;
+function pickPhoto(after){if(!fileInp){fileInp=el('input',{type:'file',accept:'image/*',style:'display:none'});document.body.append(fileInp);}
+ fileInp.value='';fileInp.onchange=async()=>{const f=fileInp.files[0];if(!f)return;try{pick.photo=await shrinkPhoto(f);pick.cat='photo';if(typeof after==='function')after();else showSetup();}catch(e){alert('That photo could not be opened. Try a JPG or PNG.');}};fileInp.click();}
 function shrinkPhoto(f){return new Promise((ok,bad)=>{const rd=new FileReader();rd.onload=async()=>{try{const im=await loadImg(rd.result);const M=1600,k=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82));}catch(e){bad(e);}};rd.onerror=bad;rd.readAsDataURL(f);});}
 
 /* ---------- puzzle geometry ---------- */
@@ -1234,13 +1252,14 @@ function edge(ctx,x0,y0,x1,y1,t){const dx=x1-x0,dy=y1-y0;if(!t){ctx.lineTo(x1,y1
 function piecePath(ctx,o,s,sd){ctx.beginPath();ctx.moveTo(o,o);edge(ctx,o,o,o+s,o,-sd.top);edge(ctx,o+s,o,o+s,o+s,-sd.right);edge(ctx,o+s,o+s,o,o+s,-sd.bottom);edge(ctx,o,o+s,o,o,-sd.left);ctx.closePath();}
 
 /* ---------- play ---------- */
-async function startNew(){const [cols,rows]=COUNTS[pick.n];J={pic:pick.pic,photo:pick.photo,n:pick.n,cols,rows,seed:Math.floor(Math.random()*1e9)+1,pieces:[],elapsed:0,t0:Date.now(),done:false};
+async function startNew(){const [cols,rows]=COUNTS[pick.n];J={pic:pick.photo?null:pick.pic,photo:pick.photo,n:pick.n,cols,rows,seed:Math.floor(Math.random()*1e9)+1,pieces:[],elapsed:0,t0:Date.now(),done:false};
  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)J.pieces.push({c,r,x:0,y:0,placed:false});
  J.edges=makeEdges(cols,rows,J.seed);await prepImage();scatter(true);openRoom();showPlay();build();save();}
 async function resume(sv){J={pic:sv.pic,photo:sv.photo,n:sv.n,cols:sv.cols,rows:sv.rows,seed:sv.seed,elapsed:sv.elapsed||0,t0:Date.now(),done:false,pieces:[]};let i=0;
  for(let r=0;r<J.rows;r++)for(let c=0;c<J.cols;c++){const p=sv.pos[i++]||[0,0,0];J.pieces.push({c,r,x:p[0],y:p[1],placed:!!p[2]});}
  J.edges=makeEdges(J.cols,J.rows,J.seed);try{await prepImage();}catch(e){clearSave();renderCard();return;}openRoom();showPlay();build();}
-async function prepImage(){const src=J.photo||sceneURL(J.pic);const im=await loadImg(src);
+async function prepImage(){let im;const info=J.photo?null:picInfo(J.pic);try{im=await loadImg(J.photo||info.url);}catch(e){if(J.photo)throw e;J.pic=SCENES[Math.floor(Math.random()*SCENES.length)][0];im=await loadImg(sceneURL(J.pic));}
+ const cr=q('#jCredit');if(cr){const i2=J.photo?null:picInfo(J.pic);cr.textContent=J.photo?'Your photo · stays on your device':(i2?(i2.name+(i2.by?' · '+credit(i2):'')):'');}
  const W=1600,H=Math.round(W*J.rows/J.cols),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
  const k=Math.max(W/im.width,H/im.height),w=im.width*k,h=im.height*k;g.drawImage(im,(W-w)/2,(H-h)/2,w,h);IMG=c;q('#jghost').src=c.toDataURL('image/jpeg',.7);}
 function showPlay(){q('#jSetup').hidden=true;q('#jPlay').hidden=false;q('#jwin').style.display=J.done?'block':'none';}
@@ -1277,7 +1296,7 @@ document.addEventListener('pointerup',drop);document.addEventListener('pointerca
 window.addEventListener('pagehide',save);
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
-window.__jig={startNew:async(n,pic)=>{pick.n=n;pick.pic=pic||'balloons';pick.photo=null;await startNew();},get J(){return J;},S:()=>S,save,saveLoad};
+window.__jig={startNew:async(n,pic)=>{pick.n=n;pick.pic=pic||'landscapes:0';pick.photo=null;await startNew();},get J(){return J;},S:()=>S,save,saveLoad};
 })();
 </script>
 <!--/jig-->
