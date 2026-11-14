@@ -1068,6 +1068,219 @@ $('#closePrint').onclick=()=>{$('#printView').style.display='none';};
 window.addEventListener('keydown',e=>{if(!$('#play').hidden&&S.cur&&S.cur.onKey&&!S.done)S.cur.onKey(e);});
 renderMenu();
 </script>
+<!--jig-->
+<style>
+#jigCard{margin:26px 0 6px;border:2px dashed var(--gold);background:linear-gradient(135deg,#fff8e6,#fff);border-radius:16px;padding:16px 18px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+#jigCard .jc-ico{width:64px;height:64px;flex:none}
+#jigCard .jc-txt{flex:1;min-width:220px}
+#jigCard .jc-k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#a16207;font-weight:800}
+#jigCard h3{margin:2px 0 4px;font-family:Georgia,serif;font-size:21px}
+#jigCard p{margin:0;color:var(--muted);font-size:14px}
+#jigCard .jc-btns{display:flex;gap:8px;flex-wrap:wrap}
+#jig .jbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 10px}
+#jig .jopts h2{margin-top:16px}
+#jig .jpics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+#jig .jpic{border:3px solid transparent;border-radius:12px;overflow:hidden;cursor:pointer;background:#fff;padding:0;font:inherit;text-align:left;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+#jig .jpic.on{border-color:var(--gold)}
+#jig .jpic img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+#jig .jpic span{display:block;padding:6px 9px;font-size:13px;font-weight:700}
+#jig .jupload{display:flex;align-items:center;justify-content:center;flex-direction:column;aspect-ratio:4/3;background:#f3efe4;color:var(--navy);font-weight:700;font-size:14px;gap:4px}
+#jig .jupload b{font-size:30px}
+#jig .jcounts{display:flex;gap:10px;flex-wrap:wrap}
+#jig .jcounts .btn.on{background:var(--navy);color:#fff}
+#jig .jtip{background:#fff8e6;border:1px solid #f3dca0;border-left:5px solid var(--gold);border-radius:9px;padding:9px 13px;font-size:14px;margin:12px 0}
+#jtable{position:relative;background:#e9e1cf;border-radius:14px;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;box-shadow:inset 0 0 0 1px #d7ccb4}
+#jboard{position:absolute;left:0;top:0;background:#f7f2e6;outline:2px solid #cdbf9f;border-radius:2px}
+#jghost{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .2s;pointer-events:none}
+#jtable canvas.jp{position:absolute;left:0;top:0;cursor:grab;touch-action:none}
+#jtable canvas.jp.placed{cursor:default}
+#jtable canvas.jp.drag{cursor:grabbing;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+#jig .jtools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+#jig .jtools .btn{padding:6px 12px;font-size:14px}
+#jig .jstat{font-weight:700;color:var(--navy)}
+#jwin{display:none;text-align:center;background:#fff;border:2px solid var(--ok);border-radius:14px;padding:14px;margin:10px 0}
+#jwin h3{margin:0 0 4px;font-family:Georgia,serif;color:var(--ok);font-size:22px}
+body:has(#jig:not([hidden])) .strip{display:none}
+@media print{#jig,#jigCard{display:none!important}}
+</style>
+<script>
+(function(){
+const KEY='pp_jigsaw_v1';
+const COUNTS={120:[12,10],240:[20,12]};
+const q=s=>document.querySelector(s);
+const el=(t,a={},c=[])=>{const e=document.createElement(t);for(const k in a){if(k==='html')e.innerHTML=a[k];else if(k.startsWith('on'))e[k]=a[k];else e.setAttribute(k,a[k]);}(Array.isArray(c)?c:[c]).forEach(x=>x!=null&&e.append(x));return e;};
+function rng(seed){let s=seed>>>0||1;return()=>{s^=s<<13;s>>>=0;s^=s>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+
+/* ---------- built-in pictures, drawn in code (original art) ---------- */
+function sceneBalloons(r){let s=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a5a"/><stop offset=".55" stop-color="#ffd59a"/><stop offset="1" stop-color="#bfe3f2"/></linearGradient></defs><rect width="1600" height="1200" fill="url(#sk)"/>`;
+ s+=`<circle cx="1260" cy="300" r="120" fill="#fff3c4" opacity=".9"/>`;
+ for(let i=0;i<9;i++){const x=r()*1600,y=120+r()*500,w=160+r()*220;s+=`<ellipse cx="${x}" cy="${y}" rx="${w}" ry="${w*.28}" fill="#fff" opacity="${.35+r()*.4}"/>`;}
+ const hills=[["#5aa36a",820],["#3f8a57",900],["#2f6e47",980]];hills.forEach(([c,b],k)=>{let d=`M0 ${b}`;for(let x=0;x<=1600;x+=100)d+=` Q${x+50} ${b-60-r()*120} ${x+100} ${b-r()*40}`;s+=`<path d="${d} V1200 H0Z" fill="${c}"/>`;});
+ for(let i=0;i<40;i++){const x=r()*1600,y=950+r()*230;s+=`<g transform="translate(${x} ${y})"><rect x="-4" y="0" width="8" height="26" fill="#5b3a1e"/><circle cx="0" cy="-8" r="${18+r()*10}" fill="${['#2d6b3f','#3d7f4a','#24583a'][i%3]}"/></g>`;}
+ const pal=[["#e63946","#f1faee"],["#f4a261","#264653"],["#2a9d8f","#e9c46a"],["#8e44ad","#f5d76e"],["#1d70b8","#ffd166"],["#ef476f","#06d6a0"],["#ff7f11","#3a86ff"]];
+ for(let i=0;i<7;i++){const x=150+i*215+r()*80,y=220+r()*420,z=.6+r()*.7,[a,b]=pal[i];let st='';for(let k=0;k<6;k++)st+=`<path d="M${-90+k*30} -40 Q${-90+k*30+15} -120 ${-60+k*30} -40 V40 Q${-75+k*30} 110 ${-90+k*30} 40Z" fill="${k%2?a:b}"/>`;
+  s+=`<g transform="translate(${x} ${y}) scale(${z})"><ellipse cx="0" cy="0" rx="95" ry="110" fill="${a}"/><clipPath id="c${i}"><ellipse cx="0" cy="0" rx="95" ry="110"/></clipPath><g clip-path="url(#c${i})">${st}</g><path d="M-40 95 L-22 150 M40 95 L22 150" stroke="#5b3a1e" stroke-width="3"/><rect x="-24" y="150" width="48" height="34" rx="4" fill="#a0652d"/><rect x="-24" y="150" width="48" height="8" fill="#7a4a1d"/></g>`;}
+ return s;}
+function sceneLighthouse(r){let s=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b2c6b"/><stop offset=".45" stop-color="#e0607e"/><stop offset=".7" stop-color="#ffb26b"/></linearGradient><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4e6fae"/><stop offset="1" stop-color="#1c2e5c"/></linearGradient></defs><rect width="1600" height="760" fill="url(#sk)"/>`;
+ for(let i=0;i<60;i++)s+=`<circle cx="${r()*1600}" cy="${r()*300}" r="${1+r()*2.2}" fill="#fff" opacity="${.4+r()*.6}"/>`;
+ s+=`<circle cx="520" cy="700" r="150" fill="#ffd27a"/><rect y="700" width="1600" height="500" fill="url(#sea)"/>`;
+ for(let i=0;i<70;i++){const y=720+r()*470,x=r()*1600,w=30+r()*120;s+=`<rect x="${x}" y="${y}" width="${w}" height="${3+r()*3}" rx="2" fill="${r()<.4?'#ffd27a':'#9fb6e3'}" opacity="${.3+r()*.5}"/>`;}
+ s+=`<path d="M900 1200 L980 860 Q1100 780 1250 820 L1600 760 V1200Z" fill="#2b2433"/><path d="M1000 1200 L1050 900 Q1150 840 1300 880 L1600 840 V1200Z" fill="#3a3040"/>`;
+ s+=`<g transform="translate(1240 360)"><path d="M-55 470 L-38 40 H38 L55 470Z" fill="#f4f1ea"/>`;for(let k=0;k<5;k++)s+=`<path d="M${-55+k*3.4} ${470-k*86-43} L${-52+k*3.4} ${470-k*86-86} H${52-k*3.4} L${55-k*3.4} ${470-k*86-43}Z" fill="#d9363e"/>`;
+ s+=`<rect x="-48" y="0" width="96" height="40" fill="#2b2433"/><rect x="-36" y="-56" width="72" height="56" fill="#ffe9a8"/><path d="M-44 -56 L0 -100 L44 -56Z" fill="#d9363e"/><path d="M36 -30 L700 -160 L700 120Z" fill="#fff6c9" opacity=".25"/></g>`;
+ for(let i=0;i<5;i++){const x=150+r()*600,y=900+r()*200;s+=`<g transform="translate(${x} ${y})"><path d="M-40 0 H40 L28 16 H-28Z" fill="#7a4a24"/><path d="M0 0 V-70 L36 -10Z" fill="#f1ece0"/><path d="M-2 -60 L-30 -8 H-2Z" fill="#e8d9b5"/></g>`;}
+ for(let i=0;i<8;i++){const x=200+r()*1200,y=200+r()*260;s+=`<path d="M${x} ${y} q12 -10 24 0 q12 -10 24 0" fill="none" stroke="#2b2433" stroke-width="3"/>`;}
+ return s;}
+function sceneGarden(r){let s=`<rect width="1600" height="1200" fill="#bfe6ff"/><circle cx="200" cy="170" r="90" fill="#fff1a8"/>`;
+ for(let i=0;i<6;i++)s+=`<ellipse cx="${300+r()*1300}" cy="${80+r()*200}" rx="${100+r()*80}" ry="${30+r()*14}" fill="#fff" opacity=".85"/>`;
+ s+=`<rect y="420" width="1600" height="780" fill="#7cc46b"/><path d="M0 420 Q400 360 800 420 T1600 410 V470 H0Z" fill="#94d27f"/>`;
+ s+=`<g transform="translate(1180 230)"><rect x="0" y="80" width="300" height="200" fill="#f4e3c3"/><path d="M-20 90 L150 -10 L320 90Z" fill="#b5462f"/><rect x="120" y="170" width="60" height="110" fill="#6b3f1d"/><rect x="30" y="130" width="60" height="50" fill="#bfe6ff" stroke="#fff" stroke-width="6"/><rect x="210" y="130" width="60" height="50" fill="#bfe6ff" stroke="#fff" stroke-width="6"/></g>`;
+ for(let x=0;x<1600;x+=40)s+=`<rect x="${x+8}" y="470" width="22" height="90" fill="#fff"/><path d="M${x+8} 470 L${x+19} 455 L${x+30} 470Z" fill="#fff"/>`;s+=`<rect y="490" width="1600" height="10" fill="#fff"/><rect y="530" width="1600" height="10" fill="#fff"/>`;
+ const cols=['#e63946','#f4a261','#ffd166','#ef476f','#9b5de5','#f15bb5','#fee440','#ff7b00','#ffffff','#4361ee'];
+ for(let i=0;i<260;i++){const x=r()*1600,y=600+r()*590,sz=10+((y-600)/590)*26+r()*8,c=cols[Math.floor(r()*cols.length)];
+  s+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+sz*2.2}" stroke="#3f8a3a" stroke-width="${2+sz/12}"/>`;let p='';for(let k=0;k<6;k++){const a=k*Math.PI/3;p+=`<circle cx="${x+Math.cos(a)*sz*.6}" cy="${y+Math.sin(a)*sz*.6}" r="${sz*.45}" fill="${c}"/>`;}s+=p+`<circle cx="${x}" cy="${y}" r="${sz*.35}" fill="${c==='#ffd166'||c==='#fee440'?'#8a4b08':'#ffd166'}"/>`;}
+ for(let i=0;i<9;i++){const x=r()*1600,y=480+r()*500;s+=`<g transform="translate(${x} ${y}) rotate(${r()*40-20})"><ellipse cx="-14" cy="-6" rx="14" ry="20" fill="${['#ff9f1c','#4cc9f0','#f72585'][i%3]}"/><ellipse cx="14" cy="-6" rx="14" ry="20" fill="${['#ff9f1c','#4cc9f0','#f72585'][i%3]}"/><rect x="-2" y="-18" width="4" height="30" rx="2" fill="#222"/></g>`;}
+ return s;}
+function sceneMountains(r){let s=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ec8f2"/><stop offset="1" stop-color="#e8f6ff"/></linearGradient><linearGradient id="lk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4aa3c9"/><stop offset="1" stop-color="#1f5f84"/></linearGradient></defs><rect width="1600" height="1200" fill="url(#sk)"/>`;
+ [["#a9b9cc",560,6],["#7f93ab",640,5],["#5e7690",720,4]].forEach(([c,b,n])=>{let d=`M0 ${b}`,caps='';const w=1600/n;for(let k=0;k<n;k++){const px=k*w+w*(.3+r()*.4),py=b-200-r()*260;d+=` L${px} ${py} L${(k+1)*w} ${b-r()*60}`;
+   caps+=`<path d="M${px-60} ${py+70} L${px} ${py} L${px+60} ${py+70} L${px+30} ${py+60} L${px} ${py+80} L${px-25} ${py+58}Z" fill="#fff" opacity=".95"/>`;}s+=`<path d="${d} V1200 H0Z" fill="${c}"/>`+caps;});
+ s+=`<rect y="760" width="1600" height="440" fill="url(#lk)"/>`;
+ for(let i=0;i<80;i++)s+=`<rect x="${r()*1600}" y="${770+r()*420}" width="${30+r()*140}" height="3" rx="2" fill="#bfe9ff" opacity="${.25+r()*.4}"/>`;
+ for(let i=0;i<70;i++){const x=r()*1600,y=700+r()*80,h=60+r()*90;s+=`<path d="M${x} ${y-h} L${x-h*.28} ${y} H${x+h*.28}Z" fill="${['#1f5f3a','#24704a','#184d2f'][i%3]}"/>`;}
+ s+=`<path d="M0 1000 Q300 940 600 1010 T1100 1000 T1600 980 V1200 H0Z" fill="#6aa84f"/>`;
+ for(let i=0;i<40;i++){const x=r()*1600,y=1010+r()*170,h=80+r()*120;s+=`<path d="M${x} ${y-h} L${x-h*.3} ${y} H${x+h*.3}Z" fill="${['#1f5f3a','#2e7d4f','#184d2f'][i%3]}"/><rect x="${x-5}" y="${y}" width="10" height="16" fill="#5b3a1e"/>`;}
+ s+=`<g transform="translate(700 860)"><path d="M-70 0 H70 L50 22 H-50Z" fill="#c0392b"/><rect x="-3" y="-60" width="6" height="60" fill="#5b3a1e"/></g>`;
+ return s;}
+function sceneCity(r){let s=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1440"/><stop offset="1" stop-color="#3b2a6e"/></linearGradient></defs><rect width="1600" height="1200" fill="url(#sk)"/><circle cx="1350" cy="200" r="80" fill="#fff6d6"/><circle cx="1380" cy="185" r="78" fill="#121a4a" opacity=".0"/>`;
+ for(let i=0;i<140;i++)s+=`<circle cx="${r()*1600}" cy="${r()*600}" r="${.8+r()*2}" fill="#fff" opacity="${.3+r()*.7}"/>`;
+ [[.55,'#1d2459',260,560],[.75,'#151b44',200,700],[1,'#0e1233',150,820]].forEach(([d,c,minW,base])=>{let x=-20;while(x<1620){const w=60+r()*minW*.6,h=150+r()*500*d;s+=`<rect x="${x}" y="${base+250-h}" width="${w}" height="${h+400}" fill="${c}"/>`;
+  if(r()<.25)s+=`<path d="M${x+w/2} ${base+250-h-80} V${base+250-h}" stroke="${c}" stroke-width="6"/><circle cx="${x+w/2}" cy="${base+250-h-80}" r="5" fill="#ff5a5a"/>`;
+  for(let yy=base+270-h;yy<1200;yy+=28)for(let xx=x+8;xx<x+w-14;xx+=20)if(r()<.45)s+=`<rect x="${xx}" y="${yy}" width="10" height="14" fill="${['#ffd66b','#ffe9a8','#9fd8ff','#ffb36b'][Math.floor(r()*4)]}" opacity="${.5+d*.5}"/>`;x+=w+4;}});
+ s+=`<rect y="1080" width="1600" height="120" fill="#0a0d24"/>`;for(let i=0;i<60;i++)s+=`<rect x="${r()*1600}" y="${1090+r()*100}" width="${20+r()*90}" height="3" fill="${r()<.5?'#ffd66b':'#9fd8ff'}" opacity=".5"/>`;
+ return s;}
+function sceneFruit(r){let s=`<rect width="1600" height="1200" fill="#f3e3c3"/>`;for(let x=0;x<1600;x+=80)for(let y=0;y<700;y+=80)if(((x+y)/80)%2===0)s+=`<rect x="${x}" y="${y}" width="80" height="80" fill="#ead3a8"/>`;
+ s+=`<rect y="700" width="1600" height="500" fill="#8a5a33"/>`;for(let i=0;i<14;i++)s+=`<rect y="${710+i*36}" width="1600" height="3" fill="#6f4526" opacity=".6"/>`;
+ s+=`<path d="M250 760 Q800 1240 1350 760Z" fill="#c98b45"/>`;for(let k=0;k<8;k++)s+=`<path d="M${290+k*20} ${790+k*40} Q800 ${1200-k*8} ${1310-k*20} ${790+k*40}" fill="none" stroke="#a96d2f" stroke-width="8"/>`;
+ const F=[['#e63946','apple'],['#ffb703','orange'],['#8ac926','pear'],['#6a4c93','grape'],['#ffd166','banana'],['#ff006e','cherry'],['#fb8500','orange']];
+ for(let i=0;i<34;i++){const ang=r()*Math.PI,rad=r()*480,x=800+Math.cos(ang)*rad*(r()<.5?-1:1),y=760-Math.sin(ang)*rad*.55,[c,t]=F[Math.floor(r()*F.length)],z=.7+r()*.6;
+  if(t==='grape'){let g='';for(let k=0;k<12;k++)g+=`<circle cx="${(k%3)*26-26+(Math.floor(k/3)%2)*13}" cy="${Math.floor(k/3)*24}" r="15" fill="${c}"/>`;s+=`<g transform="translate(${x} ${y}) scale(${z})">${g}<path d="M0 -14 V-40" stroke="#5b3a1e" stroke-width="5"/></g>`;}
+  else if(t==='banana')s+=`<g transform="translate(${x} ${y}) scale(${z}) rotate(${r()*60-30})"><path d="M-80 0 Q0 80 80 0 Q0 40 -80 0Z" fill="${c}" stroke="#c9a227" stroke-width="3"/></g>`;
+  else if(t==='cherry')s+=`<g transform="translate(${x} ${y}) scale(${z})"><circle cx="-16" cy="0" r="18" fill="${c}"/><circle cx="18" cy="6" r="18" fill="${c}"/><path d="M-16 -16 Q0 -60 20 -70 M18 -10 Q14 -50 20 -70" fill="none" stroke="#3f7a2a" stroke-width="4"/></g>`;
+  else if(t==='pear')s+=`<g transform="translate(${x} ${y}) scale(${z})"><circle cx="0" cy="20" r="40" fill="${c}"/><circle cx="0" cy="-20" r="26" fill="${c}"/><path d="M0 -44 V-64" stroke="#5b3a1e" stroke-width="6"/><ellipse cx="14" cy="-60" rx="14" ry="7" fill="#3f8a2a"/></g>`;
+  else s+=`<g transform="translate(${x} ${y}) scale(${z})"><circle r="44" fill="${c}"/><circle cx="-14" cy="-14" r="12" fill="#fff" opacity=".35"/>${t==='apple'?'<path d="M0 -44 V-66" stroke="#5b3a1e" stroke-width="6"/><ellipse cx="16" cy="-60" rx="16" ry="8" fill="#3f8a2a"/>':'<circle cx="0" cy="-38" r="5" fill="#5b8a2a"/>'}</g>`;}
+ s+=`<path d="M250 760 Q800 1240 1350 760" fill="none" stroke="#7a4a1d" stroke-width="14"/>`;
+ return s;}
+const SCENES=[['balloons','Hot-Air Balloons',sceneBalloons,11],['lighthouse','Lighthouse at Sunset',sceneLighthouse,23],['garden','Flower Garden',sceneGarden,37],['mountains','Mountain Lake',sceneMountains,41],['city','City at Night',sceneCity,53],['fruit','Fruit Basket',sceneFruit,67]];
+function sceneSVG(id){const sc=SCENES.find(x=>x[0]===id)||SCENES[0];return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="1600" height="1200">${sc[2](rng(sc[3]))}</svg>`;}
+function sceneURL(id){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sceneSVG(id));}
+function loadImg(src){return new Promise((ok,bad)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=bad;i.src=src;});}
+
+/* ---------- state ---------- */
+let J=null,IMG=null,pick={pic:'balloons',photo:null,n:120};
+const saveLoad=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}};
+let saveT=0;function save(){if(!J)return;clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify({pic:J.pic,photo:J.photo,n:J.n,cols:J.cols,rows:J.rows,seed:J.seed,elapsed:J.elapsed+(Date.now()-J.t0),pos:J.pieces.map(p=>[+p.x.toFixed(3),+p.y.toFixed(3),p.placed?1:0])}));}catch(e){}},250);}
+function clearSave(){try{localStorage.removeItem(KEY);}catch(e){}}
+
+/* ---------- UI ---------- */
+function ensureUI(){
+ if(q('#jig'))return;
+ const menu=q('#menu');
+ const card=el('div',{id:'jigCard'});
+ card.innerHTML=`<svg class="jc-ico" viewBox="0 0 64 64"><path d="M8 8 h18 a6 6 0 1 1 12 0 h18 v18 a6 6 0 1 1 0 12 v18 h-18 a6 6 0 1 0 -12 0 h-18 v-18 a6 6 0 1 0 0 -12z" fill="#c99a2e" stroke="#1f2a44" stroke-width="2.5"/></svg><div class="jc-txt"><div class="jc-k">Bonus game</div><h3>The Jigsaw Room</h3><p>Pick a picture or use your own photo, then choose 120 or 240 pieces. Your progress saves on this device. Best played on a computer or tablet.</p></div><div class="jc-btns" id="jcBtns"></div>`;
+ menu.append(card);
+ const sec=el('section',{id:'jig',hidden:''});
+ sec.innerHTML=`<div class="jbar"><button class="link" id="jBack">← Puzzle menu</button><span class="jstat" id="jStat"></span></div>
+ <div id="jSetup" class="jopts"><h2>The Jigsaw Room <span style="font-size:14px;color:var(--muted);font-family:inherit">· Bonus game</span></h2>
+ <div class="jtip">💻 Best played on a computer or tablet. Pieces are small on a phone.</div>
+ <h2>1. Pick a picture</h2><div class="jpics" id="jPics"></div>
+ <h2>2. How many pieces?</h2><div class="jcounts" id="jCounts"></div>
+ <p class="sub" style="margin-top:8px">120 pieces: a relaxed puzzle. 240 pieces: a bigger challenge, best on a computer.</p>
+ <button class="btn gold start" id="jGo">Start the jigsaw →</button>
+ <p class="sub">Photos you add stay on your device. They are never uploaded.</p></div>
+ <div id="jPlay" hidden><div class="jtools"><button class="btn" id="jPeek">👁 Peek at picture</button><button class="btn" id="jEdges">🧩 Edge pieces first</button><button class="btn" id="jShuffle">🔀 Spread out pieces</button><button class="btn" id="jNew">New jigsaw</button></div>
+ <div id="jwin"><h3>You did it! 🎉</h3><p id="jWinTxt"></p><button class="btn gold" id="jAgain">Start a new jigsaw</button></div>
+ <div id="jtable"><div id="jboard"><img id="jghost" alt=""></div></div>
+ <p class="sub" style="margin-top:8px">Drag a piece close to its spot and it snaps into place. Your progress saves automatically.</p></div>`;
+ menu.after(sec);
+ q('#jBack').onclick=()=>{save();showMenu();};
+ q('#jGo').onclick=startNew;
+ q('#jNew').onclick=()=>{if(J&&J.pieces.some(p=>p.placed)&&!J.done&&!confirmNew())return;clearSave();J=null;showSetup();};
+ q('#jAgain').onclick=()=>{clearSave();J=null;showSetup();};
+ const pk=q('#jPeek');const peek=v=>{q('#jghost').style.opacity=v?'.35':'0';};pk.onpointerdown=()=>peek(1);pk.onpointerup=pk.onpointerleave=()=>peek(0);pk.onclick=e=>e.preventDefault();
+ q('#jEdges').onclick=edgesFirst;q('#jShuffle').onclick=()=>{scatter(false);layout();save();};
+ window.addEventListener('resize',()=>{if(J&&!q('#jPlay').hidden)build();});
+ renderCard();
+}
+function confirmNew(){const b=q('#jNew');if(b.dataset.sure){delete b.dataset.sure;b.textContent='New jigsaw';return true;}b.dataset.sure='1';b.textContent='Tap again to start over';setTimeout(()=>{delete b.dataset.sure;b.textContent='New jigsaw';},3000);return false;}
+function renderCard(){const b=q('#jcBtns');if(!b)return;b.innerHTML='';const sv=saveLoad();
+ if(sv){const placed=sv.pos.filter(p=>p[2]).length;b.append(el('button',{class:'btn gold',onclick:()=>resume(sv)},`▶ Continue (${placed} of ${sv.n})`));b.append(el('button',{class:'btn',onclick:()=>{openRoom();showSetup();}},'New jigsaw'));}
+ else b.append(el('button',{class:'btn gold',onclick:()=>{openRoom();showSetup();}},'🧩 Open the Jigsaw Room'));}
+function openRoom(){q('#menu').hidden=true;q('#play')&&(q('#play').hidden=true);q('#jig').hidden=false;window.scrollTo(0,0);}
+function showMenu(){q('#jig').hidden=true;q('#menu').hidden=false;renderCard();window.scrollTo(0,0);}
+function showSetup(){q('#jSetup').hidden=false;q('#jPlay').hidden=true;q('#jStat').textContent='';
+ const pics=q('#jPics');pics.innerHTML='';
+ SCENES.forEach(([id,name])=>{const b=el('button',{class:'jpic'+(pick.pic===id&&!pick.photo?' on':''),onclick:()=>{pick.pic=id;pick.photo=null;showSetup();}},[el('img',{src:sceneURL(id),alt:name}),el('span',{},name)]);pics.append(b);});
+ const inp=el('input',{type:'file',accept:'image/*',style:'display:none'});inp.onchange=async()=>{const f=inp.files[0];if(!f)return;try{pick.photo=await shrinkPhoto(f);showSetup();}catch(e){alert('That photo could not be opened. Try a JPG or PNG.');}};
+ const up=el('button',{class:'jpic'+(pick.photo?' on':''),onclick:()=>inp.click()},[pick.photo?el('img',{src:pick.photo,alt:'Your photo'}):el('div',{class:'jupload',html:'<b>＋</b>Use my own photo'}),el('span',{},pick.photo?'Your photo ✓':'Your photo')]);pics.append(up,inp);
+ const cc=q('#jCounts');cc.innerHTML='';[120,240].forEach(n=>cc.append(el('button',{class:'btn'+(pick.n===n?' on':''),onclick:()=>{pick.n=n;showSetup();}},`${n} pieces`)));}
+function shrinkPhoto(f){return new Promise((ok,bad)=>{const rd=new FileReader();rd.onload=async()=>{try{const im=await loadImg(rd.result);const M=1600,k=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.82));}catch(e){bad(e);}};rd.onerror=bad;rd.readAsDataURL(f);});}
+
+/* ---------- puzzle geometry ---------- */
+function makeEdges(cols,rows,seed){const r=rng(seed),H=[],V=[];for(let y=0;y<rows-1;y++){H.push([]);for(let x=0;x<cols;x++)H[y].push(r()<.5?1:-1);}for(let y=0;y<rows;y++){V.push([]);for(let x=0;x<cols-1;x++)V[y].push(r()<.5?1:-1);}return {H,V};}
+function sides(c,r){const E=J.edges;return {top:r===0?0:-E.H[r-1][c],bottom:r===J.rows-1?0:E.H[r][c],left:c===0?0:-E.V[r][c-1],right:c===J.cols-1?0:E.V[r][c]};}
+function edge(ctx,x0,y0,x1,y1,t){const dx=x1-x0,dy=y1-y0;if(!t){ctx.lineTo(x1,y1);return;}const nx=-dy*t,ny=dx*t;const P=(a,b)=>[x0+dx*a+nx*b,y0+dy*a+ny*b];
+ const pts=[[.34,0],[.40,-.02],[.37,.16],[.36,.26],[.5,.30],[.64,.26],[.63,.16],[.60,-.02],[.66,0]];let p=P(pts[0][0],pts[0][1]);ctx.lineTo(p[0],p[1]);
+ let a=P(.40,.02),b=P(.32,.12),c=P(.36,.22);ctx.bezierCurveTo(a[0],a[1],b[0],b[1],c[0],c[1]);a=P(.40,.34);b=P(.60,.34);c=P(.64,.22);ctx.bezierCurveTo(a[0],a[1],b[0],b[1],c[0],c[1]);a=P(.68,.12);b=P(.60,.02);c=P(.66,0);ctx.bezierCurveTo(a[0],a[1],b[0],b[1],c[0],c[1]);ctx.lineTo(x1,y1);}
+function piecePath(ctx,o,s,sd){ctx.beginPath();ctx.moveTo(o,o);edge(ctx,o,o,o+s,o,-sd.top);edge(ctx,o+s,o,o+s,o+s,-sd.right);edge(ctx,o+s,o+s,o,o+s,-sd.bottom);edge(ctx,o,o+s,o,o,-sd.left);ctx.closePath();}
+
+/* ---------- play ---------- */
+async function startNew(){const [cols,rows]=COUNTS[pick.n];J={pic:pick.pic,photo:pick.photo,n:pick.n,cols,rows,seed:Math.floor(Math.random()*1e9)+1,pieces:[],elapsed:0,t0:Date.now(),done:false};
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)J.pieces.push({c,r,x:0,y:0,placed:false});
+ J.edges=makeEdges(cols,rows,J.seed);await prepImage();scatter(true);openRoom();showPlay();build();save();}
+async function resume(sv){J={pic:sv.pic,photo:sv.photo,n:sv.n,cols:sv.cols,rows:sv.rows,seed:sv.seed,elapsed:sv.elapsed||0,t0:Date.now(),done:false,pieces:[]};let i=0;
+ for(let r=0;r<J.rows;r++)for(let c=0;c<J.cols;c++){const p=sv.pos[i++]||[0,0,0];J.pieces.push({c,r,x:p[0],y:p[1],placed:!!p[2]});}
+ J.edges=makeEdges(J.cols,J.rows,J.seed);try{await prepImage();}catch(e){clearSave();renderCard();return;}openRoom();showPlay();build();}
+async function prepImage(){const src=J.photo||sceneURL(J.pic);const im=await loadImg(src);
+ const W=1600,H=Math.round(W*J.rows/J.cols),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+ const k=Math.max(W/im.width,H/im.height),w=im.width*k,h=im.height*k;g.drawImage(im,(W-w)/2,(H-h)/2,w,h);IMG=c;q('#jghost').src=c.toDataURL('image/jpeg',.7);}
+function showPlay(){q('#jSetup').hidden=true;q('#jPlay').hidden=false;q('#jwin').style.display=J.done?'block':'none';}
+function trayRows(){return Math.ceil(J.rows*0.95)+1;}
+function scatter(all){const r=rng(Date.now()&0xffffff),TR=trayRows();J.pieces.forEach(p=>{if(p.placed&&!all)return;p.placed=false;p.x=-.2+r()*(J.cols-.6);p.y=J.rows+.35+r()*(TR-1.2);});}
+function edgesFirst(){const TR=trayRows();const loose=J.pieces.filter(p=>!p.placed);const ed=loose.filter(p=>p.c===0||p.r===0||p.c===J.cols-1||p.r===J.rows-1),inner=loose.filter(p=>!ed.includes(p));
+ const per=Math.max(1,J.cols-1);ed.forEach((p,i)=>{p.x=(i%per)*1.05*(J.cols-1)/per*.95;p.y=J.rows+.3+Math.floor(i/per)*1.05;});
+ const start=J.rows+.4+Math.ceil(ed.length/per)*1.05,rng2=rng(7);inner.forEach(p=>{p.x=rng2()*(J.cols-.6);p.y=start+rng2()*Math.max(.5,(J.rows+TR)-start-1);});layout();save();}
+let S=1,PAD=0;
+function build(){const tbl=q('#jtable');tbl.querySelectorAll('canvas.jp').forEach(c=>c.remove());
+ const W=tbl.parentElement.clientWidth;S=Math.floor(W/J.cols);PAD=Math.ceil(S*.32);const bw=S*J.cols,bh=S*J.rows,TR=trayRows();
+ tbl.style.width=bw+'px';tbl.style.height=(bh+S*TR+S*.4)+'px';tbl.style.margin='0 auto';
+ const bd=q('#jboard');bd.style.width=bw+'px';bd.style.height=bh+'px';
+ const k=IMG.width/bw;
+ J.pieces.forEach(p=>{const cv=document.createElement('canvas');const sz=S+PAD*2,dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.ceil(sz*dpr);cv.height=Math.ceil(sz*dpr);cv.style.width=sz+'px';cv.style.height=sz+'px';cv.className='jp'+(p.placed?' placed':'');
+  const g=cv.getContext('2d',{willReadFrequently:true});g.scale(dpr,dpr);const sd=sides(p.c,p.r);piecePath(g,PAD,S,sd);g.save();g.clip();
+  g.drawImage(IMG,(p.c*S-PAD)*k,(p.r*S-PAD)*k,sz*k,sz*k,0,0,sz,sz);g.restore();piecePath(g,PAD,S,sd);g.lineWidth=1;g.strokeStyle='rgba(0,0,0,.35)';g.stroke();
+  g.lineWidth=1;g.strokeStyle='rgba(255,255,255,.35)';g.save();g.translate(-.6,-.6);piecePath(g,PAD,S,sd);g.stroke();g.restore();
+  p.cv=cv;tbl.append(cv);});
+ layout();status();}
+function layout(){let z=10;J.pieces.forEach(p=>{if(p.placed){p.x=p.c;p.y=p.r;}p.cv.style.transform=`translate(${p.x*S-PAD}px,${p.y*S-PAD}px)`;p.cv.style.zIndex=p.placed?1:(p.z||(z++));p.cv.classList.toggle('placed',p.placed);});}
+function status(){const n=J.pieces.filter(p=>p.placed).length;q('#jStat').textContent=`${n} of ${J.n} pieces placed`;}
+function hit(e){const els=document.elementsFromPoint(e.clientX,e.clientY);for(const c of els){if(!c.classList||!c.classList.contains('jp')||c.classList.contains('placed'))continue;const r=c.getBoundingClientRect(),dpr=c.width/r.width;const a=c.getContext('2d',{willReadFrequently:true}).getImageData(Math.floor((e.clientX-r.left)*dpr),Math.floor((e.clientY-r.top)*dpr),1,1).data[3];if(a>20)return c;}return null;}
+let drag=null,topZ=1000;
+document.addEventListener('pointerdown',e=>{if(!J||!q('#jtable')||!q('#jtable').contains(e.target))return;const c=hit(e);if(!c)return;const p=J.pieces.find(x=>x.cv===c);if(!p||p.placed)return;e.preventDefault();
+ const tr=q('#jtable').getBoundingClientRect();drag={p,ox:(e.clientX-tr.left)/S-p.x,oy:(e.clientY-tr.top)/S-p.y,id:e.pointerId};p.z=++topZ;c.style.zIndex=p.z;c.classList.add('drag');});
+document.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();const tr=q('#jtable').getBoundingClientRect(),p=drag.p;
+ p.x=Math.max(-.3,Math.min(J.cols-.7,(e.clientX-tr.left)/S-drag.ox));p.y=Math.max(-.3,Math.min(J.rows+trayRows()-.6,(e.clientY-tr.top)/S-drag.oy));p.cv.style.transform=`translate(${p.x*S-PAD}px,${p.y*S-PAD}px)`;},{passive:false});
+function drop(e){if(!drag||e.pointerId!==drag.id)return;const p=drag.p;p.cv.classList.remove('drag');drag=null;
+ if(Math.abs(p.x-p.c)<.28&&Math.abs(p.y-p.r)<.28){p.placed=true;p.x=p.c;p.y=p.r;layout();status();
+  if(J.pieces.every(x=>x.placed)){J.done=true;const secs=Math.round((J.elapsed+(Date.now()-J.t0))/1000),m=Math.floor(secs/60);q('#jWinTxt').textContent=`All ${J.n} pieces in place${m?` in ${m} minute${m>1?'s':''}`:''}. Nice work!`;q('#jwin').style.display='block';clearSave();return;}}
+ save();}
+document.addEventListener('pointerup',drop);document.addEventListener('pointercancel',drop);
+window.addEventListener('pagehide',save);
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureUI);else ensureUI();
+window.__jig={startNew:async(n,pic)=>{pick.n=n;pick.pic=pic||'balloons';pick.photo=null;await startNew();},get J(){return J;},S:()=>S,save,saveLoad};
+})();
+</script>
+<!--/jig-->
 <!--lw-embed-->
 <style>html.lw-embed #game{min-height:0}html.lw-embed #game{min-height:780px}</style>
 <script>
