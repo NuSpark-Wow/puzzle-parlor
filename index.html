@@ -123,12 +123,54 @@ footer{text-align:center;color:var(--muted);font-size:12.5px;padding:10px 16px 3
 body:has(#menu[hidden]) .strip,body:has(#play:not([hidden])) .strip,body:has(#game:not([hidden])) .strip{display:none}
 @media (max-width:520px){.strip{gap:6px}.strip li{width:52px}.strip .disc{width:48px;height:48px;border-width:2px}.strip span{font-size:9px;word-break:break-word}}
 @media print{.strip{display:none!important}}
+
+.np-big{font-size:21px;line-height:1.45;font-weight:600;color:var(--navy);margin:6px 0 4px}
+.np-key{font-size:13px;color:#666;margin:4px 0}
+.np-links{display:flex;flex-direction:column;gap:8px;align-items:center;margin:12px 0;font-size:22px;letter-spacing:1px}
+.np-blank{display:inline-block;min-width:70px;color:#c2410c;font-weight:800;margin:0 4px}
+.np-story{font-size:19px;line-height:1.5;background:#fff8e7;border-left:5px solid var(--gold,#c9952a);padding:10px 14px;border-radius:8px;margin:6px 0 10px}
+.np-clues{display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
+.np-clue{border:2px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;font-size:16px}
+.np-clue summary{cursor:pointer;font-weight:600}.np-clue[open]{background:#f0fdf4;border-color:#86efac}.np-clue b{display:block;margin-top:4px;font-size:18px;color:#166534}
+.np-mtn{text-align:center}.np-target{font-size:28px;font-weight:800;color:var(--navy);margin:6px 0}
+.np-expr{min-height:52px;font-size:26px;border:2px dashed var(--line);border-radius:12px;padding:8px;margin:8px auto;max-width:420px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.np-tiles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.np-tile{min-width:56px;height:56px;font:inherit;font-size:24px;font-weight:800;border-radius:12px;border:2px solid var(--navy);background:#fff;color:var(--navy);cursor:pointer;padding:0 10px}
+.np-tile.op{border-color:var(--line);font-size:20px;min-width:48px;height:48px}.np-tile:disabled{opacity:.3}
+.np-svg{width:100%;max-width:300px;display:block;margin:10px auto}
+.np-ws{display:grid;gap:2px;max-width:480px;margin:10px auto;user-select:none;-webkit-user-select:none}
+.np-wc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(13px,4vw,22px);background:#fff;border:1px solid var(--line);border-radius:5px;cursor:pointer}
+.np-wc.first{outline:3px solid #2563eb;outline-offset:-2px}.np-wc.hintc{animation:npglow 1s ease-in-out 3}
+@keyframes npglow{50%{background:#facc15}}
+.np-wlist{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-weight:700;font-size:16px;margin-top:6px}.np-wlist .got{text-decoration:line-through;opacity:.45}
+.np-xw{display:grid;gap:2px;max-width:min(100%,440px);margin:10px auto;background:#1f2a44;padding:2px;border-radius:6px}
+.np-xb{aspect-ratio:1;background:#1f2a44}.np-xc{aspect-ratio:1;background:#fff;position:relative}
+.np-xc input{width:100%;height:100%;border:0;text-align:center;font:inherit;font-size:clamp(14px,4.5vw,22px);font-weight:800;text-transform:uppercase;background:transparent;padding:0;color:#111;border-radius:0}
+.np-xc input:focus{outline:3px solid #2563eb;outline-offset:-3px;background:#eff6ff}
+.np-xc.bad{background:#fee2e2}.np-xc.hintx{background:#fef3c7}
+.np-xn{position:absolute;top:1px;left:3px;font-size:10px;font-weight:700;color:#334155;pointer-events:none}
+.np-xclues{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:8px;font-size:16px;line-height:1.5}.np-xcl h4{margin:4px 0}.np-xcl small{color:#888}
+.np-sdwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:8px 0}
+.np-sdbox svg{width:100%;display:block;border-radius:10px;border:2px solid var(--line);cursor:crosshair;touch-action:manipulation}
+.np-jugs{display:flex;justify-content:center;align-items:flex-end;gap:18px;margin:14px 0 6px;flex-wrap:wrap}
+.np-jugcol{display:flex;flex-direction:column;align-items:center;gap:6px}
+.np-jug{width:78px;border:3px solid #475569;border-top:0;border-radius:0 0 14px 14px;position:relative;background:#f8fafc;cursor:pointer;overflow:hidden}
+.np-jug.sel{border-color:#2563eb;box-shadow:0 0 0 3px #bfdbfe}
+.np-water{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#60a5fa,#2563eb);transition:height .35s}
+.np-jlab{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:#0f172a;text-shadow:0 0 4px #fff}
+.np-jname{font-weight:700;font-size:14px}.np-jbtns{display:flex;gap:6px;justify-content:center;margin:4px 0}
+.np-mini{font:inherit;font-size:15px;font-weight:700;padding:7px 12px;border-radius:9px;border:2px solid var(--line);background:#fff;cursor:pointer}
+.np-jinfo{text-align:center;color:#555;font-size:15px;margin:6px 0}
+.np-slide{display:grid;gap:6px;max-width:330px;margin:12px auto;padding:6px;background:#1f2a44;border-radius:12px}
+.np-st{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:clamp(22px,7vw,34px);font-weight:800;background:#fde68a;border-radius:10px;cursor:pointer;color:#1f2a44;user-select:none}
+.np-st.gap{background:transparent;cursor:default}.np-st.hint{animation:npglow 1s ease-in-out 3;box-shadow:0 0 0 4px #22c55e}
+.np-pegwrap{text-align:center}.np-peg{width:100%;max-width:340px;display:block;margin:6px auto;touch-action:manipulation}.np-peg circle{cursor:pointer}
 </style>
 </head>
 <body>
 <header>
  <h1>The Puzzle <span>Parlor</span></h1>
- <p>Keep your mind sharp. 24 kinds of puzzles, built fresh every time.</p>
+ <p>Keep your mind sharp. 36 kinds of puzzles, built fresh every time.</p>
 <ul class="strip" aria-label="Some of the games"><li><span class="disc"><svg viewBox="0 0 100 100" role="img" aria-label="Sudoku"><rect width="100" height="100" fill="#7fc8c4"/><g transform="translate(50 50) scale(1.22) translate(-50 -50)"><rect x="20" y="20" width="60" height="60" rx="3" fill="#fff" stroke="#1f2a44" stroke-width="2.5"/><line x1="26.7" y1="20" x2="26.7" y2="80" stroke="#1f2a44" stroke-width="0.6"/><line x1="20" y1="26.7" x2="80" y2="26.7" stroke="#1f2a44" stroke-width="0.6"/><line x1="33.3" y1="20" x2="33.3" y2="80" stroke="#1f2a44" stroke-width="0.6"/><line x1="20" y1="33.3" x2="80" y2="33.3" stroke="#1f2a44" stroke-width="0.6"/><line x1="40.0" y1="20" x2="40.0" y2="80" stroke="#1f2a44" stroke-width="1.8"/><line x1="20" y1="40.0" x2="80" y2="40.0" stroke="#1f2a44" stroke-width="1.8"/><line x1="46.7" y1="20" x2="46.7" y2="80" stroke="#1f2a44" stroke-width="0.6"/><line x1="20" y1="46.7" x2="80" y2="46.7" stroke="#1f2a44" stroke-width="0.6"/><line x1="53.3" y1="20" x2="53.3" y2="80" stroke="#1f2a44" stroke-width="0.6"/><line x1="20" y1="53.3" x2="80" y2="53.3" stroke="#1f2a44" stroke-width="0.6"/><line x1="60.0" y1="20" x2="60.0" y2="80" stroke="#1f2a44" stroke-width="1.8"/><line x1="20" y1="60.0" x2="80" y2="60.0" stroke="#1f2a44" stroke-width="1.8"/><line x1="66.7" y1="20" x2="66.7" y2="80" stroke="#1f2a44" stroke-width="0.6"/><line x1="20" y1="66.7" x2="80" y2="66.7" stroke="#1f2a44" stroke-width="0.6"/><line x1="73.3" y1="20" x2="73.3" y2="80" stroke="#1f2a44" stroke-width="0.6"/><line x1="20" y1="73.3" x2="80" y2="73.3" stroke="#1f2a44" stroke-width="0.6"/><text x="23.4" y="25.6" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">5</text><text x="30.1" y="32.3" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">3</text><text x="50.1" y="25.6" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">7</text><text x="70.1" y="32.3" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">9</text><text x="36.7" y="52.3" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">1</text><text x="50.1" y="52.3" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1f6fb2">8</text><text x="63.4" y="65.6" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">2</text><text x="76.7" y="78.9" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">4</text><text x="30.1" y="72.3" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1f6fb2">6</text><text x="56.7" y="72.3" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">3</text><text x="43.4" y="38.9" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">2</text><text x="70.1" y="52.3" font-size="5.6" text-anchor="middle" font-weight="700" fill="#1d2433">6</text></g></svg></span><span>Sudoku</span></li><li><span class="disc"><svg viewBox="0 0 100 100" role="img" aria-label="Logic Grids"><rect width="100" height="100" fill="#f2a490"/><g transform="translate(50 50) scale(1.22) translate(-50 -50)"><rect x="22" y="22" width="56" height="56" rx="3" fill="#fff" stroke="#1f2a44" stroke-width="2.5"/><line x1="36" y1="22" x2="36" y2="78" stroke="#1f2a44" stroke-width="1"/><line x1="22" y1="36" x2="78" y2="36" stroke="#1f2a44" stroke-width="1"/><line x1="50" y1="22" x2="50" y2="78" stroke="#1f2a44" stroke-width="1"/><line x1="22" y1="50" x2="78" y2="50" stroke="#1f2a44" stroke-width="1"/><line x1="64" y1="22" x2="64" y2="78" stroke="#1f2a44" stroke-width="1"/><line x1="22" y1="64" x2="78" y2="64" stroke="#1f2a44" stroke-width="1"/><path d="M26 26 l6 6 M32 26 l-6 6" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round"/><path d="M39 29 l3 3.5 6 -7" fill="none" stroke="#1f8a4c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M54 26 l6 6 M60 26 l-6 6" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round"/><path d="M40 40 l6 6 M46 40 l-6 6" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round"/><path d="M67 43 l3 3.5 6 -7" fill="none" stroke="#1f8a4c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M25 57 l3 3.5 6 -7" fill="none" stroke="#1f8a4c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M54 54 l6 6 M60 54 l-6 6" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round"/><path d="M40 68 l6 6 M46 68 l-6 6" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round"/><path d="M53 71 l3 3.5 6 -7" fill="none" stroke="#1f8a4c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M68 68 l6 6 M74 68 l-6 6" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round"/></g></svg></span><span>Logic Grids</span></li><li><span class="disc"><svg viewBox="0 0 100 100" role="img" aria-label="Mazes"><rect width="100" height="100" fill="#f0cf6b"/><g transform="translate(50 50) scale(1.22) translate(-50 -50)"><rect x="20" y="20" width="60" height="60" rx="3" fill="#fff"/><path d="M20 20 H80 V80 H20 Z M32 20 V44 M20 56 H44 V68 M44 32 H68 M56 32 V56 H68 M32 68 V80 M56 68 H80 M44 44 V56" fill="none" stroke="#1f2a44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 26 V50 H38 V38 H50 V62 H62 V74 H74" fill="none" stroke="#c99a2e" stroke-width="2.4" stroke-dasharray="3 3" stroke-linecap="round"/><circle cx="26" cy="26" r="3.2" fill="#c0392b"/><circle cx="74" cy="74" r="3.2" fill="#1f8a4c"/></g></svg></span><span>Mazes</span></li><li><span class="disc"><svg viewBox="0 0 100 100" role="img" aria-label="Nonograms"><rect width="100" height="100" fill="#b6a6e6"/><g transform="translate(50 50) scale(1.22) translate(-50 -50)"><rect x="18" y="18" width="64" height="64" rx="3" fill="#fff"/><rect x="32.0" y="32.0" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><rect x="41.6" y="32.0" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="51.2" y="32.0" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="60.8" y="32.0" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="70.4" y="32.0" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><rect x="32.0" y="41.6" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="41.6" y="41.6" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="51.2" y="41.6" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><rect x="60.8" y="41.6" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="70.4" y="41.6" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="32.0" y="51.2" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="41.6" y="51.2" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="51.2" y="51.2" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="60.8" y="51.2" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="70.4" y="51.2" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="32.0" y="60.8" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><rect x="41.6" y="60.8" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="51.2" y="60.8" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="60.8" y="60.8" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="70.4" y="60.8" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><rect x="32.0" y="70.4" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><rect x="41.6" y="70.4" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><rect x="51.2" y="70.4" width="9.6" height="9.6" fill="#1f2a44" stroke="#b9b2a2" stroke-width=".6"/><rect x="60.8" y="70.4" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><rect x="70.4" y="70.4" width="9.6" height="9.6" fill="#fff" stroke="#b9b2a2" stroke-width=".6"/><text x="36.8" y="29" font-size="6" text-anchor="middle" font-weight="700" fill="#c0392b">2</text><text x="46.4" y="29" font-size="6" text-anchor="middle" font-weight="700" fill="#c0392b">4</text><text x="56.0" y="29" font-size="6" text-anchor="middle" font-weight="700" fill="#c0392b">3</text><text x="65.6" y="29" font-size="6" text-anchor="middle" font-weight="700" fill="#c0392b">4</text><text x="75.2" y="29" font-size="6" text-anchor="middle" font-weight="700" fill="#c0392b">2</text><text x="30" y="38.9" font-size="5.6" text-anchor="end" font-weight="700" fill="#c0392b">3</text><text x="30" y="48.5" font-size="5.6" text-anchor="end" font-weight="700" fill="#c0392b">2 2</text><text x="30" y="58.1" font-size="5.6" text-anchor="end" font-weight="700" fill="#c0392b">5</text><text x="30" y="67.7" font-size="5.6" text-anchor="end" font-weight="700" fill="#c0392b">3</text><text x="30" y="77.3" font-size="5.6" text-anchor="end" font-weight="700" fill="#c0392b">1</text></g></svg></span><span>Nonograms</span></li><li><span class="disc"><svg viewBox="0 0 100 100" role="img" aria-label="Balance Scales"><rect width="100" height="100" fill="#8fc6ea"/><g transform="translate(50 50) scale(1.22) translate(-50 -50)"><rect x="47.5" y="34" width="5" height="38" rx="2" fill="#1f2a44"/><rect x="36" y="70" width="28" height="6" rx="3" fill="#1f2a44"/><g transform="rotate(-8 50 34)"><rect x="20" y="32" width="60" height="4" rx="2" fill="#1f2a44"/><path d="M24 36 L18 54 M24 36 L30 54 M76 36 L70 54 M76 36 L82 54" stroke="#1f2a44" stroke-width="1.2"/><path d="M15 54 h18 a9 5 0 0 1 -18 0z" fill="#c99a2e"/><path d="M67 54 h18 a9 5 0 0 1 -18 0z" fill="#c99a2e"/><circle cx="24" cy="48.5" r="5.5" fill="#c0392b"/><path d="M68 54 l4.5 -8 4.5 8z M73 54 l4.5 -8 4.5 8z" fill="#1f6fb2"/></g><circle cx="50" cy="34" r="3.2" fill="#c99a2e"/></g></svg></span><span>Balance Scales</span></li><li><span class="disc"><svg viewBox="0 0 100 100" role="img" aria-label="Tower Puzzle"><rect width="100" height="100" fill="#9fd39a"/><g transform="translate(50 50) scale(1.22) translate(-50 -50)"><rect x="16" y="70" width="68" height="5" rx="2" fill="#7a4a24"/><rect x="26.4" y="34" width="3.2" height="37" rx="1.5" fill="#7a4a24"/><rect x="48.4" y="34" width="3.2" height="37" rx="1.5" fill="#7a4a24"/><rect x="70.4" y="34" width="3.2" height="37" rx="1.5" fill="#7a4a24"/><rect x="17.0" y="63" width="22" height="6.5" rx="3" fill="#c0392b"/><rect x="20.0" y="56" width="16" height="6.5" rx="3" fill="#c99a2e"/><rect x="23.0" y="49" width="10" height="6.5" rx="3" fill="#1f8a4c"/><rect x="67" y="63" width="10" height="6.5" rx="3" fill="#1f6fb2"/></g></svg></span><span>Tower Puzzle</span></li></ul></header>
 <main>
  <section id="menu">
@@ -194,6 +236,7 @@ const TYPES=[
  {id:'seq',name:'Number Sequences',desc:'What comes next?',skill:'Number'},
  {id:'balance',name:'Balance Scales',desc:'Weigh it out',skill:'Number'},
  {id:'prob',name:'Probability',desc:'What are the odds?',skill:'Number'},
+ {id:'makenum',name:'Make the Number',desc:'Hit the target',skill:'Number'},
  {id:'matrix',name:'Pattern Matrix',desc:'Find the missing tile',skill:'Pattern'},
  {id:'code',name:'Code Breaker',desc:'Crack the message',skill:'Pattern'},
  {id:'rule',name:'Missing Rule',desc:'Find the secret rule',skill:'Pattern'},
@@ -201,13 +244,24 @@ const TYPES=[
  {id:'shape',name:'Shape Shift',desc:'Turn it in your head',skill:'Spatial'},
  {id:'maze',name:'Mazes',desc:'Find your way out',skill:'Spatial'},
  {id:'match',name:'Matchstick Math',desc:'Move one match',skill:'Spatial'},
+ {id:'count',name:'Count the Shapes',desc:'How many triangles?',skill:'Spatial'},
+ {id:'spot',name:'Spot the Difference',desc:'Find what changed',skill:'Spatial'},
  {id:'memory',name:'Memory Grid',desc:'See it, rebuild it',skill:'Memory'},
  {id:'ladder',name:'Word Ladders',desc:'One letter at a time',skill:'Word'},
  {id:'anagram',name:'Anagrams',desc:'Unscramble the word',skill:'Word'},
  {id:'rebus',name:'Rebus',desc:'Pictures become phrases',skill:'Word'},
+ {id:'wsearch',name:'Word Search',desc:'Find the hidden words',skill:'Word'},
+ {id:'cross',name:'Mini Crossword',desc:'Fill in the squares',skill:'Word'},
+ {id:'links',name:'Word Links',desc:'One word fits them all',skill:'Word'},
  {id:'flaw',name:'Spot the Flaw',desc:'Find the weak argument',skill:'Critical Thinking'},
+ {id:'riddle',name:'Riddles',desc:'What am I?',skill:'Critical Thinking'},
+ {id:'teaser',name:'Brain Teasers',desc:'Tricky questions',skill:'Critical Thinking'},
+ {id:'mystery',name:'Yes or No Mysteries',desc:'What really happened?',skill:'Critical Thinking'},
  {id:'river',name:'River Crossing',desc:'Get everyone across',skill:'Strategy'},
- {id:'tower',name:'Tower Puzzle',desc:'Move the stack',skill:'Strategy'}
+ {id:'tower',name:'Tower Puzzle',desc:'Move the stack',skill:'Strategy'},
+ {id:'pour',name:'Pouring Puzzles',desc:'Measure it exactly',skill:'Strategy'},
+ {id:'slide',name:'Sliding Tiles',desc:'Put them in order',skill:'Strategy'},
+ {id:'peg',name:'Peg Jump',desc:'Leave just one',skill:'Strategy'}
 ];
 const DIFFS=[['easy','Easy'],['medium','Medium'],['hard','Hard'],['mixed','Mixed']];
 const BASE={easy:10,medium:20,hard:30};
@@ -1010,7 +1064,415 @@ function genRebus(diff){
   hint0:'Pay attention to <i>where</i> the words sit (over, under, between), how big they are, and how many times they appear.',explain:`<b>${ans}.</b> ${why}`,answer:`<b>${ans}</b>`});
 }
 
-const GEN={who:genWho,master:genMaster,nono:genNono,balance:genBalance,prob:genProb,rule:genRule,odd:genOdd,maze:genMaze,match:genMatch,river:genRiver,tower:genTower,rebus:genRebus,logic:genLogic,truth:genTruth,sudoku:genSudoku,math:genMath,seq:genSeq,matrix:genMatrix,code:genCode,shape:genShape,memory:genMemory,ladder:genLadder,anagram:genAnagram,flaw:genFlaw};
+/* ===================== NEW TYPES (batch 1) ===================== */
+
+/* ===== 25. Riddles ===== */
+const RIDDLES={
+ easy:[
+  ['What has keys but can\'t open locks?','A piano',['A map','A jail','A diary']],
+  ['What has hands but can\'t clap?','A clock',['A glove','A statue','A tree']],
+  ['What gets wetter the more it dries?','A towel',['A sponge','The rain','A river']],
+  ['What has a neck but no head?','A bottle',['A snake','A shirt','A guitar case']],
+  ['What has one eye but can\'t see?','A needle',['A potato','A storm','A pirate']],
+  ['What has legs but doesn\'t walk?','A table',['A spider','A bird','A stool pigeon']],
+  ['What goes up but never comes down?','Your age',['A balloon','Smoke','A kite']],
+  ['What can you catch but not throw?','A cold',['A ball','A fish','A bus']],
+  ['What has a face and two hands but no arms or legs?','A clock',['A doll','A coin','A mirror']],
+  ['What has many teeth but can\'t bite?','A comb',['A shark','A zipper','A saw']],
+  ['What is full of holes but still holds water?','A sponge',['A net','A bucket','A colander']],
+  ['What runs but never walks?','Water',['A clock','A fox','A road']],
+  ['What has a thumb and four fingers but isn\'t alive?','A glove',['A hand puppet','A rake','A fork']],
+  ['What kind of room has no doors or windows?','A mushroom',['A closet','A cave','A bathroom']],
+  ['What building has the most stories?','The library',['A skyscraper','A castle','A hotel']]],
+ medium:[
+  ['The more you take, the more you leave behind. What are they?','Footsteps',['Photos','Cookies','Breaths']],
+  ['What can travel around the world while staying in a corner?','A stamp',['A spider','The moon','A compass']],
+  ['What has to be broken before you can use it?','An egg',['A promise','A record','A seal']],
+  ['I\'m tall when I\'m young and short when I\'m old. What am I?','A candle',['A tree','A pencil','A snowman']],
+  ['What is always in front of you but can\'t be seen?','The future',['Your nose','The air','Your shadow']],
+  ['What can you hold in your right hand but never in your left?','Your left hand',['A pen','A fork','A ring']],
+  ['What has cities but no houses, forests but no trees, and water but no fish?','A map',['A desert','A globe snow-dome','A painting']],
+  ['What word becomes shorter when you add two letters to it?','Short',['Long','Small','Brief']],
+  ['What belongs to you, but other people use it more than you do?','Your name',['Your phone','Your car','Your money']],
+  ['What goes through cities and fields but never moves?','A road',['A train','The wind','A river']],
+  ['What has a head and a tail but no body?','A coin',['A comet','A snake','A kite']],
+  ['If you drop me I\'m sure to crack, but give me a smile and I\'ll always smile back. What am I?','A mirror',['An egg','A plate','A window']],
+  ['What can fill a room but takes up no space?','Light',['Air','A crowd','Furniture']],
+  ['What runs all around a backyard yet never moves?','A fence',['A dog','A hose','A lawnmower']],
+  ['What gets bigger the more you take away from it?','A hole',['A debt','A pile','A shadow']]],
+ hard:[
+  ['I speak without a mouth and hear without ears. I have no body, but I come alive with the wind. What am I?','An echo',['A ghost','A kite','A flag']],
+  ['What comes once in a minute, twice in a moment, but never in a thousand years?','The letter M',['A second','A heartbeat','The letter E']],
+  ['The person who makes it sells it. The person who buys it never uses it. The person who uses it never knows it. What is it?','A coffin',['A gift','A ticket','A parachute']],
+  ['What five-letter word has one left when two are removed?','Stone',['Alone','Seven','Eight']],
+  ['Forward I am heavy, but backward I am not. What am I?','Ton',['Rock','Load','Weight']],
+  ['What can run but never walks, has a mouth but never talks, has a bed but never sleeps?','A river',['A clock','A cave','A train']],
+  ['I have branches, but no fruit, trunk or leaves. What am I?','A bank',['A tree in winter','A river delta','A family']],
+  ['What disappears as soon as you say its name?','Silence',['A secret','A bubble','A dream']],
+  ['What has 13 hearts but no other organs?','A deck of cards',['A valentine box','A beehive','A calendar']],
+  ['I am an odd number. Take away a letter and I become even. What number am I?','Seven',['Three','Five','Nine']],
+  ['What is so fragile that saying its name breaks it?','Silence',['Glass','A promise','Ice']],
+  ['What word in the dictionary is spelled incorrectly?','Incorrectly',['Misspelled','Wrong','Dictionary']],
+  ['I have keys but no locks, space but no room, and you can enter but can\'t go inside. What am I?','A keyboard',['A piano','A map','A car']],
+  ['What can be cracked, made, told and played?','A joke',['A code','An egg','A game']],
+  ['Which month has 28 days?','All of them',['February','None of them','Only February in a leap year']]]
+};
+function genRiddle(diff){
+ const [qq,ans,wr]=pick(RIDDLES[diff]);const opts=shuffle([ans,...wr]);
+ return mcPuzzle({prompt:'Solve the riddle.',top:`<div class="np-big">${qq}</div>`,opts:opts.map(o=>`<b>${o}</b>`),ansIdx:opts.indexOf(ans),text:true,
+  hint0:'Riddles play with words. Think about other meanings of the key words, not just the obvious one.',answer:`<b>${ans}</b>`,
+  explain:`The answer is <b>${ans}</b>. Riddles work by using a word two ways, like "hands" on a person and "hands" on a clock. When you're stuck, list every meaning of the strangest word in the riddle.`});
+}
+
+/* ===== 26. Brain Teasers ===== */
+const TRICKS=[
+ ['How many months have 28 days?','All 12',['Just 1','1 or 2, in a leap year','None'],'Every month has at least 28 days. February just stops there.'],
+ ['Which weighs more: a pound of feathers or a pound of bricks?','They weigh the same',['The bricks','The feathers','It depends on the bricks'],'A pound is a pound. Our brains picture heavy bricks and get fooled.'],
+ ['You\'re in a race and you pass the person in second place. What place are you in now?','Second',['First','Third','Still behind first and second'],'You took second place\'s spot. First place is still ahead of you.'],
+ ['A farmer has 17 sheep. All but 9 run away. How many are left?','9',['8','17','0'],'"All but 9" means 9 stayed.'],
+ ['How many animals of each kind did Moses take on the ark?','None. It was Noah',['Two','One','Seven'],'It was Noah\'s ark, not Moses\'s. Our brains skim right past the wrong name.'],
+ ['Divide 30 by one half, then add 10. What do you get?','70',['25','40','15'],'Dividing by one half is the same as doubling: 30 ÷ ½ = 60, plus 10 is 70.'],
+ ['There are 3 apples and you take away 2. How many apples do you have?','2',['1','3','0'],'You took 2, so you have 2.'],
+ ['An electric train heads north while the wind blows south. Which way does the smoke blow?','There is no smoke',['North','South','Straight up'],'Electric trains don\'t make smoke.'],
+ ['A rooster lays an egg right on the peak of a barn roof. Which side does it roll down?','Neither. Roosters don\'t lay eggs',['The left side','The right side','The side the wind blows'],'Only hens lay eggs.'],
+ ['How many times can you subtract 10 from 100?','Once',['10 times','9 times','As many as you like'],'After the first time, you\'re subtracting from 90, not 100.'],
+ ['What is half of 2 plus 2?','3',['2','4','1'],'Half of 2 is 1, and 1 plus 2 is 3. Order matters!'],
+ ['If you have only one match and walk into a cold, dark room with an oil lamp, a candle and a fireplace, what do you light first?','The match',['The oil lamp','The candle','The fireplace'],'You have to light the match before anything else.'],
+ ['Some months have 31 days and some have 30. How many have 29 days or more?','All 12',['1','11','6'],'Every month has at least 28 days, and even February has 29 in a leap year. All 12 reach 29 or more.'],
+ ['A doctor gives you 3 pills and says take one every half hour. How long until they\'re gone?','1 hour',['1½ hours','2 hours','30 minutes'],'Take one now, one at 30 minutes and one at 60 minutes. Done in 1 hour.']];
+const ROMAN=n=>{const v=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const [a,b] of v)while(n>=a){s+=b;n-=a;}return s;};
+function genTeaser(diff){
+ const kinds=diff==='easy'?['trick','trick','double','cuts','socks','roman']:diff==='medium'?['trick','double','tourney','fence','machines','roman','pen','age']:['trick','tourney','fence','machines','roman','pen','age','double'];
+ const k=pick(kinds);
+ if(k==='trick'){const [qq,a,w,why]=pick(TRICKS);const o=shuffle([a,...w]);
+  return mcPuzzle({prompt:'Brain teaser. Read carefully!',top:`<div class="np-big">${qq}</div>`,opts:o.map(x=>`<b>${x}</b>`),ansIdx:o.indexOf(a),text:true,hint0:'This one is a trick. Read every word slowly. The obvious answer is usually wrong.',answer:`<b>${a}</b>`,explain:why});}
+ if(k==='double'){const thing=pick([['A patch of lily pads','the whole pond'],['A spot of mold','the whole slice of bread'],['Ivy on a wall','the entire wall'],['A pile of snow from a snow machine','the whole yard']]);const d=diff==='easy'?R(4)+5:diff==='medium'?R(10)+10:R(30)+30;
+  return numPuzzle({prompt:'Brain teaser.',top:`<div class="np-big">${thing[0]} doubles in size every day. On day ${d} it covers ${thing[1]}. On what day did it cover exactly half?</div>`,ans:d-1,hints:['Don\'t divide by 2!','Think about the day before it was full.',`If it doubles every day, it was half as big one day earlier.`],explain:`Day <b>${d-1}</b>. Because it doubles every day, it was exactly half the size on the day before it was full. Most people guess day ${Math.round(d/2)}, but that's the trap.`});}
+ if(k==='tourney'){const p=diff==='medium'?pick([16,32,64,100]):pick([128,500,1000,2048]);
+  return numPuzzle({prompt:'Brain teaser.',top:`<div class="np-big">${p} players enter a tennis tournament. Lose one match and you're out. How many matches are played to crown one champion?</div>`,ans:p-1,hints:['Don\'t count round by round.','Every match knocks out exactly one player.','How many players must be knocked out?'],explain:`<b>${p-1}</b> matches. Every match knocks out exactly one player, and all but one of the ${p} players must be knocked out. So it's ${p} − 1. No adding up rounds needed!`});}
+ if(k==='fence'){const m=pick([2,3,5,10]),n=m*(diff==='medium'?R(5)+3:R(15)+8);
+  return numPuzzle({prompt:'Brain teaser.',top:`<div class="np-big">A straight fence is ${n} feet long. There's a post every ${m} feet, including both ends. How many posts are there?</div>`,ans:n/m+1,hints:['Draw a tiny fence on paper.','Count the gaps first, then the posts.','There is always one more post than gaps.'],explain:`<b>${n/m+1}</b> posts. ${n} ÷ ${m} = ${n/m} gaps between posts, and a straight fence always has one more post than gaps.`});}
+ if(k==='cuts'){const n=R(8)+4;
+  return numPuzzle({prompt:'Brain teaser.',top:`<div class="np-big">How many straight cuts does it take to cut a long log into ${n} pieces? (You can't stack the pieces.)</div>`,ans:n-1,hints:['One cut makes 2 pieces.','Two cuts make 3 pieces.','The pattern: pieces minus 1.'],explain:`<b>${n-1}</b> cuts. Each cut adds one piece, and you start with one log. So ${n} pieces need ${n-1} cuts.`});}
+ if(k==='socks'){const c=pick([[2,'black and white'],[3,'red, blue and green'],[2,'brown and gray']]);
+  return numPuzzle({prompt:'Brain teaser.',top:`<div class="np-big">A drawer is full of ${c[1]} socks, all mixed up. The lights are out. How many socks must you grab to be sure you have a matching pair?</div>`,ans:c[0]+1,hints:['Picture your worst luck.','Each grab could be a different color, until you run out of colors.',`There are ${c[0]} colors.`],explain:`<b>${c[0]+1}</b>. With ${c[0]} colors, your first ${c[0]} socks might all be different. The very next one has to match one of them.`});}
+ if(k==='machines'){const n=pick([3,5,6,8,10]),m=pick([50,100,200]);
+  return numPuzzle({prompt:'Brain teaser. Answer in minutes.',top:`<div class="np-big">If ${n} machines take ${n} minutes to make ${n} toys, how many minutes would ${m} machines take to make ${m} toys?</div>`,ans:n,hints:['Figure out how long ONE machine takes to make ONE toy.',`Each machine makes 1 toy in ${n} minutes.`,'More machines working side by side doesn\'t make each one slower or faster.'],explain:`<b>${n} minutes.</b> Each machine makes one toy in ${n} minutes. ${m} machines working at the same time make ${m} toys in those same ${n} minutes.`});}
+ if(k==='roman'){const n=diff==='easy'?R(30)+4:diff==='medium'?R(400)+40:R(2500)+400;const r=ROMAN(n);
+  if(R(2)){return numPuzzle({prompt:'Roman numerals. Type the number.',top:`<div class="np-big">What number is <b style="letter-spacing:2px">${r}</b>?</div><div class="np-key">I = 1 · V = 5 · X = 10 · L = 50 · C = 100 · D = 500 · M = 1000</div>`,ans:n,hints:['Read from left to right, adding as you go.','When a smaller letter comes BEFORE a bigger one, subtract it (IV = 4, XC = 90).','Break it into chunks: thousands, hundreds, tens, ones.'],explain:`<b>${r} = ${n}</b>. Add the letters from left to right, but when a smaller letter sits in front of a bigger one, subtract it (like IX = 9 and CM = 900).`});}
+  const w=new Set();while(w.size<3){const d=n+pick([-10,-5,-1,1,4,9,10,40,-40,100,-100].filter(x=>n+x>0));w.add(ROMAN(d));w.delete(r);}const o=shuffle([r,...w]);
+  return mcPuzzle({prompt:'Roman numerals.',top:`<div class="np-big">How do you write <b>${n}</b> in Roman numerals?</div><div class="np-key">I = 1 · V = 5 · X = 10 · L = 50 · C = 100 · D = 500 · M = 1000</div>`,opts:o.map(x=>`<b style="letter-spacing:2px">${x}</b>`),ansIdx:o.indexOf(r),text:true,hint0:'Build it in chunks: thousands, then hundreds, then tens, then ones. 4 is IV and 9 is IX.',answer:`<b>${r}</b>`,explain:`<b>${n} = ${r}</b>. Write the thousands, hundreds, tens and ones in order. Remember the subtract trick: 4 = IV, 9 = IX, 40 = XL, 90 = XC, 400 = CD, 900 = CM.`});}
+ if(k==='pen'){const d=pick([1,2,5,10]),pen=pick([5,10,15,20,25,50]),tot=d*100+2*pen;const fmt=c=>'$'+(c/100).toFixed(2);
+  const o=shuffle([fmt(pen),fmt(tot-d*100),fmt(pen*2),fmt(pen+5)].filter((x,i,a)=>a.indexOf(x)===i));
+  return mcPuzzle({prompt:'Brain teaser.',top:`<div class="np-big">A notebook and a pen cost ${fmt(tot)} together. The notebook costs ${fmt(d*100)} more than the pen. How much is the pen?</div>`,opts:o.map(x=>`<b>${x}</b>`),ansIdx:o.indexOf(fmt(pen)),text:true,hint0:`The quick answer, ${fmt(tot-d*100)}, is a trap. Check it: then the notebook would be ${fmt(tot)}, and together they'd cost more than ${fmt(tot)}.`,answer:`<b>${fmt(pen)}</b>`,explain:`<b>${fmt(pen)}</b>. If the pen is ${fmt(pen)}, the notebook is ${fmt(pen+d*100)}, and together that's ${fmt(tot)}. ✔ Take away the ${fmt(d*100)} difference first, then split what's left in half.`});}
+ if(k==='age'){const s=R(8)+4,f=s*2+R(15)+5;
+  return numPuzzle({prompt:'Brain teaser.',top:`<div class="np-big">A dad is ${f} and his daughter is ${s}. In how many years will the dad be exactly twice her age?</div>`,ans:f-2*s,hints:['The difference in their ages never changes.',`The difference is always ${f-s} years.`,`When dad is twice her age, she'll be ${f-s}.`],explain:`<b>${f-2*s} years.</b> They're always ${f-s} years apart. Dad is twice her age when she's ${f-s} (and he's ${2*(f-s)}). She's ${s} now, so that's ${f-s} − ${s} = ${f-2*s} years away.`});}
+ return genTeaser(diff);
+}
+
+/* ===== 27. Word Links ===== */
+const LINKS=[
+ ['FIRE','b',['WORKS','PLACE','MAN','ALARM']],['SUN','b',['FLOWER','SHINE','GLASSES','BURN']],['AIR','b',['PLANE','PORT','LINE','BAG']],['BOOK','b',['CASE','MARK','WORM','SHELF']],
+ ['FOOT','b',['BALL','PRINT','STEP','NOTE']],['RAIN','b',['BOW','COAT','DROP','FALL']],['SNOW','b',['MAN','BALL','FLAKE','STORM']],['TOOTH','b',['BRUSH','PASTE','PICK','ACHE']],
+ ['HAND','b',['SHAKE','BAG','WRITING','CUFF']],['HEAD','b',['LINE','PHONE','WATERS','ACHE']],['DOOR','b',['BELL','KNOB','MAT','WAY']],['WATER','b',['FALL','MELON','PROOF','COLOR']],
+ ['HOME','b',['WORK','MADE','SICK','TOWN']],['MOON','b',['LIGHT','BEAM','WALK','STONE']],['SEA','b',['SHELL','SIDE','FOOD','WEED']],['KEY','b',['BOARD','HOLE','CHAIN','NOTE']],
+ ['HORSE','b',['SHOE','POWER','BACK','FLY']],['BIRTH','b',['DAY','MARK','PLACE','STONE']],['DAY','b',['LIGHT','DREAM','TIME','BREAK']],['BACK','b',['YARD','PACK','BONE','FIRE']],
+ ['NIGHT','b',['GOWN','MARE','FALL','LIGHT']],['STAR','b',['FISH','LIGHT','DUST','GAZER']],['BUTTER','b',['FLY','MILK','CUP','SCOTCH']],['EAR','b',['RING','PHONE','MUFFS','DRUM']],
+ ['BALL','a',['BASE','FOOT','SNOW','BASKET']],['HOUSE','a',['LIGHT','GREEN','DOG','FARM']],['BOARD','a',['KEY','SKATE','CUP','CHALK']],['BERRY','a',['STRAW','BLUE','RASP','GOOSE']],
+ ['CAKE','a',['PAN','CUP','CHEESE','SHORT']],['STONE','a',['KEY','MILE','SAND','CORNER']],['LIGHT','a',['SUN','MOON','FLASH','SPOT']],['FISH','a',['GOLD','STAR','SWORD','CAT']],
+ ['WORK','a',['HOME','TEAM','FIRE','HOUSE']],['TIME','a',['BED','LUNCH','PAST','SUMMER']],['BOAT','a',['SAIL','ROW','TUG','LIFE']],['PORT','a',['AIR','PASS','SEA','TRANS']],
+ ['FLY','a',['BUTTER','DRAGON','FIRE','HORSE']],['MAN','a',['SNOW','FIRE','MAIL','SALES']],['BELL','a',['DOOR','BLUE','COW','DUMB']],['BOX','a',['MAIL','SAND','TOOL','LUNCH']],
+ ['PAPER','a',['NEWS','WALL','SAND','NOTE']],['WAY','a',['HALL','DRIVE','RUN','STAIR']],['CORN','a',['POP','PEPPER','UNI']],['SHIP','a',['FRIEND','BATTLE','WAR','SPACE']]];
+function genLinks(diff){
+ let [key,side,ws]=pick(LINKS.filter(x=>!x[2].some(w=>w.length>9)));const n=diff==='hard'?3:diff==='medium'?3:4;ws=shuffle(ws).slice(0,Math.min(n,ws.length));let inp;
+ const blank=`<span class="np-blank">${diff==='hard'?'?':'_ '.repeat(key.length).trim()}</span>`;
+ return{prompt:`Find one word that goes ${side==='b'?'<b>in front of</b>':'<b>after</b>'} every word below to make new words.`,
+  build(box){box.append(h('div',{class:'np-links',html:ws.map(w=>side==='b'?`${blank}<b>${w}</b>`:`<b>${w}</b>${blank}`).map(x=>`<div>${x}</div>`).join('')}));inp=h('input',{class:'ans',placeholder:'The missing word',autocomplete:'off',autocapitalize:'characters'});box.append(inp);},
+  check(){const v=inp.value.trim().toUpperCase().replace(/[^A-Z]/g,'');if(!v)return{ok:false,msg:'Type a word first.'};return v===key?{ok:true}:{ok:false,msg:`${esc(v)} doesn't fit all of them. Try each one out loud.`};},
+  hint(i){return [`It has ${key.length} letters.`,`It starts with ${key[0]}.`,`It starts with ${key.slice(0,2)}.`][i];},
+  reveal(){inp.value=key;inp.disabled=true;},answer:`<b>${key}</b>`,
+  explain:`<b>${key}</b>: ${ws.map(w=>side==='b'?key+w:w+key).map(x=>x[0]+x.slice(1).toLowerCase()).join(', ')}. Tip: say each word out loud and try common words in front of or after it, like FIRE, SUN, HOUSE or BALL.`,printable:true};
+}
+
+/* ===== 28. Yes or No Mysteries ===== */
+const MYST=[
+ {d:'easy',s:'A man pushes his car up to a hotel and tells the owner he\'s bankrupt. Why?',c:[['Is the car a real car?','No'],['Is he playing a game?','Yes'],['Does he owe money because of where he landed?','Yes']],a:'He\'s playing Monopoly',w:['His car ran out of gas','The hotel overcharged him','He lost his wallet'],e:'He\'s playing Monopoly. His little car token landed on a property with a hotel, and he can\'t pay the rent.'},
+ {d:'easy',s:'A girl falls off a 20-foot ladder but doesn\'t get hurt at all. How?',c:[['Did she land on something soft?','No'],['Was she near the top of the ladder?','No'],['Did she fall very far?','No']],a:'She fell off the bottom step',w:['She landed in a pool','She was wearing a parachute','The ladder was lying flat']
+  ,e:'She was standing on the bottom step of the ladder, so she only fell a few inches.'},
+ {d:'easy',s:'A cowboy rides into town on Friday. He stays three days and rides out on Friday. How?',c:[['Did he stay a whole week?','No'],['Is "Friday" a day of the week in this story?','Not every time'],['Does his horse have a name?','Yes']],a:'His horse is named Friday',w:['He stayed a whole week','He crossed a time zone','The town has a different calendar'],e:'His horse is named Friday. He rode in on Friday (the horse) and rode out on Friday too.'},
+ {d:'easy',s:'Two mothers and two daughters go fishing. They each catch one fish, but only three fish are caught in all. How?',c:[['Did someone lose a fish?','No'],['Were there four people?','No'],['Is someone both a mother and a daughter?','Yes']],a:'They are a grandmother, mother and daughter',w:['One fish got away','They shared one fish','One of them didn\'t really fish'],e:'Only three people went: a grandmother, her daughter and her granddaughter. The middle one is both a mother and a daughter.'},
+ {d:'easy',s:'In the middle of a field there\'s a carrot, a scarf and five pieces of coal. Nobody put them there today. Why are they there?',c:[['Were they dropped by a person walking by?','No'],['Were they part of something?','Yes'],['Has the weather warmed up?','Yes']],a:'A snowman melted',w:['A picnic blew away','A farmer forgot them','A bird collected them'],e:'They were a snowman\'s nose, scarf, eyes and mouth. The snowman melted when the weather warmed up.'},
+ {d:'medium',s:'A man lives on the 10th floor. Every morning he takes the elevator down to the lobby. Coming home, he rides to the 7th floor and walks the rest, unless it\'s raining. Why?',c:[['Does he like the exercise?','No'],['Is something about him important?','Yes'],['Does he carry something on rainy days?','Yes'],['Is he tall?','No']],a:'He\'s too short to reach the 10 button, except with his umbrella',w:['The elevator is broken above 7','He wants exercise on dry days','His neighbor on 7 walks him home'],e:'He\'s short. He can only reach up to the 7 button, but on rainy days he uses his umbrella to press 10.'},
+ {d:'medium',s:'A man walks home in the pouring rain with no hat and no umbrella. His clothes get soaked, but not a single hair on his head gets wet. How?',c:[['Was something covering his head?','No'],['Did he walk quickly?','It doesn\'t matter'],['Is it about his hair?','Yes']],a:'He\'s bald',w:['He walked under awnings','He wore a hood','It stopped raining on his head'],e:'He\'s bald, so there was no hair to get wet!'},
+ {d:'medium',s:'A boy and a doctor go fishing. The boy is the doctor\'s son, but the doctor is not the boy\'s father. How?',c:[['Is the doctor his stepfather?','No'],['Is the doctor a man?','No'],['Is the doctor his parent?','Yes']],a:'The doctor is his mother',w:['The doctor is his uncle','He was adopted by someone else','The doctor is his grandfather'],e:'The doctor is the boy\'s mother. Many people picture a doctor as a man, and that\'s the trick.'},
+ {d:'medium',s:'Two people play five games of checkers. Each one wins three games. There are no ties. How?',c:[['Did they play more than five games?','No'],['Were they playing against each other?','No'],['Were there other players?','Yes']],a:'They weren\'t playing each other',w:['They counted wrong','One game counted twice','They switched colors'],e:'They each played other people. Each won three of their own games.'},
+ {d:'medium',s:'A truck gets stuck under a low bridge. It can\'t go forward or back. A kid walking by tells the driver how to fix it in seconds. What\'s the trick?',c:[['Does it involve tools?','No'],['Does the truck need to get a little shorter?','Yes'],['Is it about the tires?','Yes']],a:'Let some air out of the tires',w:['Push the bridge up','Take the load off','Wait for the bridge to warm up'],e:'Letting some air out of the tires lowers the truck just enough to roll out from under the bridge.'},
+ {d:'hard',s:'A woman has two sons born at the same hour, on the same day, in the same year. But they are not twins. How?',c:[['Were they born at the same time?','Yes'],['Is she their mother?','Yes'],['Were there more than two babies born?','Yes']],a:'They\'re two of triplets',w:['One was adopted','They were born in different cities','They\'re cousins'],e:'They were born as triplets. The third baby makes them not "twins."'},
+ {d:'hard',s:'A man reads a whole book in a room that is pitch dark. He doesn\'t use any light. How?',c:[['Can he see?','No'],['Is the book special?','Yes'],['Does he read with his fingers?','Yes']],a:'He\'s blind and reading braille',w:['The book glows','He memorized it','He has night vision goggles'],e:'He\'s blind and reads braille with his fingertips, so light doesn\'t matter.'},
+ {d:'hard',s:'A police officer sees a truck driver going the wrong way down a one-way street, but doesn\'t stop him. Why?',c:[['Was the officer off duty?','No'],['Was the driver breaking a rule?','No'],['Was the driver in his truck?','No']],a:'The driver was walking',w:['It was an emergency','The officer didn\'t notice','The sign was wrong'],e:'The truck driver was walking, not driving. Walking the "wrong way" on a one-way street is fine.'},
+ {d:'hard',s:'A man runs away from home. He turns left three times and then meets a man in a mask, so he heads back home. What\'s going on?',c:[['Is he in danger?','No'],['Is it a sport?','Yes'],['Is the man in the mask a catcher?','Yes']],a:'He\'s playing baseball',w:['It\'s Halloween','He got lost','He\'s at a costume party'],e:'He\'s running the bases. Three left turns brings him toward home plate, where the catcher in the mask is waiting.'},
+ {d:'hard',s:'A woman pushes a button and a stranger she can\'t see suddenly freezes. A minute later she pushes it again and he moves. What is she doing?',c:[['Is the stranger in the room?','No'],['Is it something on a screen?','Yes'],['Is it a movie?','Yes']],a:'She\'s pausing a movie',w:['She\'s controlling a robot','She\'s playing freeze tag','It\'s an elevator button'],e:'She\'s pausing and unpausing a movie on TV.'}];
+function genMystery(diff){
+ const pool=MYST.filter(m=>m.d===diff);const m=pick(pool.length?pool:MYST);const o=shuffle([m.a,...m.w]);
+ const clues=m.c.map(([qq,a])=>`<details class="np-clue"><summary>❓ ${qq}</summary><b>${a}</b></details>`).join('');
+ return mcPuzzle({prompt:'Solve the mystery. Tap a question to see the answer, then pick what really happened.',top:`<div class="np-story">${m.s}</div><div class="np-clues">${clues}</div>`,opts:o.map(x=>`<b>${x}</b>`),ansIdx:o.indexOf(m.a),text:true,
+  hint0:'Tap every question first. Then look for the answer that fits ALL the yes-or-no answers.',answer:`<b>${m.a}</b>`,explain:m.e+' Mysteries like this are called lateral thinking puzzles: the trick is to question the picture that first pops into your head.'});
+}
+
+/* ===== 29. Make the Number ===== */
+function mtnMake(diff){
+ const cnt=diff==='easy'?3:4,ops=diff==='easy'?['+','−']:diff==='medium'?['+','−','×']:['+','−','×','÷'];
+ for(let tries=0;tries<500;tries++){
+  const nums=range(cnt).map(()=>diff==='hard'?R(12)+1:R(9)+1);
+  let items=nums.map(n=>({v:n,e:String(n)})),steps=[];
+  while(items.length>1){
+   const i=R(items.length);let j=R(items.length);if(i===j)continue;const a=items[i],b=items[j];const op=pick(ops);let v;
+   if(op==='+')v=a.v+b.v;else if(op==='−')v=a.v-b.v;else if(op==='×')v=a.v*b.v;else v=b.v?a.v/b.v:NaN;
+   if(!Number.isInteger(v)||v<0)continue;if(op==='÷'&&b.v===1)continue;if(op==='×'&&(a.v===1||b.v===1)&&diff!=='easy')continue;
+   steps.push(`${a.v} ${op} ${b.v} = ${v}`);const ne={v,e:`(${a.e} ${op} ${b.e})`};items=items.filter((_,k)=>k!==i&&k!==j);items.push(ne);}
+  const t=items[0].v,lo=diff==='easy'?5:10,hi=diff==='easy'?30:diff==='medium'?80:150;
+  if(t>=lo&&t<=hi&&!nums.includes(t))return{nums,target:t,expr:mtnStrip(items[0].e),steps};}
+ return{nums:[2,3,4],target:20,expr:'(2 + 3) × 4',steps:['2 + 3 = 5','5 × 4 = 20']};
+}
+function mtnStrip(e){if(e[0]!=='(')return e;let d=0;for(let i=0;i<e.length;i++){if(e[i]==='(')d++;else if(e[i]===')'){d--;if(d===0&&i<e.length-1)return e;}}return e.slice(1,-1);}
+function mtnTok(e){return (e.match(/\d+|[()+−×÷]/g)||[]).map(x=>/\d/.test(x)?+x:x);}
+function mtnEval(tokens){// tokens: numbers and ops, with parens. Shunting-yard
+ const out=[],st=[],pr={'+':1,'−':1,'×':2,'÷':2};
+ for(const t of tokens){if(typeof t==='number')out.push(t);else if(t==='(')st.push(t);else if(t===')'){while(st.length&&st[st.length-1]!=='(')out.push(st.pop());if(!st.length)throw 0;st.pop();}
+  else{while(st.length&&st[st.length-1]!=='('&&pr[st[st.length-1]]>=pr[t])out.push(st.pop());st.push(t);}}
+ while(st.length){const x=st.pop();if(x==='(')throw 0;out.push(x);}
+ const s=[];for(const t of out){if(typeof t==='number')s.push(t);else{const b=s.pop(),a=s.pop();if(a===undefined||b===undefined)throw 0;s.push(t==='+'?a+b:t==='−'?a-b:t==='×'?a*b:a/b);}}
+ if(s.length!==1)throw 0;return s[0];
+}
+function genMakeNum(diff){
+ const P=mtnMake(diff);let toks=[],used=[],disp,area,tileBtns=[];
+ const show=()=>{disp.innerHTML=toks.length?toks.map(t=>typeof t==='number'?`<b>${t}</b>`:t).join(' '):'<span style="color:#999">Tap numbers and signs</span>';tileBtns.forEach((b,i)=>b.disabled=used.includes(i)||S.done);};
+ const opsList=diff==='easy'?['+','−','(',')']:diff==='medium'?['+','−','×','(',')']:['+','−','×','÷','(',')'];
+ return{prompt:`Use ${diff==='easy'?'all three':'all four'} numbers once each${diff==='easy'?' with + and −':diff==='medium'?' with + − and ×':' with + − × and ÷'} to make <b>${P.target}</b>.`,
+  build(box){area=h('div',{class:'np-mtn'});area.append(h('div',{class:'np-target'},`Target: ${P.target}`));disp=h('div',{class:'np-expr'});area.append(disp);
+   const tr=h('div',{class:'np-tiles'});P.nums.forEach((n,i)=>{const b=h('button',{class:'np-tile'},String(n));b.onclick=()=>{if(S.done||used.includes(i))return;const last=toks[toks.length-1];if(typeof last==='number'||last===')')return setFb('info','Put a sign between numbers.');toks.push(n);used.push(i);show();};tileBtns.push(b);tr.append(b);});area.append(tr);
+   const orow=h('div',{class:'np-tiles'});opsList.forEach(o=>{const b=h('button',{class:'np-tile op'},o);b.onclick=()=>{if(S.done)return;toks.push(o);used.push(null);show();};orow.append(b);});
+   const bk=h('button',{class:'np-tile op'},'⌫');bk.onclick=()=>{if(S.done)return;toks.pop();used.pop();show();};const cl=h('button',{class:'np-tile op'},'Clear');cl.onclick=()=>{if(S.done)return;toks=[];used=[];show();};orow.append(bk,cl);area.append(orow);box.append(area);show();},
+  check(){if(used.filter(x=>x!==null).length<P.nums.length)return{ok:false,msg:`Use every number once (${P.nums.join(', ')}).`};let v;try{v=mtnEval(toks);}catch(e){return{ok:false,msg:'That isn\'t a complete math sentence. Check your signs and brackets.'};}
+   if(Math.abs(v-P.target)<1e-9)return{ok:true};return{ok:false,msg:`That makes ${Number.isInteger(v)?v:v.toFixed(2)}, not ${P.target}. Try a different order.`};},
+  hint(i){if(!P.steps.length)return 'Try multiplying the two biggest numbers first.';if(i<P.steps.length-1)return `Step ${i+1}: ${P.steps[i]}.`;return `Last step: ${P.steps[P.steps.length-1]}.`;},
+  reveal(){toks=mtnTok(P.expr);used=[];const free=P.nums.map((n,i)=>i);toks.forEach(t=>{if(typeof t==='number'){const k=free.findIndex(i=>P.nums[i]===t);used.push(free[k]);free.splice(k,1);}else used.push(null);});show();disp.innerHTML+=` = <b>${P.target}</b>`;tileBtns.forEach(b=>b.disabled=true);},
+  answer:`<b>${P.expr} = ${P.target}</b>`,
+  explain:`One way: <b>${P.expr} = ${P.target}</b>${P.steps.length?` (${P.steps.join(', then ')})`:''}. There are often other ways too! Tip: get close to the target with the biggest numbers first, then use the small ones to fine-tune.`,printable:false};
+}
+
+/* ===== 30. Count the Shapes ===== */
+function genCount(diff){
+ const C2=n=>n*(n+1)/2;const kinds=diff==='easy'?['sq2','fan','rect1']:diff==='medium'?['sq3','fan','rect1','fanh']:['sq4','rect2','fanh','sq3'];const k=pick(kinds);
+ const W=220,svg=inner=>`<svg viewBox="-10 -10 240 240" class="np-svg">${inner}</svg>`,L=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#1f2a44" stroke-width="3" stroke-linecap="round"/>`;
+ if(k.startsWith('sq')){const n=+k[2];let g='';for(let i=0;i<=n;i++){g+=L(0,i*W/n,W,i*W/n)+L(i*W/n,0,i*W/n,W);}let tot=0,parts=[];for(let s=1;s<=n;s++){const c=(n-s+1)**2;tot+=c;parts.push(`${c} of size ${s}×${s}`);}
+  return numPuzzle({prompt:'How many squares of any size are in this picture?',top:svg(g),ans:tot,hints:['Count the small squares first.',`Don't forget the bigger squares made of 2×2 small squares${n>2?', 3×3 and so on':''}.`,`There are ${n*n} small squares. Now count the bigger ones.`],explain:`<b>${tot} squares:</b> ${parts.join(', ')}. The trick is to count by size, smallest to biggest, so you don't miss the big ones (including the whole outline!).`});}
+ if(k.startsWith('rect')){const rows=k==='rect1'?1:2,cols=k==='rect1'?(diff==='easy'?3:4):3;const cw=W/cols,rh=rows===1?70:W*0.6/rows,H=rh*rows,y0=(W-H)/2;let g='';
+  for(let r=0;r<=rows;r++)g+=L(0,y0+r*rh,W,y0+r*rh);for(let c=0;c<=cols;c++)g+=L(c*cw,y0,c*cw,y0+H);const tot=C2(rows)*C2(cols);
+  return numPuzzle({prompt:'How many rectangles of any size are in this picture? (Squares count as rectangles too.)',top:svg(g),ans:tot,hints:['Count the single boxes first.','Then count rectangles made of 2 boxes side by side.','Keep going: 3 boxes, 4 boxes, and the whole shape.'],explain:`<b>${tot} rectangles.</b> Pick any 2 of the ${cols+1} up-and-down lines (that's ${C2(cols)} ways) and any 2 of the ${rows+1} across lines (${C2(rows)} way${C2(rows)>1?'s':''}). ${C2(cols)} × ${C2(rows)} = ${tot}.`});}
+ const s=k==='fan'?(diff==='easy'?pick([2,3]):pick([3,4])):pick([3,4]),hz=k==='fanh'?(diff==='hard'?pick([1,2]):1):0;
+ const A=[110,0],Bl=[0,210],Br=[220,210];let g=L(...A,...Bl)+L(...A,...Br)+L(...Bl,...Br);const pts=range(s+1).map(i=>[i*220/s,210]);pts.slice(1,-1).forEach(p=>g+=L(...A,...p));
+ for(let j=1;j<=hz;j++){const t=j/(hz+1),y=210*t;g+=L(110-110*t,y,110+110*t,y);}const tot=C2(s)*(hz+1);
+ return numPuzzle({prompt:'How many triangles of any size are in this picture?',top:svg(g),ans:tot,hints:['Count the smallest triangles first.','Then count triangles made of 2 small pieces side by side, then 3, and so on.',hz?`Count the triangles in the top layer, then notice each one has a matching bigger triangle that reaches the lower lines.`:`Don't forget the big outside triangle!`],
+  explain:`<b>${tot} triangles.</b> Every triangle uses the top point and 2 of the ${s+1} lines coming down from it. That gives ${C2(s)} choices${hz?`, and each one can end on any of the ${hz+1} across-lines (including the bottom), so ${C2(s)} × ${hz+1} = ${tot}`:''}. Counting by size, smallest to biggest, keeps you from missing any.`});
+}
+
+/* ===================== NEW TYPES (batch 2) ===================== */
+
+/* ===== 31. Word Search ===== */
+const WS_THEMES={
+ 'Animals':['TIGER','HORSE','ZEBRA','PANDA','RABBIT','MONKEY','TURTLE','LION','BEAR','GOAT','EAGLE','SNAKE','OTTER','MOOSE','CAMEL','SHEEP','WHALE','KOALA'],
+ 'Fruit':['APPLE','BANANA','GRAPE','LEMON','MANGO','PEACH','PEAR','PLUM','CHERRY','MELON','ORANGE','KIWI','LIME','BERRY','PAPAYA','APRICOT'],
+ 'In the Kitchen':['SPOON','FORK','KNIFE','PLATE','BOWL','OVEN','STOVE','KETTLE','TOASTER','APRON','LADLE','WHISK','SKILLET','MUG','PITCHER','SINK'],
+ 'Garden':['ROSE','TULIP','DAISY','SEED','SOIL','RAKE','HOSE','SHOVEL','WEEDS','VINE','BLOOM','LILY','FENCE','PATIO','SPROUT','HEDGE'],
+ 'Weather':['RAIN','SNOW','WIND','STORM','CLOUD','SUNNY','FOGGY','THUNDER','HAIL','SLEET','BREEZE','FROST','RAINBOW','HUMID','CHILLY'],
+ 'At the Beach':['SAND','WAVES','SHELL','TOWEL','OCEAN','CRAB','SURF','TIDE','PIER','DUNES','GULL','KITE','BOARDWALK','SUNSCREEN','BUCKET'],
+ 'Sports':['SOCCER','TENNIS','GOLF','HOCKEY','BOWLING','SKIING','RUGBY','BOXING','DIVING','CYCLING','KARATE','ARCHERY','BASEBALL','TRACK'],
+ 'Music':['PIANO','GUITAR','DRUMS','FLUTE','VIOLIN','TRUMPET','BANJO','HARP','TUBA','CELLO','SONG','CHOIR','TEMPO','RHYTHM','MELODY'],
+ 'Travel':['TRAIN','PLANE','TICKET','HOTEL','MAP','SUITCASE','CRUISE','PASSPORT','BEACH','CAMERA','TOUR','AIRPORT','BUS','JOURNEY'],
+ 'Colors':['RED','BLUE','GREEN','YELLOW','PURPLE','ORANGE','PINK','BROWN','BLACK','WHITE','SILVER','GOLD','TEAL','MAROON','VIOLET']};
+function genWordSearch(diff){
+ const n=diff==='easy'?8:diff==='medium'?10:12,cnt=diff==='easy'?6:diff==='medium'?8:10;
+ const dirs=diff==='easy'?[[0,1],[1,0]]:diff==='medium'?[[0,1],[1,0],[1,1],[-1,1]]:[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
+ let theme,grid,placed;
+ for(let att=0;att<40;att++){theme=pick(Object.keys(WS_THEMES));grid=range(n).map(()=>Array(n).fill(''));placed=[];
+  for(const w of shuffle(WS_THEMES[theme].filter(w=>w.length<=n))){if(placed.length>=cnt)break;
+   for(let t=0;t<120;t++){const [dr,dc]=pick(dirs),r=R(n),c=R(n),er=r+dr*(w.length-1),ec=c+dc*(w.length-1);if(er<0||er>=n||ec<0||ec>=n)continue;
+    let ok=true;for(let i=0;i<w.length;i++){const x=grid[r+dr*i][c+dc*i];if(x&&x!==w[i]){ok=false;break;}}if(!ok)continue;
+    for(let i=0;i<w.length;i++)grid[r+dr*i][c+dc*i]=w[i];placed.push({w,cells:range(w.length).map(i=>[r+dr*i,c+dc*i]),found:false});break;}}
+  if(placed.length>=cnt)break;}
+ const AZ='ABCDEFGHIJKLMNOPRSTUWY';grid.forEach(row=>row.forEach((x,i)=>{if(!x)row[i]=AZ[R(AZ.length)];}));
+ let first=null,cellsEl=[],listEl,gEl;const COLS=['#fde68a','#bbf7d0','#bfdbfe','#fbcfe8','#ddd6fe','#fed7aa','#a7f3d0','#fecaca','#c7d2fe','#e9d5ff'];
+ const paint=()=>{cellsEl.forEach(row=>row.forEach(e=>{e.style.background='';e.classList.remove('first','hintc');}));
+  placed.forEach((p,k)=>{if(p.found)p.cells.forEach(([r,c])=>cellsEl[r][c].style.background=COLS[k%COLS.length]);});if(first)cellsEl[first[0]][first[1]].classList.add('first');
+  listEl.innerHTML=placed.map(p=>`<span class="${p.found?'got':''}">${p.w}</span>`).join('');};
+ const tap=(r,c)=>{if(S.done)return;if(!first){first=[r,c];paint();return;}if(first[0]===r&&first[1]===c){first=null;paint();return;}
+  const hit=placed.find(p=>!p.found&&((p.cells[0]+''===first+''&&p.cells[p.cells.length-1]+''===[r,c]+'')||(p.cells[p.cells.length-1]+''===first+''&&p.cells[0]+''===[r,c]+'')));
+  first=null;if(hit){hit.found=true;paint();if(placed.every(p=>p.found))autoWin();else setFb('ok',`Found <b>${hit.w}</b>!`);}else{paint();setFb('info','Not a word from the list. Tap the first letter, then the last letter of a word.');}};
+ return{prompt:`Find the ${placed.length} hidden <b>${theme}</b> words. Tap the <b>first letter</b> of a word, then its <b>last letter</b>. Words go ${diff==='easy'?'across and down':diff==='medium'?'across, down and on the diagonal':'in any direction, even backward'}.`,
+  build(box){gEl=h('div',{class:'np-ws',style:`grid-template-columns:repeat(${n},1fr)`});cellsEl=grid.map((row,r)=>row.map((x,c)=>{const e=h('div',{class:'np-wc'},x);e.onclick=()=>tap(r,c);gEl.append(e);return e;}));
+   listEl=h('div',{class:'np-wlist'});box.append(gEl,listEl);paint();},
+  check(){const left=placed.filter(p=>!p.found).length;return left?{ok:false,msg:`${left} word${left>1?'s':''} still to find.`}:{ok:true};},
+  hint(i){const p=placed.find(x=>!x.found);if(!p)return 'All found!';const [r,c]=p.cells[0];paint();cellsEl[r][c].classList.add('hintc');return `<b>${p.w}</b> starts at the flashing letter.`;},
+  reveal(){placed.forEach(p=>p.found=true);first=null;paint();},
+  answer:'',explain:`All ${placed.length} words: ${placed.map(p=>p.w).join(', ')}. Tip: hunt for the first letter of a word, then check the eight directions around it for the second letter.`,printable:false};
+}
+
+/* ===== 32. Mini Crossword ===== */
+const XW=[['CAT','Purring pet'],['DOG','Barking pet'],['SUN','It rises in the east'],['MOON','It shines at night'],['STAR','Twinkle, twinkle, little ___'],['TREE','Oak or maple'],['RAIN','Drops from the clouds'],['SNOW','Winter flakes'],['BOOK','You read it'],['PEN','Writing tool with ink'],['CUP','Coffee holder'],['TEA','Hot drink from leaves'],['CAKE','Birthday dessert'],['PIE','Apple ___'],['EGG','Breakfast item a hen lays'],['MILK','White drink from cows'],['BREAD','Sandwich slices'],['HONEY','Sweet stuff bees make'],['APPLE','A fruit a day keeps the doctor away'],['LEMON','Sour yellow fruit'],['GRAPE','Fruit that becomes a raisin'],['PEAR','Fruit shaped like a bell'],['CORN','Yellow kernels on a cob'],['BEAN','Jelly ___'],['RICE','Small grain in many meals'],['SOUP','Chicken noodle ___'],['SALT','Pepper\'s partner'],['OVEN','Where you bake'],['SINK','Kitchen basin'],['DOOR','Knock on it'],['ROOF','Top of a house'],['BED','Where you sleep'],['LAMP','Light on a table'],['CLOCK','It tells time'],['CHAIR','Something to sit on'],['SOFA','Couch'],['RUG','Floor covering'],['BELL','It rings'],['KEY','It opens a lock'],['BOAT','It floats'],['SHIP','Big boat'],['TRAIN','It runs on tracks'],['PLANE','It flies passengers'],['CAR','Four-wheeled ride'],['BUS','School ___'],['ROAD','Street'],['MAP','Shows the way'],['HAT','Head covering'],['COAT','Winter jacket'],['SHOE','Lace-up footwear'],['SOCK','It goes under a shoe'],['RING','Jewelry for a finger'],['BOW','Ribbon on a present'],['GIFT','Present'],['SONG','Something you sing'],['DRUM','Beat it with sticks'],['PIANO','Instrument with 88 keys'],['FLUTE','Wind instrument'],['HORN','Car beeper'],['NOTE','Musical symbol'],['ART','Painting and drawing'],['INK','Pen filler'],['PAGE','Part of a book'],['WORD','Group of letters'],['NAME','What you\'re called'],['HOME','Where the heart is'],['YARD','Grass around a house'],['ROSE','Red flower with thorns'],['SEED','It grows into a plant'],['LEAF','Green part of a plant'],['BIRD','It has feathers'],['OWL','Wise night bird'],['HEN','Female chicken'],['COW','It says moo'],['PIG','It says oink'],['DUCK','It says quack'],['GOAT','Farm animal with a beard'],['BEAR','Teddy ___'],['LION','King of the jungle'],['FROG','Green jumper'],['FISH','It swims'],['CRAB','Sideways-walking shellfish'],['OCEAN','Atlantic or Pacific'],['LAKE','Body of fresh water'],['RIVER','The Mississippi, for one'],['HILL','Small mountain'],['ROCK','Stone'],['SAND','Beach grains'],['WAVE','Ocean ripple, or a hand hello'],['WIND','Moving air'],['STORM','Thunder and lightning'],['CLOUD','White puff in the sky'],['ICE','Frozen water'],['FIRE','It burns'],['GOLD','Shiny yellow metal'],['RED','Color of a stop sign'],['BLUE','Color of the sky'],['GREEN','Color of grass'],['PINK','Color of bubble gum'],['ONE','First number'],['TWO','Number of eyes'],['TEN','Number of fingers'],['YES','Opposite of no'],['HOT','Opposite of cold'],['BIG','Opposite of small'],['OLD','Opposite of new'],['SAD','Opposite of happy'],['FAST','Opposite of slow'],['OPEN','Opposite of closed'],['TOP','Opposite of bottom'],['DAY','Opposite of night'],['ARM','Body part with an elbow'],['LEG','Body part with a knee'],['EAR','You hear with it'],['EYE','You see with it'],['NOSE','You smell with it'],['HAND','It has five fingers'],['TOE','Foot digit'],['SMILE','Happy face'],['LAUGH','Ha ha ha'],['NAP','Short sleep'],['GAME','Something you play'],['TOY','Something kids play with'],['BALL','Round thing you throw'],['KITE','It flies on a string'],['PARK','Place with swings'],['ZOO','Place to see lions'],['FARM','Place with a barn'],['STORE','Place to shop'],['BANK','Place for money'],['MAIL','Letters and packages'],['STAMP','It goes on an envelope'],['PHONE','You call with it'],['RADIO','It plays music and news'],['TV','Box with shows'],['IDEA','A bright thought'],['TIME','What a clock tells'],['YEAR','365 days'],['WEEK','Seven days'],['MONTH','About 30 days']].filter(x=>x[0].length>=3);
+function xwBuild(cnt){
+ const N=15;for(let att=0;att<60;att++){const G=range(N).map(()=>Array(N).fill(null)),P=[];const bank=shuffle(XW);
+  const fits=(w,r,c,dr,dc)=>{if(r<0||c<0||r+dr*(w.length-1)>=N||c+dc*(w.length-1)>=N)return -1;const br=r-dr,bc=c-dc,ar=r+dr*w.length,ac=c+dc*w.length;
+   if(br>=0&&bc>=0&&G[br][bc])return -1;if(ar<N&&ac<N&&G[ar][ac])return -1;let x=0;
+   for(let i=0;i<w.length;i++){const rr=r+dr*i,cc=c+dc*i,g=G[rr][cc];if(g){if(g!==w[i])return -1;x++;continue;}
+    const n1=dr?[rr,cc-1]:[rr-1,cc],n2=dr?[rr,cc+1]:[rr+1,cc];for(const [a,b] of [n1,n2])if(a>=0&&b>=0&&a<N&&b<N&&G[a][b])return -1;}return x;};
+  const put=(w,clue,r,c,dr,dc)=>{for(let i=0;i<w.length;i++)G[r+dr*i][c+dc*i]=w[i];P.push({w,clue,r,c,dr,dc});};
+  const f=bank.find(x=>x[0].length>=5)||bank[0];put(f[0],f[1],7,7-Math.floor(f[0].length/2),0,1);
+  for(const [w,clue] of bank){if(P.length>=cnt)break;if(P.some(p=>p.w===w))continue;let best=null;
+   for(let r=0;r<N;r++)for(let c=0;c<N;c++)for(const [dr,dc] of [[0,1],[1,0]]){const x=fits(w,r,c,dr,dc);if(x>0&&(!best||x>best.x||(x===best.x&&Math.random()<.3)))best={x,r,c,dr,dc};}
+   if(best)put(w,clue,best.r,best.c,best.dr,best.dc);}
+  if(P.length<cnt)continue;let r0=N,r1=0,c0=N,c1=0;G.forEach((row,r)=>row.forEach((x,c)=>{if(x){r0=Math.min(r0,r);r1=Math.max(r1,r);c0=Math.min(c0,c);c1=Math.max(c1,c);}}));
+  if(c1-c0+1>11||r1-r0+1>11)continue;P.forEach(p=>{p.r-=r0;p.c-=c0;});return{P,H:r1-r0+1,W:c1-c0+1};}
+ return null;
+}
+function genCross(diff){
+ const X=xwBuild(diff==='easy'?5:diff==='medium'?7:9)||xwBuild(5);const {P,H,W}=X;const sol=range(H).map(()=>Array(W).fill(null));P.forEach(p=>{for(let i=0;i<p.w.length;i++)sol[p.r+p.dr*i][p.c+p.dc*i]=p.w[i];});
+ let num=0;const numAt={};for(let r=0;r<H;r++)for(let c=0;c<W;c++){const st=P.filter(p=>p.r===r&&p.c===c);if(st.length){num++;numAt[r+','+c]=num;st.forEach(p=>p.n=num);}}
+ const inputs=range(H).map(()=>Array(W).fill(null));let dir=[0,1];
+ const next=(r,c)=>{const [dr,dc]=dir,a=inputs[r+dr]&&inputs[r+dr][c+dc];if(a)return a;const b=dir[1]?(inputs[r+1]&&inputs[r+1][c]):(inputs[r][c+1]);return null;};
+ return{prompt:`Fill in the crossword. Tap a square and type. ${diff==='easy'?'It\'s a small warm-up.':diff==='medium'?'Medium size.':'The biggest one.'}`,
+  build(box){const g=h('div',{class:'np-xw',style:`grid-template-columns:repeat(${W},1fr)`});
+   for(let r=0;r<H;r++)for(let c=0;c<W;c++){if(!sol[r][c]){g.append(h('div',{class:'np-xb'}));continue;}const cell=h('div',{class:'np-xc'});if(numAt[r+','+c])cell.append(h('span',{class:'np-xn'},String(numAt[r+','+c])));
+    const inp=h('input',{maxlength:'1',autocomplete:'off',autocapitalize:'characters','aria-label':`row ${r+1} column ${c+1}`});inputs[r][c]=inp;
+    inp.addEventListener('focus',()=>{const ac=!!((inputs[r][c-1])||(inputs[r][c+1])),dn=!!((inputs[r-1]&&inputs[r-1][c])||(inputs[r+1]&&inputs[r+1][c]));if(ac&&!dn)dir=[0,1];else if(dn&&!ac)dir=[1,0];inp.select();});
+    inp.addEventListener('input',()=>{inp.value=inp.value.toUpperCase().replace(/[^A-Z]/g,'').slice(-1);inp.parentNode.classList.remove('bad','hintx');if(inp.value){const nx=next(r,c);if(nx)nx.focus();}});
+    inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!inp.value){const pv=inputs[r-dir[0]]&&inputs[r-dir[0]][c-dir[1]];if(pv){pv.focus();pv.value='';e.preventDefault();}}});
+    cell.append(inp);g.append(cell);}
+   const cl=(lab,ps)=>h('div',{class:'np-xcl',html:`<h4>${lab}</h4>`+ps.sort((a,b)=>a.n-b.n).map(p=>`<div><b>${p.n}.</b> ${p.clue} <small>(${p.w.length})</small></div>`).join('')});
+   const clues=h('div',{class:'np-xclues'});clues.append(cl('Across',P.filter(p=>p.dc)),cl('Down',P.filter(p=>p.dr)));box.append(g,clues);},
+  check(){let empty=0,wrong=0;for(let r=0;r<H;r++)for(let c=0;c<W;c++){const i=inputs[r][c];if(!i)continue;if(!i.value)empty++;else if(i.value!==sol[r][c]){wrong++;i.parentNode.classList.add('bad');}}
+   if(!empty&&!wrong)return{ok:true};return{ok:false,msg:empty?`${empty} square${empty>1?'s':''} still empty.${wrong?` ${wrong} letter${wrong>1?'s are':' is'} wrong (shown in red).`:''}`:`${wrong} letter${wrong>1?'s are':' is'} wrong (shown in red).`};},
+  hint(i){const cand=[];for(let r=0;r<H;r++)for(let c=0;c<W;c++){const x=inputs[r][c];if(x&&x.value!==sol[r][c])cand.push([r,c]);}if(!cand.length)return 'Every letter is already right!';
+   const [r,c]=pick(cand),x=inputs[r][c];x.value=sol[r][c];x.parentNode.classList.remove('bad');x.parentNode.classList.add('hintx');return 'One letter is filled in for you (in gold).';},
+  reveal(){for(let r=0;r<H;r++)for(let c=0;c<W;c++){const x=inputs[r][c];if(x){x.value=sol[r][c];x.disabled=true;x.parentNode.classList.remove('bad');}}},
+  answer:'',explain:`The words: ${P.sort((a,b)=>a.n-b.n).map(p=>`${p.n} ${p.dc?'across':'down'} <b>${p.w}</b>`).join(', ')}. Tip: start with the clues you're sure of. The crossing letters give you a head start on the rest.`,printable:false};
+}
+
+/* ===== 33. Spot the Difference ===== */
+const SD_SETS=[['🌳','🌲','🌷','🌻','🍄','🐝','🦋','🐞','🌼','🐦','🏡','☁️','🌞','🐿️','🌿','🪨','🐌','🍎'],['🐠','🐟','🐙','🦀','🐚','⭐','🐬','🐳','🌊','⛵','🪸','🐢','🦑','🪼','🏝️','☀️'],['🍎','🍌','🍇','🍓','🍒','🍐','🍋','🥕','🥦','🌽','🍞','🧀','🥚','🍅','🍉','🥝'],['🚗','🚌','🚲','🚦','🏠','🏢','🌳','🐕','🛴','🚕','🏪','⛪','🚒','🛵','🎈','☁️']];
+function genSpot(diff){
+ const nItems=diff==='easy'?10:diff==='medium'?13:16,nD=diff==='easy'?3:diff==='medium'?4:5,set=pick(SD_SETS),W=320,H=230;
+ const items=[];for(let t=0;t<3000&&items.length<nItems;t++){const x=24+R(W-48),y=24+R(H-48);if(items.every(o=>Math.hypot(o.x-x,o.y-y)>40))items.push({x,y,e:pick(set),s:diff==='hard'?24+R(8):28+R(8)});}
+ const right=items.map(o=>({...o}));const types=diff==='easy'?['gone','swap']:diff==='medium'?['gone','swap','big']:['gone','swap','big','move'];
+ const diffs=shuffle(range(items.length)).slice(0,nD).map(i=>{const t=pick(types),o=right[i];if(t==='gone')o.gone=true;else if(t==='swap'){o.e=pick(set.filter(e=>e!==o.e));}else if(t==='big')o.s=Math.round(o.s*1.55);else if(t==='flip')o.flip=true;else{o.x=Math.min(W-20,Math.max(20,o.x+pick([-1,1])*16));o.y=Math.min(H-20,Math.max(20,o.y+pick([-1,1])*12));}return{i,t,x:items[i].x,y:items[i].y,found:false};});
+ let svL,svR;const drawSv=(arr)=>`<svg viewBox="0 0 ${W} ${H}" class="np-sd"><rect width="${W}" height="${H*0.62}" fill="#dbeafe"/><rect y="${H*0.62}" width="${W}" height="${H*0.38}" fill="#dcfce7"/>${arr.map(o=>o.gone?'':`<text x="${o.x}" y="${o.y}" font-size="${o.s}" text-anchor="middle" dominant-baseline="central" ${o.flip?`transform="translate(${2*o.x},0) scale(-1,1)"`:''}>${o.e}</text>`).join('')}<g class="marks"></g></svg>`;
+ const mark=()=>{[svL,svR].forEach(sv=>{const g=sv.querySelector('.marks');g.innerHTML=diffs.filter(d=>d.found).map(d=>`<circle cx="${d.x}" cy="${d.y}" r="24" fill="none" stroke="#dc2626" stroke-width="4"/>`).join('');});};
+ const tapAt=(sv,ev)=>{if(S.done)return;const r=sv.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width*W,y=(ev.clientY-r.top)/r.height*H;
+  const d=diffs.find(d=>!d.found&&Math.hypot(d.x-x,d.y-y)<30);if(d){d.found=true;mark();const left=diffs.filter(z=>!z.found).length;if(!left)autoWin();else setFb('ok',`Found one! ${left} to go.`);}
+  else{const g=sv.querySelector('.marks');const m=document.createElementNS('http://www.w3.org/2000/svg','text');m.setAttribute('x',x);m.setAttribute('y',y);m.setAttribute('text-anchor','middle');m.setAttribute('dominant-baseline','central');m.setAttribute('font-size','22');m.setAttribute('fill','#64748b');m.textContent='✕';g.append(m);setTimeout(()=>m.remove(),700);}};
+ return{prompt:`Find the <b>${nD} differences</b> between the two pictures. Tap a spot on either picture.`,
+  build(box){const wrap=h('div',{class:'np-sdwrap'});const a=h('div',{class:'np-sdbox',html:drawSv(items)}),b=h('div',{class:'np-sdbox',html:drawSv(right)});svL=a.firstChild;svR=b.firstChild;
+   svL.addEventListener('click',e=>tapAt(svL,e));svR.addEventListener('click',e=>tapAt(svR,e));wrap.append(a,b);box.append(wrap);},
+  check(){const left=diffs.filter(d=>!d.found).length;return left?{ok:false,msg:`${left} difference${left>1?'s':''} still hiding.`}:{ok:true};},
+  hint(i){const d=diffs.find(z=>!z.found);if(!d)return 'All found!';[svL,svR].forEach(sv=>{const g=sv.querySelector('.marks');const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',d.x+R(20)-10);c.setAttribute('cy',d.y+R(20)-10);c.setAttribute('r','46');c.setAttribute('fill','rgba(250,204,21,.35)');g.append(c);setTimeout(()=>c.remove(),2200);});
+   return 'Look inside the yellow glow.';},
+  reveal(){diffs.forEach(d=>d.found=true);mark();},
+  answer:'',explain:`The ${nD} differences: ${diffs.map(d=>({gone:'something is missing',swap:'one thing changed into something else',big:'one thing got bigger',flip:'one thing is facing the other way',move:'one thing moved'}[d.t])).join('; ')}. Tip: scan the pictures in strips, left to right, top to bottom, comparing one small area at a time.`,printable:false};
+}
+
+/* ===== 34. Pouring Puzzles ===== */
+function pourBFS(caps,start,target,tap){
+ const key=s=>s.join(','),seen=new Map([[key(start),null]]),Q=[start];
+ while(Q.length){const s=Q.shift();if(s.includes(target)){const path=[];let k=key(s);while(seen.get(k)){const [p,m]=seen.get(k);path.unshift(m);k=p;}return path;}
+  const moves=[];for(let i=0;i<caps.length;i++){if(tap){moves.push(['fill',i]);moves.push(['empty',i]);}for(let j=0;j<caps.length;j++)if(i!==j)moves.push(['pour',i,j]);}
+  for(const m of moves){const t=pourApply(caps,s,m);if(!t)continue;const k=key(t);if(!seen.has(k)){seen.set(k,[key(s),m]);Q.push(t);}}}
+ return null;
+}
+function pourApply(caps,s,m){const t=s.slice();if(m[0]==='fill'){if(t[m[1]]===caps[m[1]])return null;t[m[1]]=caps[m[1]];}else if(m[0]==='empty'){if(!t[m[1]])return null;t[m[1]]=0;}
+ else{const [,i,j]=m;if(!t[i]||t[j]===caps[j])return null;const a=Math.min(t[i],caps[j]-t[j]);t[i]-=a;t[j]+=a;}return t;}
+function genPour(diff){
+ let caps,start,target,tap,sol;
+ for(let att=0;att<200;att++){
+  if(diff==='easy'){caps=pick([[3,5],[2,5],[3,7],[4,7]]);tap=true;}else if(diff==='medium'){caps=pick([[5,8],[4,9],[5,9],[7,11],[3,10]]);tap=true;}else{caps=pick([[8,5,3],[10,7,3],[12,7,5],[16,9,7]]);tap=false;}
+  start=tap?caps.map(()=>0):[caps[0],...caps.slice(1).map(()=>0)];const cand=range(Math.max(...caps)).map(i=>i+1).filter(t=>!caps.includes(t));target=pick(cand);
+  if(!tap&&caps[0]%2===0&&R(2))target=caps[0]/2;sol=pourBFS(caps,start,target,tap);const minLen=diff==='easy'?3:diff==='medium'?5:6;if(sol&&sol.length>=minLen&&sol.length<=(diff==='easy'?7:14))break;sol=null;}
+ if(!sol){caps=[3,5];start=[0,0];target=4;tap=true;sol=pourBFS(caps,start,target,tap);}
+ let st=start.slice(),sel=null,moves=0,area;const nm=i=>`the ${caps[i]}-cup jug`;
+ const desc=m=>m[0]==='fill'?`Fill ${nm(m[1])}`:m[0]==='empty'?`Empty ${nm(m[1])}`:`Pour ${nm(m[1])} into ${nm(m[2])}`;
+ const render=()=>{area.innerHTML='';const row=h('div',{class:'np-jugs'});const mx=Math.max(...caps);
+  caps.forEach((c,i)=>{const col=h('div',{class:'np-jugcol'});const jug=h('div',{class:'np-jug'+(sel===i?' sel':''),style:`height:${60+120*c/mx}px`});jug.append(h('div',{class:'np-water',style:`height:${100*st[i]/c}%`}),h('div',{class:'np-jlab',html:`<b>${st[i]}</b>/${c}`}));
+   jug.onclick=()=>tapJug(i);col.append(jug,h('div',{class:'np-jname'},`${c}-cup jug`));
+   if(tap){const bb=h('div',{class:'np-jbtns'});const f=h('button',{class:'np-mini'},'Fill');f.onclick=()=>doMove(['fill',i]);const e=h('button',{class:'np-mini'},'Empty');e.onclick=()=>doMove(['empty',i]);bb.append(f,e);col.append(bb);}
+   row.append(col);});
+  area.append(row,h('div',{class:'np-jinfo',html:`${sel===null?'Tap a jug to pour from it, then tap the jug to pour into.':`Pouring from the ${caps[sel]}-cup jug. Now tap where it goes.`}<br>Moves: ${moves}`}));
+  const rs=h('button',{class:'np-mini'},'↺ Start over');rs.onclick=()=>{if(S.done)return;st=start.slice();sel=null;moves=0;render();};area.append(rs);};
+ const doMove=m=>{if(S.done)return;const t=pourApply(caps,st,m);sel=null;if(!t){render();return;}st=t;moves++;$('#fb').className='fb';render();if(st.includes(target))autoWin();};
+ const tapJug=i=>{if(S.done)return;if(sel===null){if(!st[i])return setFb('info','That jug is empty. Pick one with water in it.');sel=i;render();return;}if(sel===i){sel=null;render();return;}doMove(['pour',sel,i]);};
+ return{prompt:`Get <b>exactly ${target} cups</b> of water into one jug. ${tap?'You can fill any jug from the tap, empty it out, or pour one jug into another until it\'s full.':`The ${caps[0]}-cup jug starts full. There's no tap, so you can only pour between jugs.`} There are no measuring marks!`,
+  build(box){area=h('div');box.append(area);render();},
+  check(){return st.includes(target)?{ok:true}:{ok:false,msg:`No jug has exactly ${target} cups yet.`};},
+  hint(i){const p=pourBFS(caps,st,target,tap);if(!p)return 'You\'re stuck. Tap Start over.';if(!p.length)return 'Already there!';return `Next move: ${desc(p[0])}.`;},
+  reveal(){let s=start.slice();sol.forEach(m=>s=pourApply(caps,s,m));st=s;sel=null;render();},
+  answer:'',explain:`One shortest way (${sol.length} moves): ${sol.map((m,k)=>`${k+1}. ${desc(m)}`).join(' · ')}. Tip: a full jug poured into a smaller one leaves a known amount behind. That leftover is your secret measuring tool.`,printable:false};
+}
+
+/* ===== 35. Sliding Tiles ===== */
+function slideSolve(board,n,limit){// IDA* with Manhattan distance; returns list of tile values to move, or null
+ const goal=v=>v?[(v-1)/n|0,(v-1)%n]:[n-1,n-1];const md=b=>{let s=0;b.forEach((v,i)=>{if(v){const [r,c]=goal(v);s+=Math.abs(r-(i/n|0))+Math.abs(c-i%n);}});return s;};
+ let b=board.slice(),z=b.indexOf(0),path=[],nodes=0,found=null;const D=[[-1,0],[1,0],[0,-1],[0,1]];
+ const dfs=(g,th,prev)=>{const hh=md(b);if(g+hh>th)return g+hh;if(hh===0){found=path.slice();return -1;}if(++nodes>limit)return Infinity;let mn=Infinity;const zr=z/n|0,zc=z%n;
+  for(const [dr,dc] of D){const r=zr+dr,c=zc+dc;if(r<0||c<0||r>=n||c>=n)continue;const t=r*n+c;if(t===prev)continue;const v=b[t];b[z]=v;b[t]=0;const oz=z;z=t;path.push(v);const res=dfs(g+1,th,oz);path.pop();z=oz;b[t]=v;b[z]=0;if(res===-1)return -1;if(res<mn)mn=res;}return mn;};
+ let th=md(b);while(th<80){const r=dfs(0,th,-1);if(r===-1)return found;if(r===Infinity)return null;th=r;}return null;
+}
+function genSlide(diff){
+ const n=diff==='hard'?4:3,sh=diff==='easy'?16:diff==='medium'?40:36;let b=[...range(n*n-1).map(i=>i+1),0],z=n*n-1,prev=-1;
+ for(let k=0;k<sh;k++){const zr=z/n|0,zc=z%n;const nb=[[zr-1,zc],[zr+1,zc],[zr,zc-1],[zr,zc+1]].filter(([r,c])=>r>=0&&c>=0&&r<n&&c<n).map(([r,c])=>r*n+c).filter(t=>t!==prev);const t=pick(nb);prev=z;b[z]=b[t];b[t]=0;z=t;}
+ if(b.every((v,i)=>v===(i<n*n-1?i+1:0)))return genSlide(diff);
+ const start=b.slice();let moves=0,area,hl=null;
+ const solved=()=>b.every((v,i)=>v===(i<n*n-1?i+1:0));
+ const render=()=>{area.innerHTML='';const g=h('div',{class:'np-slide',style:`grid-template-columns:repeat(${n},1fr)`});
+  b.forEach((v,i)=>{const t=h('div',{class:'np-st'+(v?'':' gap')+(v&&v===hl?' hint':'')},v?String(v):'');if(v)t.onclick=()=>tap(i);g.append(t);});
+  const rs=h('button',{class:'np-mini'},'↺ Start over');rs.onclick=()=>{if(S.done)return;b=start.slice();moves=0;hl=null;render();};
+  area.append(g,h('div',{class:'np-jinfo'},`Moves: ${moves}`),rs);};
+ const tap=i=>{if(S.done)return;const z=b.indexOf(0);if(Math.abs((i/n|0)-(z/n|0))+Math.abs(i%n-z%n)!==1)return setFb('info','Only a tile right next to the empty space can slide.');b[z]=b[i];b[i]=0;moves++;hl=null;$('#fb').className='fb';render();if(solved())autoWin();};
+ return{prompt:`Slide the tiles into order, 1 to ${n*n-1}, with the empty space in the bottom-right corner. Tap a tile next to the empty space to slide it.`,
+  build(box){area=h('div');box.append(area);render();},
+  check(){return solved()?{ok:true}:{ok:false,msg:'Not in order yet.'};},
+  hint(i){const p=slideSolve(b,n,n===3?400000:250000);if(!p){return 'Work on the top row first: get 1, 2'+(n===4?', 3, 4':', 3')+' in place, then the next row.';}if(!p.length)return 'Already solved!';hl=p[0];render();return `Slide the <b>${p[0]}</b> tile (it's glowing). ${p.length} moves to go from here.`;},
+  reveal(){b=[...range(n*n-1).map(i=>i+1),0];hl=null;render();},
+  answer:'',explain:`The trick experts use: solve the top row first, then the next row, and finish the last two rows together. Once a row is done, try not to disturb it. ${n===3?'Every 3×3 puzzle can be solved in 31 moves or fewer.':'The 4×4 version was a craze in the 1880s, called the "15 Puzzle."'}`,printable:false};
+}
+
+/* ===== 36. Peg Jump ===== */
+const PEG=(()=>{const pos=[];for(let r=0;r<5;r++)for(let c=0;c<=r;c++)pos.push([r,c]);const idx=(r,c)=>(r>=0&&c>=0&&c<=r&&r<5)?r*(r+1)/2+c:-1;
+ const jumps=[];pos.forEach(([r,c],i)=>{for(const [dr,dc] of [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,-1]]){const m=idx(r+dr,c+dc),t=idx(r+2*dr,c+2*dc);if(m>=0&&t>=0)jumps.push([i,m,t]);}});return{pos,jumps};})();
+const PEGMEMO=new Map();function pegBest(mask){if(PEGMEMO.has(mask))return PEGMEMO.get(mask);let best=0;for(let x=mask;x;x&=x-1)best++;
+ for(const [a,m,t] of PEG.jumps){if((mask>>a&1)&&(mask>>m&1)&&!(mask>>t&1)){const v=pegBest(mask&~(1<<a)&~(1<<m)|(1<<t));if(v<best)best=v;}}PEGMEMO.set(mask,best);return best;}
+function genPeg(diff){
+ const goal=diff==='easy'?3:diff==='medium'?2:1;const hole=diff==='easy'?pick([0,4,12]):R(15);const full=(1<<15)-1,start=full&~(1<<hole);
+ let mask=start,sel=null,hist=[],area,hintT=null;const cnt=m=>{let k=0;for(let x=m;x;x&=x-1)k++;return k;};
+ const legal=m=>PEG.jumps.filter(([a,b,t])=>(m>>a&1)&&(m>>b&1)&&!(m>>t&1));
+ const XY=i=>{const [r,c]=PEG.pos[i];return[130+(c-r/2)*48,30+r*42];};
+ const render=()=>{area.innerHTML='';const L=legal(mask);let svg=`<svg viewBox="0 0 260 220" class="np-peg"><polygon points="130,2 4,214 256,214" fill="#c08a4d" stroke="#8b5a2b" stroke-width="4" stroke-linejoin="round"/>`;
+  PEG.pos.forEach((_,i)=>{const [x,y]=XY(i),has=mask>>i&1,canLand=sel!==null&&(hintT===null?L.some(j=>j[0]===sel&&j[2]===i):i===hintT);
+   svg+=`<circle cx="${x}" cy="${y}" r="15" fill="${canLand?'#fde68a':'#6b4423'}" data-i="${i}"/>`;if(has)svg+=`<circle cx="${x}" cy="${y}" r="12" fill="${sel===i?'#2563eb':'#dc2626'}" stroke="#fff" stroke-width="2" data-i="${i}"/>`;});
+  svg+='</svg>';const wrap=h('div',{html:svg});wrap.querySelectorAll('[data-i]').forEach(e=>e.addEventListener('click',()=>tapHole(+e.dataset.i)));
+  const btns=h('div',{class:'np-jbtns'});const u=h('button',{class:'np-mini'},'↶ Undo');u.onclick=()=>{if(S.done||!hist.length)return;mask=hist.pop();sel=null;render();};
+  const rs=h('button',{class:'np-mini'},'↺ Start over');rs.onclick=()=>{if(S.done)return;mask=start;hist=[];sel=null;render();};btns.append(u,rs);
+  area.append(wrap,h('div',{class:'np-jinfo',html:`Pegs left: <b>${cnt(mask)}</b> · Goal: ${goal===1?'just 1':goal+' or fewer'}`}),btns);};
+ const tapHole=i=>{if(S.done)return;if(mask>>i&1){sel=sel===i?null:i;hintT=null;render();return;}if(sel===null)return setFb('info','Tap a peg first, then the empty hole it jumps into.');
+  const j=legal(mask).find(x=>x[0]===sel&&x[2]===i);if(!j){sel=null;render();return setFb('info','A peg can only jump over one neighbor into an empty hole right behind it.');}
+  hintT=null;hist.push(mask);mask=mask&~(1<<j[0])&~(1<<j[1])|(1<<j[2]);sel=null;$('#fb').className='fb';render();const c=cnt(mask);
+  if(c<=goal)autoWin();else if(!legal(mask).length)setFb('bad',`No jumps left, with ${c} pegs on the board. Tap <b>Undo</b> or <b>Start over</b> and try again.`);};
+ return{prompt:`Jump pegs over each other to remove them, like checkers. The peg you jump over comes off the board. Leave <b>${goal===1?'just one peg':goal+' pegs or fewer'}</b>. Tap a peg, then tap the empty hole to jump into.`,
+  build(box){area=h('div',{class:'np-pegwrap'});box.append(area);render();},
+  check(){const c=cnt(mask);if(c<=goal)return{ok:true};return{ok:false,msg:legal(mask).length?`${c} pegs left. Keep jumping!`:`No jumps left with ${c} pegs. Tap Undo or Start over.`};},
+  hint(i){if(pegBest(mask)>goal)return 'From here you can\'t reach the goal. Tap Undo a few times, or Start over.';const j=legal(mask).find(([a,b,t])=>pegBest(mask&~(1<<a)&~(1<<b)|(1<<t))<=goal);if(!j)return 'Keep going!';sel=j[0];hintT=j[2];render();return 'Jump the blue peg (picked for you) into the yellow hole.';},
+  reveal(){let m=mask;while(cnt(m)>goal){const j=legal(m).find(([a,b,t])=>pegBest(m&~(1<<a)&~(1<<b)|(1<<t))<=goal);if(!j)break;m=m&~(1<<j[0])&~(1<<j[1])|(1<<j[2]);}mask=m;sel=null;render();},
+  answer:'',explain:`The famous restaurant table version says leaving 1 peg makes you a genius! Tip: work from the outside in, and try not to leave pegs stranded alone in the corners, where nothing can jump them.`,printable:false};
+}
+
+const GEN={who:genWho,master:genMaster,nono:genNono,balance:genBalance,prob:genProb,rule:genRule,odd:genOdd,maze:genMaze,match:genMatch,river:genRiver,tower:genTower,rebus:genRebus,logic:genLogic,truth:genTruth,sudoku:genSudoku,math:genMath,seq:genSeq,matrix:genMatrix,code:genCode,shape:genShape,memory:genMemory,ladder:genLadder,anagram:genAnagram,flaw:genFlaw,riddle:genRiddle,teaser:genTeaser,links:genLinks,mystery:genMystery,makenum:genMakeNum,count:genCount,wsearch:genWordSearch,cross:genCross,spot:genSpot,pour:genPour,slide:genSlide,peg:genPeg};
 
 /* ---------- app ---------- */
 const S={sel:new Set(),diff:'medium',theme:'everyday',score:0,solved:0,stats:{},last:null,cur:null,type:null,hints:0,done:false};
