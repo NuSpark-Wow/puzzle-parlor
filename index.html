@@ -168,6 +168,7 @@ body:has(#menu[hidden]) .strip,body:has(#play:not([hidden])) .strip,body:has(#ga
 
 /* new puzzles: Big Crossword, Five-Letter Guess, Honeycomb Words, Theme Grid, Domino Logic */
 .np-bigxw .np-xc input{font-size:clamp(11px,2.6vw,20px)}
+.akam{display:block;margin-top:3px;font-size:12px;font-weight:700;color:#8a6a14}.akanote{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.4}
 .aka{background:var(--gold2);border:2px solid var(--gold);border-radius:12px;padding:10px 14px;margin:0 0 12px;font-size:16px}.aka small{display:block;margin-top:4px;font-size:12.5px;color:#5b5446;line-height:1.4}
 .tiny-note{font-size:13px;color:var(--muted);text-align:center;margin:6px 0}
 .g5-grid{display:flex;flex-direction:column;gap:6px;align-items:center;margin:8px auto}
@@ -310,7 +311,7 @@ const TYPES=[
  {id:'links',name:'Word Links',desc:'One word fits them all',skill:'Word'},
  {id:'bigcross',name:'Big Crossword',desc:'Up to Sunday size',skill:'Word'},
  {id:'guess5',name:'Five-Letter Guess',desc:'Crack the word in six',skill:'Word',aka:'Wordle®'},
- {id:'honey',name:'Honeycomb Words',desc:'Seven letters, how many words?',skill:'Word',aka:'Spelling Bee®'},
+ {id:'honey',name:'Honeycomb Words',desc:'7 letters, how many words?',skill:'Word',aka:'Spelling Bee®'},
  {id:'tgrid',name:'Theme Grid',desc:'Every letter hides a theme',skill:'Word',aka:'Strands®'},
  {id:'flaw',name:'Spot the Flaw',desc:'Find the weak argument',skill:'Critical Thinking'},
  {id:'teaser',name:'Brain Teasers',desc:'Tricky questions',skill:'Critical Thinking'},
@@ -1776,8 +1777,9 @@ const S={sel:new Set(),diff:'medium',theme:'everyday',score:0,solved:0,stats:{},
 function renderMenu(){
  const tw=$('#types');tw.innerHTML='';
  [...new Set(TYPES.map(t=>t.skill))].forEach(sk=>{tw.append(h('h3',{class:'grp'},sk));const g=h('div',{class:'types'});
-  TYPES.filter(t=>t.skill===sk).forEach(t=>{const b=h('button',{class:'type'+(S.sel.has(t.id)?' on':'')},h('span',{class:'ck'},'✓'),h('b',{},t.name),h('small',{},t.desc));
+  TYPES.filter(t=>t.skill===sk).forEach(t=>{const b=h('button',{class:'type'+(S.sel.has(t.id)?' on':'')},h('span',{class:'ck'},'✓'),h('b',{},t.name),h('small',{},t.desc),t.aka?h('small',{class:'akam'},'Plays like '+t.aka):null);
    b.onclick=()=>{S.sel.has(t.id)?S.sel.delete(t.id):S.sel.add(t.id);b.classList.toggle('on');$('#note').textContent='';};g.append(b);});tw.append(g);});
+ tw.append(h('p',{class:'akanote'},'® Mastermind, Wordle, Spelling Bee, Strands and Pips are trademarks of their owners. Our puzzles have their own names and are not affiliated with or endorsed by those companies.'));
  const dw=$('#diffs');dw.innerHTML='';
  DIFFS.forEach(([id,lab])=>{const b=h('button',{class:'btn'+(S.diff===id?' on':'')},lab);b.onclick=()=>{S.diff=id;renderMenu();};dw.append(b);});
  const ts=$('#theme');if(!ts.options.length){Object.entries(THEMES).forEach(([k,v])=>ts.append(h('option',{value:k},v.label)));ts.onchange=()=>S.theme=ts.value;}
