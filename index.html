@@ -168,6 +168,7 @@ body:has(#menu[hidden]) .strip,body:has(#play:not([hidden])) .strip,body:has(#ga
 
 /* new puzzles: Big Crossword, Five-Letter Guess, Honeycomb Words, Theme Grid, Domino Logic */
 .np-bigxw .np-xc input{font-size:clamp(11px,2.6vw,20px)}
+.aka{background:var(--gold2);border:2px solid var(--gold);border-radius:12px;padding:10px 14px;margin:0 0 12px;font-size:16px}.aka small{display:block;margin-top:4px;font-size:12.5px;color:#5b5446;line-height:1.4}
 .tiny-note{font-size:13px;color:var(--muted);text-align:center;margin:6px 0}
 .g5-grid{display:flex;flex-direction:column;gap:6px;align-items:center;margin:8px auto}
 .g5-row{display:flex;gap:6px}
@@ -282,9 +283,9 @@ const TYPES=[
  {id:'logic',name:'Logic Grids',desc:'Who did what?',skill:'Logic'},
  {id:'truth',name:'Truth & Lies',desc:'Who is lying?',skill:'Logic'},
  {id:'who',name:'Whodunit',desc:'Solve the case',skill:'Logic'},
- {id:'master',name:'Mastermind',desc:'Crack the color code',skill:'Logic'},
+ {id:'master',name:'Color Code',desc:'Crack the secret colors',skill:'Logic',aka:'Mastermind®'},
  {id:'nono',name:'Nonograms',desc:'Shade by the numbers',skill:'Logic'},
- {id:'domino',name:'Domino Logic',desc:'Place dominoes by the rules',skill:'Logic'},
+ {id:'domino',name:'Domino Logic',desc:'Place dominoes by the rules',skill:'Logic',aka:'Pips®'},
  {id:'sudoku',name:'Sudoku',desc:'The classic 9×9',skill:'Number'},
  {id:'math',name:'Math Grids',desc:'Cages that add up',skill:'Number'},
  {id:'seq',name:'Number Sequences',desc:'What comes next?',skill:'Number'},
@@ -308,9 +309,9 @@ const TYPES=[
  {id:'cross',name:'Mini Crossword',desc:'Fill in the squares',skill:'Word'},
  {id:'links',name:'Word Links',desc:'One word fits them all',skill:'Word'},
  {id:'bigcross',name:'Big Crossword',desc:'Up to Sunday size',skill:'Word'},
- {id:'guess5',name:'Five-Letter Guess',desc:'Crack the word in six',skill:'Word'},
- {id:'honey',name:'Honeycomb Words',desc:'Seven letters, how many words?',skill:'Word'},
- {id:'tgrid',name:'Theme Grid',desc:'Every letter hides a theme',skill:'Word'},
+ {id:'guess5',name:'Five-Letter Guess',desc:'Crack the word in six',skill:'Word',aka:'Wordle®'},
+ {id:'honey',name:'Honeycomb Words',desc:'Seven letters, how many words?',skill:'Word',aka:'Spelling Bee®'},
+ {id:'tgrid',name:'Theme Grid',desc:'Every letter hides a theme',skill:'Word',aka:'Strands®'},
  {id:'flaw',name:'Spot the Flaw',desc:'Find the weak argument',skill:'Critical Thinking'},
  {id:'teaser',name:'Brain Teasers',desc:'Tricky questions',skill:'Critical Thinking'},
  {id:'mystery',name:'Yes or No Mysteries',desc:'What really happened?',skill:'Critical Thinking'},
@@ -811,7 +812,7 @@ function genWho(diff){
  return null;
 }
 
-/* ===== 14. Mastermind ===== */
+/* ===== 14. Color Code (plays like Mastermind) ===== */
 const MMC=[['#dc2626','Red'],['#2563eb','Blue'],['#16a34a','Green'],['#eab308','Yellow'],['#9333ea','Purple'],['#f97316','Orange']];
 function genMaster(diff){
  const [P,C,rep]={easy:[3,5,false],medium:[4,6,false],hard:[4,6,true]}[diff],maxG=10,cols=MMC.slice(0,C);
@@ -1786,6 +1787,8 @@ function renderMenu(){
   const g=h('div',{class:'stats'});Object.entries(S.stats).forEach(([k,v])=>g.append(h('div',{class:'stat',html:`<b>${k}</b><br>${v.solved} of ${v.tried} solved`})));ss.append(g);}
 }
 function show(id){$('#menu').hidden=id!=='menu';$('#play').hidden=id!=='play';window.scrollTo(0,0);}
+// "plays like" note for puzzles whose famous name is someone else's trademark
+function akaBox(t){if(!t||!t.aka)return '';const m=t.aka.replace('®','');return `<div class="aka"><div>🧩 <b>${t.name}</b> plays like <b>${t.aka}</b></div><small>Why a different name? ${m}® is a trademark owned by its maker, so we gave our version its own name. The Puzzle Parlor is not affiliated with or endorsed by the maker, and our rules may differ a little.</small></div>`;}
 function setFb(cls,html){const f=$('#fb');f.className='fb '+cls;f.innerHTML=html;}
 function finish(){S.done=true;['#check','#hint','#reveal'].forEach(s=>$(s).disabled=true);const e=$('#explain');e.innerHTML='<h4>Why it works</h4>'+S.cur.explain;e.style.display='block';}
 function stat(solved){const sk=S.type.skill;S.stats[sk]=S.stats[sk]||{solved:0,tried:0};S.stats[sk].tried++;if(solved)S.stats[sk].solved++;}
@@ -1799,7 +1802,7 @@ function nextPuzzle(){
   let p=null;for(let k=0;k<3&&!p;k++){try{p=GEN[id](S.curDiff,S.theme);}catch(e){console.error(e);}}
   if(!p){$('#prompt').textContent='That one didn\'t come out right. Tap Next for a fresh puzzle.';$('#next').disabled=false;return;}
   S.cur=p;S.hints=0;S.done=false;
-  $('#prompt').innerHTML=p.prompt;p.build($('#pbox'));
+  $('#prompt').innerHTML=akaBox(S.type)+p.prompt;p.build($('#pbox'));
   ['#check','#hint','#reveal','#next'].forEach(s=>$(s).disabled=false);$('#print').disabled=!p.printable;
   $('#hint').textContent='Hint (3 left)';$('#check').textContent=p.checkLabel||'Check';
  },30);
