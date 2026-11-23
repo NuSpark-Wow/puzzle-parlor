@@ -242,6 +242,8 @@ body:has(#menu[hidden]) .strip,body:has(#play:not([hidden])) .strip,body:has(#ga
   <h2>1. Pick your puzzles</h2>
   <p class="sub">Tap as many as you like. We'll mix them up for you. Or let us pick everything:</p>
   <button class="btn gold" id="surprise" style="margin-bottom:8px">🎲 Surprise me</button>
+  <button class="btn gold" id="warmup" style="margin-bottom:8px">☀️ Today's Brain Warm-Up</button>
+  <p class="sub" id="warmupNote" style="margin-top:0"></p>
   <div class="row" style="margin-bottom:10px"><button class="link" id="all">Select all</button><span>·</span><button class="link" id="none">Clear</button></div>
   <div id="types"></div>
   <h2>2. Choose a level</h2>
@@ -1840,12 +1842,24 @@ function nextPuzzle(forceId){
  setTimeout(()=>{
   let p=null;for(let k=0;k<3&&!p;k++){try{p=GEN[id](S.curDiff,S.theme);}catch(e){console.error(e);}}
   if(!p){$('#prompt').textContent='That one didn\'t come out right. Tap Next for a fresh puzzle.';$('#next').disabled=false;return;}
-  S.cur=p;S.hints=0;S.steps=0;S.done=false;
+  S.cur=p;S.hints=0;S.steps=0;S.done=false;S.t0=Date.now();
   $('#prompt').innerHTML=akaBox(S.type)+p.prompt;p.build($('#pbox'));
   ['#check','#hint','#step','#reveal','#next'].forEach(s=>$(s).disabled=false);$('#step').style.display=p.step?'':'none';$('#reveal').textContent=p.step?'Show full answer':'Show answer';$('#print').disabled=!p.printable;$('#print').style.display=p.printable?'':'none';
   $('#hint').textContent='Hint (3 left)';$('#check').textContent=p.checkLabel||'Check';
  },30);
 }
+// How'd I Do?: time taken, help used, and a rating for this puzzle (nothing is saved).
+function howDid(used){
+ const sec=Math.max(1,Math.round((Date.now()-(S.t0||Date.now()))/1000)),par={easy:120,medium:240,hard:480}[S.curDiff]||240;
+ const t=sec<60?sec+' seconds':Math.floor(sec/60)+' min '+(sec%60)+' sec';
+ const stars=used===0&&sec<=par?3:used<=1&&sec<=par*2?2:1;
+ const label=['','Nice work. Every solve sharpens the mind!','Strong solve!','Sharp as a tack!'][stars];
+ return `<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.55)"><b>How'd I do?</b> ${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)} ${label}<br><span style="font-size:13px">Time: ${t} · Help used: ${used?used:'none'} · ${cap(S.curDiff)} level</span></div>`;}
+// Today's Brain Warm-Up: one puzzle type a day (the same type for everyone that day), at medium level.
+const dayNo=Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/86400000);
+const warmType=()=>TYPES[(dayNo*7)%TYPES.length];
+try{$('#warmupNote').textContent='Today: '+warmType().name+' (medium). A fresh one every day.';}catch(e){}
+$('#warmup').onclick=()=>{const t=warmType();S.sel=new Set([t.id]);S.diff='medium';renderMenu();show('play');nextPuzzle(t.id);};
 $('#surprise').onclick=()=>{TYPES.forEach(t=>S.sel.add(t.id));S.diff='mixed';renderMenu();show('play');nextPuzzle();};
 $('#all').onclick=()=>{TYPES.forEach(t=>S.sel.add(t.id));renderMenu();};
 $('#none').onclick=()=>{S.sel.clear();renderMenu();};
@@ -1856,7 +1870,7 @@ $('#again').onclick=()=>{nextPuzzle(S.type.id);window.scrollTo(0,0);};
 $('#menu2').onclick=()=>{renderMenu();show('menu');};
 $('#check').onclick=()=>{if(S.done)return;const r=S.cur.check();
  if(r.ok){const used=S.hints+(S.steps||0),pts=Math.max(1,Math.round(BASE[S.curDiff]*(1-.25*used)));S.score+=pts;S.solved++;stat(true);
-  $('#score').textContent=S.score;$('#solvedN').textContent=S.solved;const help=[S.hints?`${S.hints} hint${S.hints>1?'s':''}`:'',S.steps?`${S.steps} move${S.steps>1?'s':''} shown`:''].filter(Boolean).join(', ');setFb('ok',`<b>Solved!</b> +${pts} point${pts>1?'s':''}${help?` (${help})`:''}.`);finish();}
+  $('#score').textContent=S.score;$('#solvedN').textContent=S.solved;const help=[S.hints?`${S.hints} hint${S.hints>1?'s':''}`:'',S.steps?`${S.steps} move${S.steps>1?'s':''} shown`:''].filter(Boolean).join(', ');setFb('ok',`<b>Solved!</b> +${pts} point${pts>1?'s':''}${help?` (${help})`:''}.`+howDid(used));finish();}
  else setFb('bad',r.msg);};
 $('#hint').onclick=()=>{if(S.done||S.hints>=3)return;const m=S.cur.hint(S.hints);S.hints++;setFb('info',`<b>Hint ${S.hints}:</b> ${m}`);
  const left=3-S.hints;$('#hint').textContent=left?`Hint (${left} left)`:'No hints left';if(!left)$('#hint').disabled=true;};
