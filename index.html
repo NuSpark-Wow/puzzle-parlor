@@ -265,9 +265,12 @@ body:has(#menu[hidden]) .strip,body:has(#play:not([hidden])) .strip,body:has(#ga
    <div class="actions">
     <button class="btn primary" id="check">Check</button>
     <button class="btn" id="hint">Hint (3 left)</button>
+    <button class="btn" id="step" style="display:none">⏭ Next move</button>
     <button class="btn" id="reveal">Show answer</button>
     <button class="btn" id="print">Print</button>
+    <button class="btn gold" id="again" style="display:none">↻ Play again</button>
     <button class="btn gold" id="next">Next puzzle →</button>
+    <button class="btn" id="menu2" style="display:none">← Puzzle menu</button>
    </div>
   </div>
  </section>
@@ -394,6 +397,7 @@ function genLogic(diff,theme){
   check(){let empty=0,wrong=0;sels.forEach((s,p)=>s.forEach((sel,c)=>{if(sel.value==='')empty++;else if(+sel.value!==sol[c][p])wrong++;}));
    if(empty)return{ok:false,msg:`${empty} box${empty>1?'es are':' is'} still blank.`};
    if(wrong)return{ok:false,msg:`Close. ${wrong} match${wrong>1?'es are':' is'} off. Recheck the clues.`};return{ok:true};},
+  step(){for(let p=0;p<n;p++)for(let c=0;c<2;c++){const sel=sels[p][c];if(sel.value===''||+sel.value!==sol[c][p]){sel.value=String(sol[c][p]);sel.disabled=true;return `${names[p]} is ${W(c,sol[c][p])}.`;}}return 'Everything is already right. Hit Check!';},safeCheck:true,
   hint(i){if(i===0)return 'Start with any clue that names a person directly. Then use the "not" clues to rule options out. When someone has only one choice left, it must be theirs.';
    for(let p=0;p<n;p++)for(let c=0;c<2;c++){const sel=sels[p][c];if(sel.value===''||+sel.value!==sol[c][p]){sel.value=String(sol[c][p]);sel.disabled=true;return `Filled in: ${names[p]} is ${W(c,sol[c][p])}.`;}}
    return 'Everything is already right. Hit Check!';},
@@ -435,6 +439,7 @@ function truthPuzzle(names,st,sol){
    box.append(h('div',{class:'person'},h('div',{class:'q'},h('b',{},nm+' says: '),'“'+st[i].t+'”'),h('div',{class:'row'},tb,lb)));return{set,tb,lb};});},
   check(){if(ch.some(x=>x===null))return{ok:false,msg:'Mark everyone as a truth-teller or a liar first.'};
    const w=ch.filter((x,i)=>x!==sol[i]).length;return w?{ok:false,msg:`Not quite. ${w} ${w>1?'people are':'person is'} marked wrong. Test your answer against each statement.`}:{ok:true};},
+  step(){const k=ch.findIndex((x,i)=>x!==sol[i]);if(k<0)return 'Everyone is marked right. Hit Check!';ui[k].set(sol[k]);ui[k].tb.disabled=ui[k].lb.disabled=true;return `${names[k]} is a ${sol[k]?'truth-teller':'liar'}.`;},safeCheck:true,
   hint(i){if(i===0)return 'Assume one person is telling the truth and follow what that forces for everyone else. If you hit a contradiction, flip your assumption.';
    const k=i-1;ui[k].set(sol[k]);ui[k].tb.disabled=ui[k].lb.disabled=true;return `${names[k]} is a ${sol[k]?'truth-teller':'liar'}.`;},
   reveal(){ui.forEach((u,i)=>{u.set(sol[i]);u.tb.disabled=u.lb.disabled=true;});},
@@ -463,6 +468,7 @@ function cellPuzzle({n,given,sol,box,cages,size,tip,explain}){
    if(empty)return{ok:false,msg:`${empty} square${empty>1?'s are':' is'} still empty.`};
    if(wrong.length){wrong.forEach(w=>w.parentNode.classList.add('wrong'));return{ok:false,msg:`${wrong.length} square${wrong.length>1?'s are':' is'} off. They're marked in red.`};}
    return{ok:true};},
+  step(){const k=inputs.findIndex((inp,k)=>inp&&!inp.disabled&&+inp.value!==sol[k]);if(k<0)return 'Everything is already right. Hit Check!';fill(k,'hinted');return `Row ${(k/n|0)+1}, column ${k%n+1} is <b>${sol[k]}</b>.`;},safeCheck:true,
   hint(i){const open=inputs.map((inp,k)=>inp&&!inp.disabled&&(+inp.value!==sol[k])?k:-1).filter(k=>k>=0);
    if(!open.length)return 'Everything is already right. Hit Check!';
    const k=pick(open);fill(k,'hinted');return (i===0?tip+' ':'')+`Filled in row ${(k/n|0)+1}, column ${k%n+1}.`;},
@@ -616,6 +622,7 @@ function genCode(diff){
   prompt:sub?'Every letter has been swapped for a different letter, and the same swap is used every time. Crack the message.':'Every letter has been shifted the <b>same number of places</b> along the alphabet. Crack the message.',
   build(box){box.append(h('div',{class:'cipher'},enc));if(given.length)box.append(h('div',{class:'givens'},'Clue: '+given.map(c=>`${key[c]} stands for ${c}`).join(' · ')));inp=h('input',{class:'ans',placeholder:'Type the real message',autocapitalize:'characters',autocomplete:'off'});box.append(inp);},
   check(){if(!inp.value.trim())return{ok:false,msg:'Type your answer first.'};return norm(inp.value)===norm(p)?{ok:true}:{ok:false,msg:'Not quite. Check each word against the code.'};},
+  step(){const words=p.split(' '),tw=inp.value.toUpperCase().trim().split(/\s+/);let k=0;while(k<words.length&&tw[k]===words[k])k++;if(k>=words.length)return 'The whole message is already right. Hit Check!';inp.value=words.slice(0,k+1).join(' ');return `Word ${k+1} is <b>${words[k]}</b>.`;},safeCheck:true,
   hint(i){if(i===0)return 'The most common letters in English are E, T and A. Short words like THE, A and IS are great places to start.';
    if(!sub&&i===1)return `Each letter moved ${s} place${s>1?'s':''} forward in the alphabet.`;
    const c=byFreq[i-1]||byFreq[0];return `In the code, ${key[c]} stands for ${c}.`;},
@@ -702,6 +709,7 @@ function genLadder(diff){
     for(const w of words){if(w.length!==4)return{ok:false,msg:`"${esc(U(w))}" needs exactly 4 letters.`};if(!WSET.has(w))return{ok:false,msg:`"${esc(U(w))}" isn't in our word list. Try another word.`};}
     for(let i=1;i<chain.length;i++){let diffs=0;for(let k=0;k<4;k++)if(chain[i][k]!==chain[i-1][k])diffs++;if(diffs!==1)return{ok:false,msg:`${U(chain[i-1])} → ${esc(U(chain[i]))} changes ${diffs===0?'no letters':'more than one letter'}.`};}
     return{ok:true};},
+   step(){const k=ins.findIndex((x,k)=>x.value.trim().toLowerCase()!==path[k+1]);if(k<0)return 'Every step is filled in. Hit Check!';ins[k].value=U(path[k+1]);ins[k].disabled=true;return `Step ${k+1} is <b>${U(path[k+1])}</b>.`;},safeCheck:true,
    hint(i){if(i===0)return `Compare ${U(s)} and ${U(e)}. Which letters already match? Change the others one at a time.`;const k=Math.min(i-1,ins.length-1);ins[k].value=U(path[k+1]);ins[k].disabled=true;return `Step ${k+1} is ${U(path[k+1])}.`;},
    reveal(){ins.forEach((x,k)=>{x.value=U(path[k+1]);x.disabled=true;});},
    answer:path.map(U).join(' → '),
@@ -848,6 +856,7 @@ function genMaster(diff){
    cur=cur.map((x,i)=>fixed[i]?x:null);renderCur();const left=maxG-rows;
    if(!left)return{ok:false,msg:'Out of guesses! Tap Show answer to see the code.'};
    return{ok:false,msg:`${bl} right spot, ${wh} right color in the wrong spot. ${left} guess${left>1?'es':''} left.`};},
+  step(){return this.hint(1);},
   hint(i){if(i===0)return 'Use your first guesses to learn which colors are in the code. Then work out where each one goes.';const k=range(P).find(j=>!fixed[j]);if(k===undefined)return 'Every spot is already set!';fixed[k]=true;cur[k]=secret[k];renderCur();return `Spot ${k+1} is ${cols[secret[k]][1]}. It's locked in.`;},
   reveal(){cur=secret.slice();fixed.fill(true);renderCur();},
   answer:code,
@@ -869,6 +878,7 @@ function genNono(diff){
    range(n).forEach(r=>{const tr=h('tr',{},h('td',{class:'rc'},rowC[r].join(' ')));range(n).forEach(c=>{const i=r*n+c,td=h('td',{class:'nc'});td.style.width=td.style.height=sz+'px';td.onclick=()=>{if(td.dataset.lock)return;st[i]=(st[i]+1)%3;paint(i);};cells[i]=td;tr.append(td);});t.append(tr);});
    box.append(h('div',{style:'overflow-x:auto'},t));},
   check(){const b=lineOK(st.map(v=>v===1?1:0));if(!b.r&&!b.c)return{ok:true};return{ok:false,msg:`${b.r} row${b.r!==1?'s':''} and ${b.c} column${b.c!==1?'s':''} don't match their numbers yet.`};},
+  step(){const wrong=range(n*n).filter(k=>(st[k]===1)!==(sol[k]===1)&&!cells[k].dataset.lock);if(!wrong.length)return 'Everything shaded so far is right. Hit Check!';const pref=wrong.filter(k=>sol[k]);const k=(pref.length?pref:wrong)[0];st[k]=sol[k]?1:2;cells[k].dataset.lock='1';paint(k);return `Row ${(k/n|0)+1}, column ${k%n+1} is ${sol[k]?'shaded':'empty'}. It's locked in with a gold border.`;},safeCheck:true,
   hint(i){if(i===0)return `Start with the biggest numbers. A long run in a row of ${n} has to cover the middle squares, no matter where it starts.`;
    const wrong=range(n*n).filter(k=>(st[k]===1)!==(sol[k]===1)&&!cells[k].dataset.lock);if(!wrong.length)return 'Everything shaded so far is right. Keep going!';
    const pref=wrong.filter(k=>sol[k]);const k=pick(pref.length?pref:wrong);st[k]=sol[k]?1:2;cells[k].dataset.lock='1';paint(k);return `Row ${(k/n|0)+1}, column ${k%n+1} is ${sol[k]?'shaded':'empty'}. It's locked in with a gold border.`;},
@@ -995,6 +1005,7 @@ function genMaze(diff){
    box.append(pad);draw();},
   onKey(e){const d=keyMap[e.key];if(d){e.preventDefault();move(d);}},
   check(){return pos===goal?{ok:true}:{ok:false,msg:'Keep going. Get the red dot to the green square.'};},
+  step(){if(pos===goal)return 'You\'re already there!';const p=pathFrom(pos),dirOf=(a,b)=>b===a-n?'N':b===a+n?'S':b===a+1?'E':'W',d0=dirOf(p[0],p[1]);let k=1;while(k<p.length-1&&dirOf(p[k],p[k+1])===d0)k++;for(let j=0;j<k;j++)move(d0);return `Moved ${k} square${k>1?'s':''} ${({N:'up',S:'down',E:'right',W:'left'})[d0]}.`;},
   hint(i){show=pathFrom(pos).slice(0,1+[6,10,16][i]);draw();return i===0?'The gold line shows your next few steps. Tip: in mazes like this, keeping one hand on the same wall always gets you out eventually.':'The gold line shows a few more steps.';},
   reveal(){show=pathFrom(0);pos=goal;draw();},
   answer:svg([],pathFrom(0),null),
@@ -1073,6 +1084,7 @@ function genRiver(diff){
   return{prompt:`Get everyone to the far side. The boat holds the ${th.kn} plus ${cap===1?'<b>one</b> passenger':'<b>up to two</b> passengers'}, and only the ${th.kn} can row. ${pairs.map(([a,b])=>`Never leave the <b>${nm(a)}</b> alone with the <b>${nm(b)}</b>.`).join(' ')} Tap to load the boat, then cross.`,
    build(box){area=h('div');crossBtn=h('button',{class:'btn primary',style:'display:block;margin:8px auto'},'Cross the river ⛵');crossBtn.onclick=doCross;box.append(area,crossBtn);render();},
    check(){return far===full&&farm===1?{ok:true}:{ok:false,msg:'Not yet. Everyone needs to reach the far side.'};},
+   step(){const p=solve(far,farm);if(!p)return 'Tap Show full answer to see the way across.';if(!p.length)return 'Everyone is across!';const L=p[0],txt=L.length?`Took the ${names(L)} ${farm?'back':'across'}.`:`Went ${farm?'back':'across'} alone.`;sel=new Set(L);doCross();return txt;},
    hint(i){const p=solve(far,farm);if(!p||!p.length)return 'Start over from the beginning and try a new plan.';const L=p[0];return (i===0?'Sometimes you have to bring someone back across. ':'')+'Next move: '+(L.length?`take the ${names(L)} ${farm?'back':'across'}.`:`go ${farm?'back':'across'} alone.`);},
    reveal(){far=full;farm=1;sel.clear();render();crossBtn.disabled=true;},
    answer:'',explain:`One shortest solution (${sol.length} crossings):<ol>${sol.map((L,k)=>`<li>${stepTxt(L,k)}</li>`).join('')}</ol>The key move is realizing you can bring a passenger <i>back</i> to keep the dangerous pairs apart.`,
@@ -1097,6 +1109,7 @@ function genTower(diff){
  return{prompt:`Move the whole stack from peg <b>A</b> to peg <b>C</b>. Move one disk at a time, and never put a bigger disk on a smaller one. Tap a peg to pick up its top disk, then tap where to drop it.`,
   build(box){area=h('div');box.append(area);render();},
   check(){return pegs[2].length===n?{ok:true}:{ok:false,msg:'Not yet. The whole stack needs to end up on peg C.'};},
+  step(){const m=next(posOf(),n,2);if(!m)return 'Already solved!';held=null;pegs[m[1]].push(pegs[m[0]].pop());moves++;render();if(pegs[2].length===n)autoWin();return `Moved the top disk from peg ${'ABC'[m[0]]} to peg ${'ABC'[m[1]]}.`;},
   hint(i){const m=next(posOf(),n,2);if(!m)return 'Already solved!';return (i===0?'The smallest disk moves every other turn. ':'')+`Next move: peg ${'ABC'[m[0]]} to peg ${'ABC'[m[1]]}.`;},
   reveal(){pegs=[[],[],range(n).map(i=>n-i)];held=null;render();},
   answer:'',explain:`With ${n} disks, the fewest possible moves is ${min} (that's 2 multiplied by itself ${n} times, minus 1). The pattern: to move a stack, first move everything above the bottom disk out of the way, move the bottom disk, then rebuild the smaller stack on top. Same trick, over and over.`,
@@ -1384,6 +1397,7 @@ function genWordSearch(diff){
   build(box){gEl=h('div',{class:'np-ws',style:`grid-template-columns:repeat(${n},1fr)`});cellsEl=grid.map((row,r)=>row.map((x,c)=>{const e=h('div',{class:'np-wc'},x);e.onclick=()=>tap(r,c);gEl.append(e);return e;}));
    listEl=h('div',{class:'np-wlist'});box.append(gEl,listEl);paint();},
   check(){const left=placed.filter(p=>!p.found).length;return left?{ok:false,msg:`${left} word${left>1?'s':''} still to find.`}:{ok:true};},
+  step(){const p=placed.find(x=>!x.found);if(!p)return 'All found!';p.found=true;first=null;paint();if(placed.every(x=>x.found))autoWin();return `Found <b>${p.w}</b> for you.`;},
   hint(i){const p=placed.find(x=>!x.found);if(!p)return 'All found!';const [r,c]=p.cells[0];paint();cellsEl[r][c].classList.add('hintc');return `<b>${p.w}</b> starts at the flashing letter.`;},
   reveal(){placed.forEach(p=>p.found=true);first=null;paint();},
   answer:'',explain:`All ${placed.length} words: ${placed.map(p=>p.w).join(', ')}. Tip: hunt for the first letter of a word, then check the eight directions around it for the second letter.`,printable:false};
@@ -1423,6 +1437,7 @@ function genCross(diff){
    const clues=h('div',{class:'np-xclues'});clues.append(cl('Across',P.filter(p=>p.dc)),cl('Down',P.filter(p=>p.dr)));box.append(g,clues);},
   check(){let empty=0,wrong=0;for(let r=0;r<H;r++)for(let c=0;c<W;c++){const i=inputs[r][c];if(!i)continue;if(!i.value)empty++;else if(i.value!==sol[r][c]){wrong++;i.parentNode.classList.add('bad');}}
    if(!empty&&!wrong)return{ok:true};return{ok:false,msg:empty?`${empty} square${empty>1?'s':''} still empty.${wrong?` ${wrong} letter${wrong>1?'s are':' is'} wrong (shown in red).`:''}`:`${wrong} letter${wrong>1?'s are':' is'} wrong (shown in red).`};},
+  step(){const p=P.find(p=>{for(let k=0;k<p.w.length;k++){if(inputs[p.r+p.dr*k][p.c+p.dc*k].value!==p.w[k])return true;}return false;});if(!p)return 'Every letter is already right. Hit Check!';for(let k=0;k<p.w.length;k++){const x=inputs[p.r+p.dr*k][p.c+p.dc*k];x.value=p.w[k];x.parentNode.classList.remove('bad');x.parentNode.classList.add('hintx');}return `${p.n} ${p.dc?'across':'down'} is <b>${p.w}</b>. It's filled in (in gold).`;},safeCheck:true,
   hint(i){const cand=[];for(let r=0;r<H;r++)for(let c=0;c<W;c++){const x=inputs[r][c];if(x&&x.value!==sol[r][c])cand.push([r,c]);}if(!cand.length)return 'Every letter is already right!';
    const [r,c]=pick(cand),x=inputs[r][c];x.value=sol[r][c];x.parentNode.classList.remove('bad');x.parentNode.classList.add('hintx');return 'One letter is filled in for you (in gold).';},
   reveal(){for(let r=0;r<H;r++)for(let c=0;c<W;c++){const x=inputs[r][c];if(x){x.value=sol[r][c];x.disabled=true;x.parentNode.classList.remove('bad');}}},
@@ -1445,6 +1460,7 @@ function genSpot(diff){
   build(box){const wrap=h('div',{class:'np-sdwrap'});const a=h('div',{class:'np-sdbox',html:drawSv(items)}),b=h('div',{class:'np-sdbox',html:drawSv(right)});svL=a.firstChild;svR=b.firstChild;
    svL.addEventListener('click',e=>tapAt(svL,e));svR.addEventListener('click',e=>tapAt(svR,e));wrap.append(a,b);box.append(wrap);},
   check(){const left=diffs.filter(d=>!d.found).length;return left?{ok:false,msg:`${left} difference${left>1?'s':''} still hiding.`}:{ok:true};},
+  step(){const d=diffs.find(z=>!z.found);if(!d)return 'All found!';d.found=true;mark();if(diffs.every(z=>z.found))autoWin();return 'One difference is circled for you.';},
   hint(i){const d=diffs.find(z=>!z.found);if(!d)return 'All found!';[svL,svR].forEach(sv=>{const g=sv.querySelector('.marks');const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',d.x+R(20)-10);c.setAttribute('cy',d.y+R(20)-10);c.setAttribute('r','46');c.setAttribute('fill','rgba(250,204,21,.35)');g.append(c);setTimeout(()=>c.remove(),2200);});
    return 'Look inside the yellow glow.';},
   reveal(){diffs.forEach(d=>d.found=true);mark();},
@@ -1482,6 +1498,7 @@ function genPour(diff){
  return{prompt:`Get <b>exactly ${target} cups</b> of water into one jug. ${tap?'You can fill any jug from the tap, empty it out, or pour one jug into another until it\'s full.':`The ${caps[0]}-cup jug starts full. There's no tap, so you can only pour between jugs.`} There are no measuring marks!`,
   build(box){area=h('div');box.append(area);render();},
   check(){return st.includes(target)?{ok:true}:{ok:false,msg:`No jug has exactly ${target} cups yet.`};},
+  step(){const p=pourBFS(caps,st,target,tap);if(!p)return 'You\'re stuck. Tap Start over.';if(!p.length)return 'Already there!';const t=desc(p[0]);doMove(p[0]);return t+'.';},
   hint(i){const p=pourBFS(caps,st,target,tap);if(!p)return 'You\'re stuck. Tap Start over.';if(!p.length)return 'Already there!';return `Next move: ${desc(p[0])}.`;},
   reveal(){let s=start.slice();sol.forEach(m=>s=pourApply(caps,s,m));st=s;sel=null;render();},
   answer:'',explain:`One shortest way (${sol.length} moves): ${sol.map((m,k)=>`${k+1}. ${desc(m)}`).join(' · ')}. Tip: a full jug poured into a smaller one leaves a known amount behind. That leftover is your secret measuring tool.`,printable:false};
@@ -1509,6 +1526,7 @@ function genSlide(diff){
  return{prompt:`Slide the tiles into order, 1 to ${n*n-1}, with the empty space in the bottom-right corner. Tap a tile next to the empty space to slide it.`,
   build(box){area=h('div');box.append(area);render();},
   check(){return solved()?{ok:true}:{ok:false,msg:'Not in order yet.'};},
+  step(){const p=slideSolve(b,n,n===3?400000:250000);if(!p)return 'This one is too tangled for a quick next move. Work on the top row first.';if(!p.length)return 'Already solved!';tap(b.indexOf(p[0]));return `Slid the <b>${p[0]}</b> tile. ${p.length-1} move${p.length-1===1?'':'s'} to go.`;},
   hint(i){const p=slideSolve(b,n,n===3?400000:250000);if(!p){return 'Work on the top row first: get 1, 2'+(n===4?', 3, 4':', 3')+' in place, then the next row.';}if(!p.length)return 'Already solved!';hl=p[0];render();return `Slide the <b>${p[0]}</b> tile (it's glowing). ${p.length} moves to go from here.`;},
   reveal(){b=[...range(n*n-1).map(i=>i+1),0];hl=null;render();},
   answer:'',explain:`The trick experts use: solve the top row first, then the next row, and finish the last two rows together. Once a row is done, try not to disturb it. ${n===3?'Every 3×3 puzzle can be solved in 31 moves or fewer.':'The 4×4 version was a craze in the 1880s, called the "15 Puzzle."'}`,printable:false};
@@ -1538,6 +1556,7 @@ function genPeg(diff){
  return{prompt:`Jump pegs over each other to remove them, like checkers. The peg you jump over comes off the board. Leave <b>${goal===1?'just one peg':goal+' pegs or fewer'}</b>. Tap a peg, then tap the empty hole to jump into.`,
   build(box){area=h('div',{class:'np-pegwrap'});box.append(area);render();},
   check(){const c=cnt(mask);if(c<=goal)return{ok:true};return{ok:false,msg:legal(mask).length?`${c} pegs left. Keep jumping!`:`No jumps left with ${c} pegs. Tap Undo or Start over.`};},
+  step(){if(pegBest(mask)>goal)return 'From here you can\'t reach the goal. Tap Undo a few times, or Start over.';const j=legal(mask).find(([a,b,t])=>pegBest(mask&~(1<<a)&~(1<<b)|(1<<t))<=goal);if(!j)return 'Keep going!';hintT=null;hist.push(mask);mask=mask&~(1<<j[0])&~(1<<j[1])|(1<<j[2]);sel=null;render();if(cnt(mask)<=goal)autoWin();return 'One jump made for you.';},
   hint(i){if(pegBest(mask)>goal)return 'From here you can\'t reach the goal. Tap Undo a few times, or Start over.';const j=legal(mask).find(([a,b,t])=>pegBest(mask&~(1<<a)&~(1<<b)|(1<<t))<=goal);if(!j)return 'Keep going!';sel=j[0];hintT=j[2];render();return 'Jump the blue peg (picked for you) into the yellow hole.';},
   reveal(){let m=mask;while(cnt(m)>goal){const j=legal(m).find(([a,b,t])=>pegBest(m&~(1<<a)&~(1<<b)|(1<<t))<=goal);if(!j)break;m=m&~(1<<j[0])&~(1<<j[1])|(1<<j[2]);}mask=m;sel=null;render();},
   answer:'',explain:`The famous restaurant table version says leaving 1 peg makes you a genius! Tip: work from the outside in, and try not to leave pegs stranded alone in the corners, where nothing can jump them.`,printable:false};
@@ -1595,6 +1614,7 @@ function genBigCross(diff){
    const clues=h('div',{class:'np-xclues'});clues.append(cl('Across',P.filter(p=>p.dc)),cl('Down',P.filter(p=>p.dr)));box.append(g,clues);},
   check(){let empty=0,wrong=0;for(let r=0;r<H;r++)for(let c=0;c<W;c++){const i=inputs[r][c];if(!i)continue;if(!i.value)empty++;else if(i.value!==sol[r][c]){wrong++;i.parentNode.classList.add('bad');}}
    if(!empty&&!wrong)return{ok:true};return{ok:false,msg:empty?`${empty} square${empty>1?'s':''} still empty.${wrong?` ${wrong} letter${wrong>1?'s are':' is'} wrong (shown in red).`:''}`:`${wrong} letter${wrong>1?'s are':' is'} wrong (shown in red).`};},
+  step(){const p=P.find(p=>{for(let k=0;k<p.w.length;k++){if(inputs[p.r+p.dr*k][p.c+p.dc*k].value!==p.w[k])return true;}return false;});if(!p)return 'Every letter is already right. Hit Check!';for(let k=0;k<p.w.length;k++){const x=inputs[p.r+p.dr*k][p.c+p.dc*k];x.value=p.w[k];x.parentNode.classList.remove('bad');x.parentNode.classList.add('hintx');}return `${p.n} ${p.dc?'across':'down'} is <b>${p.w}</b>. It's filled in (in gold).`;},safeCheck:true,
   hint(i){const p=P.find(p=>{for(let k=0;k<p.w.length;k++){const x=inputs[p.r+p.dr*k][p.c+p.dc*k];if(x.value!==p.w[k])return true;}return false;});if(!p)return 'Every letter is already right!';
    const k=range(p.w.length).find(k=>inputs[p.r+p.dr*k][p.c+p.dc*k].value!==p.w[k]);const x=inputs[p.r+p.dr*k][p.c+p.dc*k];x.value=p.w[k];x.parentNode.classList.remove('bad');x.parentNode.classList.add('hintx');
    return `One letter of ${p.n} ${p.dc?'across':'down'} is filled in for you (in gold).`;},
@@ -1626,6 +1646,7 @@ function genGuess5(diff){
    const m=score(cur);rows.push(cur);marks.push(m);[...cur].forEach((L,i)=>{const rank={miss:1,near:2,hit:3};if(!keyState[L]||rank[m[i]]>rank[keyState[L]])keyState[L]=m[i];});const g=cur;cur='';draw();
    if(g===ans)return{ok:true};if(rows.length>=max){over=true;setTimeout(()=>$('#reveal').click(),400);return{ok:false,msg:`Out of tries. The word was <b>${ans}</b>.`};}
    return{ok:false,msg:`Not yet. ${max-rows.length} ${max-rows.length>1?'tries':'try'} left.`};},
+  step(){if(over||S.done)return 'The game is over.';const sc=(sec,g)=>{const res=Array(5).fill('miss'),left={};for(let i=0;i<5;i++){if(g[i]===sec[i])res[i]='hit';else left[sec[i]]=(left[sec[i]]||0)+1;}for(let i=0;i<5;i++)if(res[i]!=='hit'&&left[g[i]]){res[i]='near';left[g[i]]--;}return res.join();};let w,cnt;if(!rows.length){w=pick(['CRANE','SLATE','STARE','TRACE','RAISE','ARISE']);}else{const cand=ANS5.map(x=>x.toUpperCase()).filter(x=>!rows.includes(x)&&rows.every((g,r)=>sc(x,g)===marks[r].join()));cnt=cand.length;w=cand.length?pick(cand):ans;}cur=w;draw();return `Row ${rows.length+1}: try <b>${w}</b>. ${rows.length?`It fits every clue so far${cnt>1?` (${cnt} words still possible)`:''}.`:'It\'s packed with common letters.'} Tap <b>Enter guess</b> to play it.`;},
   hint(i){if(i===0){const L=[...ans].find(L=>!keyState[L]||keyState[L]==='miss')||ans[0];return `The word has the letter <b>${L}</b> in it.`;}if(i===1)return `It starts with <b>${ans[0]}</b>.`;return `It ends with <b>${ans[4]}</b>.`;},
   reveal(){over=true;cur='';if(!rows.includes(ans)){if(rows.length>=max){rows.pop();marks.pop();}rows.push(ans);marks.push(Array(5).fill('hit'));}draw();},
   answer:`<b>${ans}</b>`,
@@ -1664,6 +1685,7 @@ function genHoney(diff){
    foundEl=h('div',{class:'hb-found'});box.append(barEl,curEl,hexBox,btns,h('div',{class:'tiny-note'},'Tip: you can also type on your keyboard and press Enter.'),foundEl);render();showCur();showFound();},
   onKey(e){if(e.target&&e.target.tagName==='INPUT')return;if(e.key==='Enter'){e.preventDefault();submit();}else if(e.key==='Backspace'){cur=cur.slice(0,-1);showCur();}else if(/^[a-zA-Z]$/.test(e.key)){cur+=e.key.toLowerCase();showCur();}},
   check(){return score>=goal?{ok:true}:{ok:false,msg:`You have ${score} of ${goal} points. Keep going!`};},
+  step(){const left=words.filter(w=>!found.includes(w)).sort((a,b)=>a.length-b.length);if(!left.length)return 'You found every word!';const w=left[0];found.push(w);score+=pts(w);showFound();if(score>=goal)autoWin();return `<b>${w.toUpperCase()}</b> is one of the words. It's added to your list.`;},
   hint(i){const left=words.filter(w=>!found.includes(w));if(!left.length)return 'You found every word!';
    if(i===0){const pans=words.filter(isPan),fp=pans.filter(w=>found.includes(w)).length;return `There ${pans.length===1?'is':'are'} <b>${pans.length}</b> pangram${pans.length===1?'':'s'} (you've found ${fp}). Words left in the list: ${left.length}.`;}
    const w=i===1?left.sort((a,b)=>a.length-b.length)[0]:pick(left);return i===1?`Try a ${w.length}-letter word that starts with <b>${w.slice(0,2).toUpperCase()}</b>.`:`Try a ${w.length}-letter word that starts with <b>${w.slice(0,3).toUpperCase()}</b>.`;},
@@ -1714,6 +1736,7 @@ function genThemeGrid(diff){
    wordEl=h('div',{class:'tg-word'});const btns=h('div',{class:'hb-btns'});const clr=h('button',{class:'np-mini',type:'button'},'Clear');clr.onclick=()=>{sel=[];draw();};const sub=h('button',{class:'np-mini hb-enter',type:'button'},'Submit word');sub.onclick=submit;btns.append(clr,sub);
    listEl=h('div',{class:'hb-found'});const sc=h('div',{class:'tg-scroll'});sc.append(box);b.append(wordEl,sc,btns,listEl);draw();},
   check(){return found.size===words.length?{ok:true}:{ok:false,msg:`${words.length-found.size} word${words.length-found.size>1?'s':''} still hidden.`};},
+  step(){const j=words.findIndex((w,j)=>!found.has(j));if(j<0)return 'All found!';found.add(j);sel=[];draw();if(found.size===words.length)autoWin();return `Found <b>${words[j]}</b> for you.`;},
   hint(i){const left=words.map((w,j)=>j).filter(j=>!found.has(j));if(!left.length)return 'All found!';if(i===0&&diff==='hard')return `The theme is <b>${theme}</b>.`;
    const j=left[0];if(i<=1&&diff!=='hard'||i===1){hinted=new Set([cells[j][0]]);draw();return `One word starts on the glowing letter. It has ${words[j].length} letters.`;}
    hinted=new Set(cells[j]);draw();return `The glowing letters spell one word.`;},
@@ -1774,6 +1797,7 @@ function genDomino(diff){
    box.append(h('div',{class:'dm-scroll'},boardEl),h('div',{class:'hb-btns'},fl),trayEl);draw();},
   check(){if(tray.some(t=>!t.at))return{ok:false,msg:`${tray.filter(t=>!t.at).length} domino${tray.filter(t=>!t.at).length>1?'es':''} still in the tray.`};
    const bad=regions.filter(g=>!ruleOK(g)).length;return bad?{ok:false,msg:`${bad} area${bad>1?'s don\'t':' doesn\'t'} follow ${bad>1?'their rules':'its rule'} yet.`}:{ok:true};},
+  step(){return this.hint(1);},safeCheck:true,
   hint(i){const d=doms.find((d,k)=>{const ia=ci(...d.a),ib=ci(...d.b);return val[ia]!==d.v[0]||val[ib]!==d.v[1];});if(!d)return 'Everything is already in place!';
    const ia=ci(...d.a),ib=ci(...d.b);tray.filter(t=>t.at&&(t.at.includes(ia)||t.at.includes(ib))).forEach(lift);
    const t=tray.find(t=>!t.at&&((t.v[0]===d.v[0]&&t.v[1]===d.v[1])||(t.v[0]===d.v[1]&&t.v[1]===d.v[0])))||tray.find(t=>t.at&&((t.v[0]===d.v[0]&&t.v[1]===d.v[1])||(t.v[0]===d.v[1]&&t.v[1]===d.v[0])));
@@ -1804,20 +1828,21 @@ function show(id){$('#menu').hidden=id!=='menu';$('#play').hidden=id!=='play';wi
 // "plays like" note for puzzles whose famous name is someone else's trademark
 function akaBox(t){if(!t||!t.aka)return '';const m=t.aka.replace('®','');return `<div class="aka"><div>🧩 <b>${t.name}</b> plays like <b>${t.aka}</b></div><small>Why a different name? ${m}® is a trademark owned by its maker, so we gave our version its own name. The Puzzle Parlor is not affiliated with or endorsed by the maker, and our rules may differ a little.</small></div>`;}
 function setFb(cls,html){const f=$('#fb');f.className='fb '+cls;f.innerHTML=html;}
-function finish(){S.done=true;['#check','#hint','#reveal'].forEach(s=>$(s).disabled=true);const e=$('#explain');e.innerHTML='<h4>Why it works</h4>'+S.cur.explain;e.style.display='block';}
+function setDoneBtns(done){['#check','#hint','#step','#reveal'].forEach(s=>$(s).style.display=done?'none':'');['#again','#menu2'].forEach(s=>$(s).style.display=done?'':'none');$('#again').textContent='↻ Play again: '+(S.type?S.type.name:'same type');}
+function finish(){S.done=true;['#check','#hint','#step','#reveal'].forEach(s=>$(s).disabled=true);setDoneBtns(true);const e=$('#explain');e.innerHTML='<h4>Why it works</h4>'+S.cur.explain;e.style.display='block';setTimeout(()=>{try{$('#fb').scrollIntoView({behavior:'smooth',block:'start'});}catch(x){}},60);}
 function stat(solved){const sk=S.type.skill;S.stats[sk]=S.stats[sk]||{solved:0,tried:0};S.stats[sk].tried++;if(solved)S.stats[sk].solved++;}
-function nextPuzzle(){
- const ids=[...S.sel];let id=pick(ids);if(ids.length>1)while(id===S.last)id=pick(ids);S.last=id;
+function nextPuzzle(forceId){
+ const ids=[...S.sel];let id=forceId||pick(ids);if(!forceId&&ids.length>1)while(id===S.last)id=pick(ids);S.last=id;setDoneBtns(false);
  S.type=TYPES.find(t=>t.id===id);S.curDiff=S.diff==='mixed'?pick(['easy','medium','hard']):S.diff;
  $('#ptype').textContent=S.type.name;$('#pdiff').textContent=cap(S.curDiff);
  $('#prompt').innerHTML='Building your puzzle…';$('#pbox').innerHTML='';$('#fb').className='fb';$('#explain').style.display='none';
- ['#check','#hint','#reveal','#print','#next'].forEach(s=>$(s).disabled=true);
+ ['#check','#hint','#step','#reveal','#print','#next'].forEach(s=>$(s).disabled=true);
  setTimeout(()=>{
   let p=null;for(let k=0;k<3&&!p;k++){try{p=GEN[id](S.curDiff,S.theme);}catch(e){console.error(e);}}
   if(!p){$('#prompt').textContent='That one didn\'t come out right. Tap Next for a fresh puzzle.';$('#next').disabled=false;return;}
-  S.cur=p;S.hints=0;S.done=false;
+  S.cur=p;S.hints=0;S.steps=0;S.done=false;
   $('#prompt').innerHTML=akaBox(S.type)+p.prompt;p.build($('#pbox'));
-  ['#check','#hint','#reveal','#next'].forEach(s=>$(s).disabled=false);$('#print').disabled=!p.printable;
+  ['#check','#hint','#step','#reveal','#next'].forEach(s=>$(s).disabled=false);$('#step').style.display=p.step?'':'none';$('#reveal').textContent=p.step?'Show full answer':'Show answer';$('#print').disabled=!p.printable;$('#print').style.display=p.printable?'':'none';
   $('#hint').textContent='Hint (3 left)';$('#check').textContent=p.checkLabel||'Check';
  },30);
 }
@@ -1827,12 +1852,15 @@ $('#none').onclick=()=>{S.sel.clear();renderMenu();};
 $('#start').onclick=()=>{if(!S.sel.size){$('#note').textContent='Pick at least one puzzle type above.';return;}show('play');nextPuzzle();};
 $('#back').onclick=()=>{renderMenu();show('menu');};
 $('#next').onclick=()=>{if(S.cur&&!S.done)stat(false);nextPuzzle();window.scrollTo(0,0);};
+$('#again').onclick=()=>{nextPuzzle(S.type.id);window.scrollTo(0,0);};
+$('#menu2').onclick=()=>{renderMenu();show('menu');};
 $('#check').onclick=()=>{if(S.done)return;const r=S.cur.check();
- if(r.ok){const pts=Math.max(1,Math.round(BASE[S.curDiff]*(1-.25*S.hints)));S.score+=pts;S.solved++;stat(true);
-  $('#score').textContent=S.score;$('#solvedN').textContent=S.solved;setFb('ok',`<b>Solved!</b> +${pts} points${S.hints?` (${S.hints} hint${S.hints>1?'s':''} used)`:''}.`);finish();}
+ if(r.ok){const used=S.hints+(S.steps||0),pts=Math.max(1,Math.round(BASE[S.curDiff]*(1-.25*used)));S.score+=pts;S.solved++;stat(true);
+  $('#score').textContent=S.score;$('#solvedN').textContent=S.solved;const help=[S.hints?`${S.hints} hint${S.hints>1?'s':''}`:'',S.steps?`${S.steps} move${S.steps>1?'s':''} shown`:''].filter(Boolean).join(', ');setFb('ok',`<b>Solved!</b> +${pts} point${pts>1?'s':''}${help?` (${help})`:''}.`);finish();}
  else setFb('bad',r.msg);};
 $('#hint').onclick=()=>{if(S.done||S.hints>=3)return;const m=S.cur.hint(S.hints);S.hints++;setFb('info',`<b>Hint ${S.hints}:</b> ${m}`);
  const left=3-S.hints;$('#hint').textContent=left?`Hint (${left} left)`:'No hints left';if(!left)$('#hint').disabled=true;};
+$('#step').onclick=()=>{if(S.done||!S.cur.step)return;const m=S.cur.step();S.steps=(S.steps||0)+1;if(!S.done)setFb('info',`<b>Next move:</b> ${m}`);if(S.cur.safeCheck&&!S.done){const r=S.cur.check();if(r.ok)autoWin();}};
 $('#reveal').onclick=()=>{if(S.done)return;S.cur.reveal();stat(false);setFb('info','Here\'s the answer. No points this time, but now you know the trick.');finish();};
 $('#print').onclick=()=>{const p=S.cur;if(!p)return;
  $('#printBody').innerHTML=`<h2 style="margin-top:0">The Puzzle Parlor: ${S.type.name} (${cap(S.curDiff)})</h2><div class="prompt">${p.prompt}</div>${$('#pbox').innerHTML}<div class="pa"><h3>Answer</h3>${p.answer}</div>`;
